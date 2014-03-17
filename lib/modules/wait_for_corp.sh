@@ -1,0 +1,34 @@
+#!/bin/bash
+
+function wait_for_corp () {
+  # wait_for_corp loop
+  # This script will loop util the computer is on the corperate network or 4
+  # hours has passed. Then it will run the script or funx passed.
+
+  Version="2.0"
+  logger -t code-wait_for_corp "$@"
+
+  # Loop until the machine is on the corp_network
+  check_corp
+  while [[ "$check_corp" != "True" ]]; do
+    sleep 300
+    check_corp
+  done
+
+  # Test if nothing is being passed
+  if [ -z "$@" ] ; then
+    return
+  fi
+
+  # Test if func is passed and run
+  TEST=`type $@ | grep "is a function"`
+  if [ -n "$TEST" ] ; then
+    $@
+    return
+  fi
+
+  # run script with params
+  sh $@
+}
+
+

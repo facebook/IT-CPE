@@ -1,0 +1,8 @@
+# This is an example of how you would get the host finger print of your code
+# sync server. You will need this so you dont get the prompt to store the key.
+#
+# run the command below and copy results here:
+# ssh-keyscan -t rsa facebook.com
+
+# facebook.com SSH-2.0-OpenSSH_6.5p1-hpn14v2
+facebook.com ssh-rsa AAAABdlkfsdjlfkjsdlfkjsdlkjf.....
