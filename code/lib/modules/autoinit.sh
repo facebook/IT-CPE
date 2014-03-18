@@ -1,10 +1,17 @@
 #!/usr/bin/env bash
 
+#
+#  Copyright (c) 2014, Facebook, Inc.
+#  All rights reserved.
+#
+#  This source code is licensed under the BSD-style license found in the
+#  LICENSE file in the root directory of this source tree. An additional grant
+#  of patent rights can be found in the PATENTS file in the same directory.
+#
+#  Created by Jonathon Elfar(https://www.facebook.com/j0n)
 
 function autoinit () {
 
-  # Created by Jonathon Elfar(https://www.facebook.com/j0n)
-  #
   # Auto_init:
   #   This script is an auto initializer for IT-code codebase.
   #   Sources all of the files in the codebase except for excluded_files

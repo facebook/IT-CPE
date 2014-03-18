@@ -1,6 +1,13 @@
 #!/bin/bash
 
-###############################################################################
+#
+#  Copyright (c) 2014, Facebook, Inc.
+#  All rights reserved.
+#
+#  This source code is licensed under the BSD-style license found in the
+#  LICENSE file in the root directory of this source tree. An additional grant
+#  of patent rights can be found in the PATENTS file in the same directory.
+#
 
 # Created By Ajay Chand(http://fb.me/achand27)
 #
@@ -9,7 +16,7 @@
 # Input: $1 is local path to ini file, $2 is code path to ini file
 # Output: outputs the date the file was replaced
 # Sample Usage: diff_replace "/etc/krb5.conf" "/Library/code/lib/kerberos/krb5.conf"
-###############################################################################
+
 
 function diff_replace() {
 
