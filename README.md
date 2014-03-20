@@ -38,6 +38,7 @@ IT-CPE tools requires or works with
 
 ## How MyProject works
 ...
+* How the IT-CPE tools work
 
 ## Full documentation
 ...
