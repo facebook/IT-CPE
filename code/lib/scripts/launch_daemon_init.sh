@@ -15,14 +15,14 @@ function Main () {
 # Created By Mike Dodge(http://fb.me/mikedodge04):
 #
 # Launch Daemon Init:
-#   This is where we launch any scripts that we need to run as a lauch_demon.
+#   This is where we launch any scripts that we need to run as a launch_demon.
 #   Every thing we put here will run 2.5 mins after boot or as scheduled.
 #
 #   $schedule:
-#     is passed from a corasponding launuch demon and can be
+#     is passed from a corresponding launch daemon and can be
 #     startup, every15, hourly, daily, weekly
 #   ldi_[sh/py/func]_run:
-#     Depending on the script you are passing. You will use sh or py or fun.
+#     Depending on the script you are passing. You will use sh or py or func.
 #     This takes care of the logging and general run syntax
 #   ldi_logger:
 #     runs a logger command, that writes a standard message to syslog

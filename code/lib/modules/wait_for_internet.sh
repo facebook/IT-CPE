@@ -11,8 +11,8 @@
 
 function wait_for_internet () {
   # wait_for_internet loop
-  # This script will loop util the computer is on the internet or 4 hours has
-  # passed. Then it will run the script or func passed.
+  # This script will loop until the computer is on the internet.
+  # Then it will run the script or function passed.
 
   Version="2.0"
   logger -t code-wait_for_internet "$@"

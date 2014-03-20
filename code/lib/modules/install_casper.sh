@@ -16,7 +16,7 @@ function install_casper {
     chmod 755 /usr/sbin/jamf
   fi
 
-  sudo installer -pkg $PATH_TO_QA_PKG -target / &> /dev/null
+  installer -pkg $PATH_TO_QA_PKG -target / &> /dev/null
 
   if [[ $? -ne 0 ]]; then
     print_red "Install failed"
