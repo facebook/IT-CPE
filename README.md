@@ -3,33 +3,36 @@ The IT-CPE repo is a a suite of tools that we use to manage our fleet of client
 systems.
 
 ## Examples
-We found that we were writing alot of fuctions to do our day to day
-work, instead of copying pasting needed functions to each script we started
-storeing commonly used functions on our moachines. But then how do you keep
-these functions uptodate? Thats when we wrote 'code\_sync'(I know, not a very
+The CPE team found that we were writing alot of functions to do our day to day
+work. Instead of copying and pasting needed functions to each script, we started
+storing commonly used functions on our machines. But then how do we keep
+these functions up-to-date? Thats when we wrote 'code\_sync'(I know, not a very
 clever name).
 
-Next we noticed that it was alot of work to rmeber which function is stored
-were? So with 'autoinit' it sources all the functions, that you have written,
-so you can set constants and fuctions, in one place, and have them all ready for
-you to use.
+Next we noticed that it was difficult to remember where each function was 
+actually stored? So we then wrote 'autoinit'. Autoinit sources all your 
+functions into each of your scripts, giving you a global namespace. 
+This makes it much easier to reference any functions you have written 
+previously and provides for cleaner code.
 
-We were also noticing that with our current client management system, it would
-lose connection or systems would just become unmanaged. We bulit 'Lanuch Demon
-init' with the intention for it to just veirfy that our mangement client was
-intact. But over time it evolved in to a easy way to run any script or function
-on a set interval.
+We were also noticing issues with our current client management tool. 
+It would periodically lose connection to client systems so that they 
+would become unmanaged. We built "Launch Daemon Init" or LDI, with 
+the intention for it to verify that our managed clients were intact.
+But over time LDI evolved in to a easy way to run any script or function
+on a set interval. LDI is a system daemon that we wrote that runs on startup 
+and on periodic intervals throughout the day.
 
 
 ## Requirements
 IT-CPE tools requires or works with
 * Mac OS X or Linux server to serve as an ssh server
-* Apache server to sevre ssh key or way to deploy the key to each machine
+* Apache server to host ssh keys as a way for clients to grab the key
 
 ## Building MyProject
 
 * Single-purpose SSH key to your code_sync server
-	I use a 'util' account that only as access to the 'code\_sync' directory.
+	We use a 'util' account that only has access to the 'code\_sync' directory.
 	http://www.paulkeck.com/ssh/
 	http://www.hackinglinuxexposed.com/articles/20030115.html
 

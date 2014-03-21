@@ -119,7 +119,7 @@ function rsync_lib () {
 
 function create_code_directories {
   # Create the dirs needed for code. This is where I like to keep all of my
-  # nesscary dirs for later use by my scripts.
+  # necessary dirs for later use by my scripts.
   mkdir -p $code/key
   # Create the Waiting Room dir
   mkdir -p $code/logs

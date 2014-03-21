@@ -6,10 +6,10 @@ function Main () {
 # Created By Mike Dodge(http://fb.me/mikedodge04):
 #
 # Launch Daemon Init installer:
-#   This installs the needed LauchDemons for LDI.
+#   This installs the needed Launch Daemons for LDI.
 #
 #   $schedule:
-#     is passed from a corasponding launuch demon and can be
+#     is passed from a corresponding launch daemon and can be
 #     startup, every15, hourly, daily, weekly
 #   ldi_[sh/py/func]_run:
 #     Depending on the script you are passing. You will use sh or py or fun.

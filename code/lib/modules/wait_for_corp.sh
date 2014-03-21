@@ -11,8 +11,8 @@
 
 function wait_for_corp () {
   # wait_for_corp loop
-  # This script will loop util the computer is on the corperate network or 4
-  # hours has passed. Then it will run the script or funx passed.
+  # This script will loop until the computer is on the corporate network or 4
+  # hours have passed. Then it will run the script or function passed.
 
   Version="2.0"
   logger -t code-wait_for_corp "$@"

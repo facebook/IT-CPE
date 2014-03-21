@@ -9,13 +9,12 @@
 #
 
 # Prep:
-#   Should be copyied in each of your scripts. I hate coping and pasting but
-#   this is the bar minuim you will need to copy to verify that you will have
-#   your code/lib avalible. Prep with use code_sync to verify that your code it
-#   there and
+# Should be copied in each of your scripts. I hate coping and pasting but this 
+# is the bare minimum you will need to copy to verify that you will have
+# your code/lib available. Prep with use code_sync to verify that your code is there.
 
 function prep () {
-  # Prep to run the script, make sure we have the latest code before sourceing
+  # Prep to run the script, make sure we have the latest code before sourcing
   # the code/lib and setup up and pre conditions.
   exit_on_failure="noexit"
   [[ "$1" = "exit" ]] && exit_on_failure="exit"
