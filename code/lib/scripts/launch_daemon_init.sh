@@ -15,11 +15,7 @@ function Main () {
 # Created By Mike Dodge(http://fb.me/mikedodge04):
 #
 # Launch Daemon Init:
-<<<<<<< HEAD
 #   This is where we launch any scripts that we need to run as a launch_daemon.
-=======
-#   This is where we launch any scripts that we need to run as a launch_demon.
->>>>>>> FETCH_HEAD
 #   Every thing we put here will run 2.5 mins after boot or as scheduled.
 #
 #   $schedule:

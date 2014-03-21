@@ -8,18 +8,12 @@
 #  of patent rights can be found in the PATENTS file in the same directory.
 #
 
-# Prep:
-<<<<<<< HEAD
-# Should be copied in each of your scripts. I hate coping and pasting but this 
-# is the bare minimum you will need to copy to verify that you will have
-# your code/lib available. Prep with use code_sync to verify that your code is there.
-=======
+#  Prep:
 #  Needs to be ran as root.
 #  Should be copied in each of your scripts. I hate coping and pasting but this
 #  is the bare minimum you will need to copy to verify that you will have your
 #  code/lib available. Prep will use code_sync to verify that your code is there
 #  and autoinit will make sure all of your functions are sourced.
->>>>>>> FETCH_HEAD
 
 function prep () {
   # Prep to run the script, make sure we have the latest code before sourcing

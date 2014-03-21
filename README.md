@@ -9,7 +9,6 @@ storing commonly used functions on our machines. But then how do we keep
 these functions up-to-date? Thats when we wrote 'code\_sync'(I know, not a very
 clever name).
 
-<<<<<<< HEAD
 Next we noticed that it was difficult to remember where each function was 
 actually stored? So we then wrote 'autoinit'. Autoinit sources all your 
 functions into each of your scripts, giving you a global namespace. 
@@ -23,20 +22,6 @@ the intention for it to verify that our managed clients were intact.
 But over time LDI evolved in to a easy way to run any script or function
 on a set interval. LDI is a system daemon that we wrote that runs on startup 
 and on periodic intervals throughout the day.
-=======
-Next we noticed that it was difficult to remember where each function was
-actually stored? So we then wrote 'autoinit'. Autoinit sources all your
-functions into each of your scripts, giving you a global namespace. This makes
-it much easier to reference any functions you have written previously and
-provides for cleaner code.
-
-We were also noticing issues with our current client management tool. It would
-periodically lose connection to client systems so that they would become
-unmanaged. We built "Launch Daemon Init" or LDI, with the intention for it to
-verify that our managed clients were intact. But over time LDI evolved in to a
-easy way to run any script or function on a set interval. LDI is a system daemon
-that we wrote that runs on startup and on periodic intervals throughout the day.
->>>>>>> FETCH_HEAD
 
 
 ## Requirements
@@ -49,14 +34,6 @@ IT-CPE tools requires or works with
 
 * Single-purpose SSH key to your code_sync server
 	We use a 'util' account that only has access to the 'code\_sync' directory.
-=======
-* Apache server to host ssh keys as a way for clients to grab the key. Or some
-  means of getting the ssh key on to your machines.
-## Building MyProject
-
-* Single-purpose SSH key to your 'code\_sync' server
-    We use a 'util' account that only has access to the 'code\_sync' directory.
->>>>>>> FETCH_HEAD
 	http://www.paulkeck.com/ssh/
 	http://www.hackinglinuxexposed.com/articles/20030115.html
 
