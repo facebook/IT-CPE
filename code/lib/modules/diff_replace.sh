@@ -13,8 +13,14 @@
 #
 # Updates a configuration file with a file from the code repo
 # Makes a backup of the original local conf to .code.bak
+<<<<<<< HEAD
 # $1 is path to the local file, $2 is the path to the file on the code repo. 
 # The file from the code repo will replace the local file if they are different.
+=======
+# Input: $1 is path to the local file, $2 is the path to the file in the code
+#        repo. The file from the code repo will replace the local file if they
+#        are different.
+>>>>>>> FETCH_HEAD
 # Output: outputs the date the file was replaced
 # Sample Usage: diff_replace "/etc/krb5.conf" "/Library/code/lib/kerberos/krb5.conf"
 
