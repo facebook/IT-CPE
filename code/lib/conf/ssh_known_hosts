@@ -2,7 +2,8 @@
 # sync server. You will need this so you dont get the prompt to store the key.
 #
 # run the command below and copy results here:
-# ssh-keyscan -t rsa facebook.com
+# ssh-keyscan -t rsa yourcodesyncserver.com
+# The resulting keyscan should be put into your /etc/ssh_known_hosts file as shown below
 
-# facebook.com SSH-2.0-OpenSSH_6.5p1-hpn14v2
-facebook.com ssh-rsa AAAABdlkfsdjlfkjsdlfkjsdlkjf.....
+# yourcodesyncserver.com SSH-2.0-OpenSSH_6.5p1-hpn14v2
+yourcodesyncserver.com ssh-rsa AAAABdlkfsdjlfkjsdlfkjsdlkjf.....

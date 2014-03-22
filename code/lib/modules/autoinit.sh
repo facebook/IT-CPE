@@ -16,7 +16,7 @@ function autoinit () {
   #   This script is an auto initializer for IT-code codebase.
   #   Sources all of the files in the codebase except for excluded_files
   #
-  # USAGE: Files using this autonit should include:
+  # USAGE: Files using this autoinit should include:
   #   [ -z $autoinit ] && { . /Library/code/lib/modules/autoinit.sh; autoinit; }
 
   # Ensures the user is running this in a bash shell

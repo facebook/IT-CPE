@@ -10,7 +10,19 @@
 #
 
 function check_corp {
-  # Checks to see if on the corporate network
+  # check_corp:
+  #   This script verifies a system is on the corporate network.
+  #   Input: CORP_URL= set this to a hostname on your corp network
+  #   Optional ($1) contains a parameter that is used for testing.
+  #   Output: Returns a check_corp variable that will return "True" if on 
+  #   corp network, "False" otherwise.
+  #   If a parameter is passed ($1), the check_corp variable will return it
+  #   This is useful for testing scripts where you want to force check_corp
+  #   to be either "True" or "False"
+  # USAGE: 
+  #   check_corp        # No parameter passed
+  #   check_corp "True"  # Parameter of "True" is passed and returned
+
   CORP_URL="internal-host.com"
   check_corp="False"
   ping=`host -W .5 $CORP_URL`
