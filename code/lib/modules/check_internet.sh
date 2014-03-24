@@ -11,6 +11,11 @@
 
 function check_internet {
   # Checks to see if on the internet
+  # Input: Optional ($1) contains a parameter that is used for testing.
+  # Output: Returns "True" if URL variable is pingable, "False" otherwise.
+  # If a parameter is passed ($1), the check_internet variable will return it
+  # This is useful for testing scripts where you want to force check_corp
+  # to be either "True" or "False"
   URL="facebook.com"
   check_internet="False"
   ping=`host -W .5 $URL`

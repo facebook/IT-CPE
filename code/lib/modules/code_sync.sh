@@ -14,14 +14,14 @@
 # Code_Sync
 #   This function will download a ssh key from your defined web server as
 #   $KEY_SERVER. It will use the downloaded ssh key to do an rsync from the
-#   defined $RSYNC_SERVER to the local code/lib. Replaeing any local chanegs.
+#   defined $RSYNC_SERVER to the local code/lib. Replacing any local chanegs.
 #
 #   $KEY_SERVER:
-#     This is a HTTPS server wehre you will store your ssh key for download
+#     This is a HTTPS server where you will store your ssh key for download
 #   $KEY_PATH:
-#     This is the rest of th web address used to download the key
+#     This is the rest of the web address used to download the key
 #   $RSYNC_SERVER:
-#     Server host name in which you are storeing the /code/lib directory
+#     Server host name in which you are storing the /code/lib directory
 
 
 #########################################################
@@ -46,8 +46,8 @@
 
 function code_sync () {
   # Usage:  code_sync EXIT
-  # Downloads lastest changes to /Library/code/lib,
-  # and delets any files not on the server
+  # Downloads latest changes to /Library/code/lib,
+  # and deletes any files not on the server
   # EXIT should contain "exit" to exit on sync fail
   # if you pass exit as $1 it will quit on sync fail
   exit_on_failure="noexit"
@@ -64,8 +64,10 @@ function code_sync () {
 ###               Supplement Functions                ###
 #########################################################
 
-
+  
 function dl_logger () {
+  # Usage:  dl_logger FAIL_MSG
+  # Writes FAIL_MSG to syslog with the "code_sync" tag
   FAIL_MSG="$1"
   dl_logger_tag="code_sync"
   logger -t $dl_logger_tag "$FAIL_MSG"
@@ -74,7 +76,7 @@ function dl_logger () {
 
 function download_key () {
   # Usage:  download_key
-  # Downlaods the ssh key used to an rsync.
+  # Downloads the ssh key used to an rsync.
   mkdir -p $code/key &> /dev/null
   curl -s "$KEY_SERVER/$KEY_PATH" --O "$key" &>/dev/null
 }
@@ -93,6 +95,8 @@ function code_sync_abort () {
 }
 
 function maintain_ssh_known_hosts (){
+  # Usage:  maintain_ssh_known_hosts
+  # Ensures the /etc/ssh_known_hosts file is up to date with the version in codelib
   CODE_KNOWN_HOSTS="$lib/conf/ssh_known_hosts"
   KNOWN_HOSTS='/etc/ssh_known_hosts'
   . $modules/diff_replace.sh; diff_replace "$KNOWN_HOSTS" "$CODE_KNOWN_HOSTS"
@@ -108,7 +112,7 @@ function rsync_lib () {
   rsync -av --delete -e "ssh -i $code/key/rsync_key" \
     util@"$RSYNC_SERVER":/code/lib $code/ &>/dev/null
 
-   # Check for failure
+   # Check for failure and log to syslog
   if [[ $? -ne 0 ]]; then
     dl_logger "Failed to rsync"
     msg="Code_Sync failed!"
@@ -118,10 +122,10 @@ function rsync_lib () {
 
 
 function create_code_directories {
-  # Create the dirs needed for code. This is where I like to keep all of my
-  # necessary dirs for later use by my scripts.
+  # Create the dirs needed for code. This is where we like to keep all of the
+  # necessary dirs for later.
   mkdir -p $code/key
-  # Create the Waiting Room dir
+  # Create the Logs dir
   mkdir -p $code/logs
   # Make sure the Log file exists
   touch $code/logs/log.txt
