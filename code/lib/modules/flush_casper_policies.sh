@@ -10,10 +10,9 @@
 #
 
 function flush_casper_policies {
-  # Flush all casper policies
+  # Flush all JAMF Casper policies
 
-  # Requires elevated privileges to flush policies
   echo "Flushing all Casper Policies..."
-  sudo jamf flushPolicyHistory
+  jamf flushPolicyHistory
 
 }

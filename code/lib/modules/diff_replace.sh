@@ -12,7 +12,7 @@
 # Created By Ajay Chand(http://fb.me/achand27)
 #
 # Updates a configuration file with a file from the code repo
-# Makes a backup of the original local conf to .code.bak
+# Makes a backup of the original local file to .code.bak
 # $1 is path to the local file, $2 is the path to the file on the code repo. 
 # The file from the code repo will replace the local file if they are different.
 # Output: outputs the date the file was replaced

@@ -9,6 +9,10 @@
 #  of patent rights can be found in the PATENTS file in the same directory.
 #
 
+# Prints a message into any color given below by function name.
+# Examples: print_red "Install failed"
+# print_green "Successful Install"
+
 RED=$'\033[31m'
 LightRED=$'\033[31;01m'
 

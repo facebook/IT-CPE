@@ -67,7 +67,8 @@ function code_sync () {
   
 function dl_logger () {
   # Usage:  dl_logger FAIL_MSG
-  # Writes FAIL_MSG to syslog with the "code_sync" tag
+  # Writes FAIL_MSG to syslog with the "code_sync" tag. Useful for Splunk
+  # or other logging tools
   FAIL_MSG="$1"
   dl_logger_tag="code_sync"
   logger -t $dl_logger_tag "$FAIL_MSG"
@@ -104,10 +105,16 @@ function maintain_ssh_known_hosts (){
 
 function rsync_lib () {
   # Usage: rsync_lib EXIT
-  # rsyncs lib and exit on fail if passed exit
+  # Input $1= exit, (optional). Exits on failure
+  # Syncs the code library from your Rsync server down to the localhost
+
   exit_on_failure="noexit"
   [[ "$1" = "exit" ]] && exit_on_failure="exit"
 
+  # Change permissions on the rsync key and pull down the code base with
+  # an rsync using the key.  Delete any changes on the localhost that aren't 
+  # on the server. Note, we are assuming that there is a 'util' account on 
+  # your codesync server that has access to the code library on the server.
   chmod 700 $code/key/rsync_key
   rsync -av --delete -e "ssh -i $code/key/rsync_key" \
     util@"$RSYNC_SERVER":/code/lib $code/ &>/dev/null
