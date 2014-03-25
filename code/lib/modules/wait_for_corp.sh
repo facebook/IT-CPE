@@ -11,7 +11,6 @@
 
 function wait_for_corp () {
   # wait_for_corp loop
-<<<<<<< HEAD
   # This script will loop until the computer is on the corporate network or 4
   # hours have passed. Then it will run the script or function passed.
 
