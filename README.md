@@ -31,7 +31,7 @@ IT-CPE tools requires:
 These values will be used by all clients when they sync the code library
 
 * Generate an keyscan of your code sync server
-  To do this from a terminal type: ssh -t rsa yourcodesyncserver.com.  Place the resulting fingerprint into your /etc/ssh_known_hosts file on all your client machines.  This establishes the trust to the code sync server. A sample file is placed at IT-CPE/code/lib/conf/ssh_known_hosts.
+** To do this from a terminal type: ssh -t rsa yourcodesyncserver.com.  Place the resulting fingerprint into your /etc/ssh_known_hosts file on all your client machines.  This establishes the trust to the code sync server. A sample file is placed at IT-CPE/code/lib/conf/ssh_known_hosts.
 
 * Setup the key server
   This server should be running Apache and should serve the contents of the single-use SSH key.  Clients will download the rsync key from this server using a curl.  Once downloaded, they will use this key for access to do the rsync from the code sync server to grab the latest version of the code base.
