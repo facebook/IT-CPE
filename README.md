@@ -29,24 +29,19 @@ IT-CPE tools requires:
 
 * Set the hostnames of your code sync and key server in the code_sync.sh file. These values will be used by all clients when they sync the code library
 
-* Generate an keyscan of your code sync server.
-  To do this from a terminal type: ssh -t rsa yourcodesyncserver.com.  Place the resulting fingerprint into your /etc/ssh_known_hosts file on all your client machines.  This establishes the trust to the code sync server. A sample file is placed at IT-CPE/code/lib/conf/ssh_known_hosts.
+* Generate a keyscan of your code sync server. To do this from a terminal type: ssh -t rsa yourcodesyncserver.com.  Place the resulting fingerprint into your /etc/ssh_known_hosts file on all your client machines.  This establishes the trust to the code sync server. A sample file is placed at IT-CPE/code/lib/conf/ssh_known_hosts.
 
-* Setup the key server.
-  This server should be running Apache and should serve the contents of the single-use SSH key.  Clients will download the rsync key from this server using a curl.  Once downloaded, they will use this key for access to do the rsync from the code sync server to grab the latest version of the code base.
+* Setup the key server. This server should be running Apache and should serve the contents of the single-use SSH key.  Clients will download the rsync key from this server using a curl.  Once downloaded, they will use this key for access to do the rsync from the code sync server to grab the latest version of the code base.
 
-* Setup the codesync server.
-  Setup a limited access SSH account. We call this account a 'util' account that only has access to the 'code\_sync' directory.
-  Reference the sites below for details on how to make a limited access SSH account.
+* Setup the codesync server. Setup a limited access SSH account. We call this account a 'util' account that only has access to the 'code\_sync' directory. Reference the sites below for details on how to make a limited access SSH account.
+http://www.paulkeck.com/ssh/
+http://www.hackinglinuxexposed.com/articles/20030115.html
 
-* Configure global variables for your environment.
-  Under each script in the /modules folder, assign variables that fit your enviroment where required by the code.  For example, check_corp.sh requires a "CORP_URL" variable to be set for your environment.
+* Configure global variables for your environment. Under each script in the /modules folder, assign variables that fit your enviroment where required by the code.  For example, check_corp.sh requires a "CORP_URL" variable to be set for your environment.
 
-* Setup your code base on the codesync server.
-  Copy the contents of the /conf, /modules and /scripts folder over to your codesync server in a shared folder.  This is the folder that clients will rsync from to grab the latest version of the codebase.
+* Setup your code base on the codesync server. Copy the contents of the /conf, /modules and /scripts folder over to your codesync server in a shared folder.  This is the folder that clients will rsync from to grab the latest version of the codebase.
 
-  http://www.paulkeck.com/ssh/
-  http://www.hackinglinuxexposed.com/articles/20030115.html
+  
 
 
 ## Repo layout
