@@ -42,8 +42,6 @@ http://www.hackinglinuxexposed.com/articles/20030115.html
 * Setup your code base on the codesync server. Copy the contents of the /conf, /modules and /scripts folder over to your codesync server in a shared folder.  This is the folder that clients will rsync from to grab the latest version of the codebase.
 
   
-
-
 ## Repo layout
 * /conf.  Contains configuration files.  ssh_known_hosts is a file that shows how to grab the fingerprint of your code sync server.
 * /modules.  Contains a variety of functions that are useful for clients to have.  Each function should have a detailed description within the file contents.
@@ -54,9 +52,9 @@ http://www.hackinglinuxexposed.com/articles/20030115.html
 ## Help and Support
 Find us on IRC on irc.freenode.net / #ITThinkTank if there are questions or issues.
 
-## Join the MyProject community
-* Website:
-* Facebook page:
+## Join the IT-CPE community
+* Website: facebook.com/IT
+* Facebook page: fb.com/groups/TheITThinkTank/
 * Mailing list
 * irc: irc.freenode.net / #ITThinkTank
 See the CONTRIBUTING file for how to help out.
