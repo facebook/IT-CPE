@@ -3,11 +3,11 @@ The IT-CPE repo contains a suite of tools that we use to manage our fleet of cli
 machines.  We currently manage over 10k machines using these tools.
 
 ## Examples
-The CPE team found that we were writing alot of functions to do our day to day
+The CPE team found that we were writing a lot of functions to do our day to day
 work. Instead of copying and pasting needed functions to each script, we started
 storing commonly used functions on our machines. But then how do we keep
 these functions up-to-date? That's when we wrote 'code sync'(I know, not a very
-clever name). Apple does not always provide the best tools for the enterprise. The CPE team constantly wrote functions and scripts to achieve a variety of different tasks. These scripts execute locally on the client machines. To utilize the code library, we needed a mechanism to deploy the code library to client machines. The CPE team embodies the Facebook mantra, "Move Fast and Break Things." We continually iterate and improve the code library. We needed a mechanism to keep up with our rapid development cycle, to solve the problem we wrote 'code_sync'.
+clever name). Apple does not always provide the best tools for the enterprise. The CPE team constantly wrote functions and scripts to achieve a variety of different tasks. These scripts execute locally on the client machines. To utilize the code library, we needed a mechanism to deploy the code library to client machines. The CPE team embodies the Facebook mantra, "Move Fast and Break Things." We continually iterate and improve the code library. We needed a mechanism to keep up with our rapid development cycle, to solve the problem we wrote code sync.
 
 Next we noticed that it was difficult to remember where each function was 
 actually stored? So we then wrote 'autoinit'. Autoinit sources all your 
