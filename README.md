@@ -1,16 +1,15 @@
 #IT-CPE tools
-The IT-CPE repo contains a suite of tools that we use to manage our fleet of client
-machines.  We currently manage over 10k machines using these tools.
+The IT-CPE ("Client Platform Engineering") repo contains a suite of tools that we use to manage our fleet of client
+machines.  We currently manage over 10,000 machines using these tools.
 
 ## Examples
 The CPE team found that we were writing a lot of functions to do our day to day
 work. Instead of copying and pasting needed functions to each script, we started
 storing commonly used functions on our machines. But then how do we keep
-these functions up-to-date? That's when we wrote 'code sync'(I know, not a very
-clever name). Apple does not always provide the best tools for the enterprise. The CPE team constantly wrote functions and scripts to achieve a variety of different tasks. These scripts execute locally on the client machines. To utilize the code library, we needed a mechanism to deploy the code library to client machines. The CPE team embodies the Facebook mantra, "Move Fast and Break Things." We continually iterate and improve the code library. We needed a mechanism to keep up with our rapid development cycle, to solve the problem we wrote code sync.
+these functions up-to-date? That's when we wrote 'code sync'. The CPE team constantly writes functions and scripts to achieve a variety of different tasks. These scripts execute locally on the client machines. To utilize the code library, we needed a mechanism to deploy the code library to client machines. The CPE team embodies the Facebook mantra, "Move Fast and Break Things." We continually iterate and improve the code library. We needed a mechanism to keep up with our rapid development cycle, to solve the problem we wrote code sync.
 
 Next we noticed that it was difficult to remember where each function was 
-actually stored? So we then wrote 'autoinit'. Autoinit sources all your 
+actually stored. So we then wrote 'autoinit'. Autoinit sources all your 
 functions into each of your scripts, giving you a global namespace. 
 This makes it much easier to reference any functions you have written 
 previously and provides for cleaner code. Bash is not forgiving when sourcing a multitude of functions. It requires the memorization of function paths. This became tedious, introduced unnecessary errors, and stalled the development process not allowing us to "move fast." To remove the headaches of development and following "the hacker way" of iteration, we wrote 'autoinit' to automatically source the code library's functions and provide a global namespace. Not only does this make development straightforward, the readability of code has greatly improved.
