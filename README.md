@@ -45,7 +45,7 @@ http://www.hackinglinuxexposed.com/articles/20030115.html
 * /conf.  Contains configuration files.  ssh_known_hosts is a file that shows how to grab the fingerprint of your code sync server.
 * /modules.  Contains a variety of functions that are useful for clients to have.  Each function should have a detailed description within the file contents.
 * /scripts.  Contain scripts that we want the clients to execute. 
-* /SSH_server. Contains a script that runs on the SSH Server that verifies that the client SSH command is to download the contents of the code sync library. #MIKE#
+* /SSH_server. Contains a script that runs on the SSH Server that verifies that the client SSH command is to download the contents of the code sync library.
 
 
 ## Help and Support
@@ -56,7 +56,6 @@ Find us on IRC on irc.freenode.net / #ITThinkTank if there are questions or issu
 * Facebook page: fb.com/groups/TheITThinkTank/
 * Mailing list
 * irc: irc.freenode.net / #ITThinkTank
-See the CONTRIBUTING file for how to help out.
 
 ## License
 IT-CPE tools is BSD-licensed. We also provide an additional patent grant.
