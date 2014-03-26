@@ -15,7 +15,7 @@ function set_local_time {
 
   # Set using the time server
   systemsetup -setusingnetworktime on
-  # Use your company's time server, or maybe timw.apple.com
+  # Use your company's time server, or maybe time.apple.com
   systemsetup -setnetworktimeserver time.company.com
 
 }

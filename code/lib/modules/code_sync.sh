@@ -14,7 +14,8 @@
 # Code_Sync
 #   This function will download a ssh key from your defined web server as
 #   $KEY_SERVER. It will use the downloaded ssh key to do an rsync from the
-#   defined $RSYNC_SERVER to the local code/lib. Replacing any local chanegs.
+#   defined $RSYNC_SERVER to the local code/lib. It will overwrite any local
+#   changes with what is on the $RSYNC_SERVER.
 #
 #   $KEY_SERVER:
 #     This is a HTTPS server where you will store your ssh key for download

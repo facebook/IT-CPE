@@ -18,7 +18,7 @@ function Main () {
 #   This script will verify that the client time is correct, that the jamf
 #   binary is installed, and that we can do a manual trigger.
 #
-#  iscasperup manuel trigger nees to be made before hand. All it should do is
+#  iscasperup manual trigger needs to be made before hand. All it should do is
 #  echo up.
 
 

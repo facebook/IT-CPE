@@ -10,8 +10,8 @@
 
 #  Prep:
 #  Needs to be ran as root.
-#  Should be copied in each of your scripts. I hate coping and pasting but this
-#  is the bare minimum you will need to copy to verify that you will have your
+#  Should be copied in each of your scripts. This is the bare minimum you will
+#  need to copy to verify that you will have your
 #  code/lib available. Prep will use code_sync to verify that your code is there
 #  and autoinit will make sure all of your functions are sourced.
 
@@ -25,7 +25,7 @@ function prep () {
   [[ -z "$modules" ]] && modules="$lib/modules"
 
   if [ ! -f $modules/code_sync.sh ]; then
-    # if for whatever reason the code lib isnt on the system, I have a manual
+    # if for whatever reason the code lib isn't on the system, I have a manual
     # trigger jamf  policy to drop the need files in place.
     sudo jamf policy -trigger "sync_lib_manual" &>/dev/null
     [ $? -ne 0 ] && { echo "Error: Unable to sync the local lib"; return 1; }

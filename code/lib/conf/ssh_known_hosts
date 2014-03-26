@@ -3,7 +3,7 @@
 #
 # run the command below and copy results here:
 # ssh-keyscan -t rsa yourcodesyncserver.com
-# The resulting keyscan should be put into your /etc/ssh_known_hosts file as shown below
+# The resulting key scan should be put into your /etc/ssh_known_hosts file as shown below
 
 # yourcodesyncserver.com SSH-2.0-OpenSSH_6.5p1-hpn14v2
 yourcodesyncserver.com ssh-rsa AAAABdlkfsdjlfkjsdlfkjsdlkjf.....
