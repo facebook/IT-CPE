@@ -1,0 +1,98 @@
+#!/usr/bin/python2.7
+
+import argparse
+import glob
+import inspect
+import os
+import signal
+import sys
+import traceback
+
+"""
+This file takes care of import logic and path modifications for *__tools.
+Pyexec assumes it is running in root context
+
+Example usage:
+pyexec test_success.py - runs the test_success script
+pyexec test_error.py --onerror debug.py - starts the debug script on error
+pyexec -c 'print sys_tools.get_os_version()' - outputs the OS version
+"""
+
+
+def exit_gracefully(signal=None, frame=None):
+    """
+    exit_gracefully(signal=None, frame=None)
+
+    Catches control-c sent from the signal module
+    """
+    if signal and frame:
+        print "\nReceived control-c, exitting..."
+    else:
+        print "End of file reached, exitting..."
+    sys.exit(0)
+
+try:  # Catch potential pyexec bugs
+    parser = argparse.ArgumentParser()
+
+    # Optional arg to enter into pdb for advanced debugging
+    parser.add_argument(
+        "--onerror",
+        action="store",
+        help="call script when exception is thrown"
+    )
+
+    # Optional arg to eval code passed in
+    parser.add_argument(
+        "-c",
+        "--eval",
+        action="store_true",
+        help="eval code, auto import CPE modules"
+    )
+
+    # Required arg for script to run and its args
+    parser.add_argument(
+        "file_args",
+        nargs="*",
+        help="script path and possible arguments"
+    )
+
+    args = parser.parse_args()
+    current_frame = inspect.currentframe()
+    pyexec_path = os.path.abspath(inspect.getfile(current_frame))
+    signal.signal(signal.SIGINT, exit_gracefully)
+
+    # Import in respective to the path of pyexec
+    modules = os.path.abspath(os.path.join(os.path.dirname(pyexec_path),
+                                           os.pardir, "modules"))
+    sys.path.append(modules)
+
+    for module in glob.glob(os.path.join(modules, "*_tools.py")):
+        module = os.path.splitext(os.path.basename(module))[0]
+        globals()[module] = __import__(module)
+
+    if args.eval:
+        try:
+            exec(args.file_args[0])
+            sys.exit(0)
+        except EOFError:
+            exit_gracefully()
+
+    d = dict(__name__="__main__")
+    try:
+        try:
+            # execfile can't launch scripts with args, so set them manually
+            # http://stackoverflow.com/a/14905087
+            sys.argv = args.file_args
+            execfile(args.file_args[0], d)
+        except EOFError:
+            # execfile will continue executing here if the executed script
+            # doesn't quit() or throw an exception
+            exit_gracefully()
+    except Exception:
+        if args.onerror:
+            execfile(args.onerror)
+        else:
+            raise
+except Exception as pyexec_exception:
+    print pyexec_exception
+    traceback.print_exc()
