@@ -30,8 +30,8 @@ Similiar to autoinit for bash, we wanted a solution to automatically import our 
 * _tools.py requirements, download the modules below and move them into the /modules directory:
   * Envoy - github.com/kennethreitz/envoy
   * Requests - github.com/kennethreitz/requests
-## Installing IT-CPE tools repo
 
+## Installing IT-CPE tools repo
 * Set the hostnames of your code sync and key server in the code_sync.sh file. These values will be used by all clients when they sync the code library
 
 * Generate a key scan of your code sync server to establish trust between clients and the code sync server via `ssh -t rsa yourcodesyncserver.com`. Place the resulting fingerprint into your /etc/ssh_known_hosts file on all your client machines. A sample file is placed at IT-CPE/code/lib/conf/ssh_known_hosts.
