@@ -5,21 +5,21 @@ machines.
 ## Examples
 Watch our presentation at MacIT: http://www.youtube.com/watch?v=Z3gMXUxI0Hs
 
-Code sync
+####Code sync
 We are constantly developing functions to make our scripts more robust. Both functions and scripts are deployed to all client machines via 'code sync' to ensure the latest code is always running.
 
-Autoinit
+####Autoinit
 A common problem that our team ran into was sourcing functions in multiple
 libraries. In order to increase developer efficiency and code readability, we create 'autoinit' to automatically source functions into the script and introduce a global namespace.
 
-Launch Daemon Init (LDI)
+####Launch Daemon Init (LDI)
 We also noticed issues with our previous client management tool. Periodically, client machines would lose connection with the mangement tools and become unmanaged.
 Critical patches and updates were unable to be sent to the client. To solve this, we built "Launch Daemon Init (LDI)," a system daemon that runs scripts and functions on set intervals (startup, daily, every15, weekly).
 
-_tools.py
+####_tools.py
 While the bash functions greatly increased our productivity, we realized that bash made using more advanced data types and error handling difficult. Python has enabled use to write more robust scripts and handle errors/edge cases more easily. The modules folder contain abstractions we've built to make things such as validating network states easy.
 
-Pyexec
+####Pyexec
 Similiar to autoinit for bash, we wanted a solution to automatically import our custom modules. Pyexec handles the necessary path modifications so you can focus more time on writing powerful scripts.
 
 
