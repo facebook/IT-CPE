@@ -3,7 +3,7 @@ The IT-CPE ("Client Platform Engineering") repo contains a suite of tools that w
 machines.
 
 ## Examples
-Watch our presentation at MacIT: http://www.youtube.com/watch?v=Z3gMXUxI0Hs
+Watch our [presentation at MacIT](http://www.youtube.com/watch?v=Z3gMXUxI0Hs)
 
 ####Code sync
 We are constantly developing functions to make our scripts more robust. Both functions and scripts are deployed to all client machines via 'code sync' to ensure the latest code is always running.
@@ -39,8 +39,8 @@ Similiar to autoinit for bash, we wanted a solution to automatically import our 
 * The key server should run apache/nginx to servere the contents of the single-use SSH key. Clients will download the rsync key from this server using a curl. Clients will use this key to rsync code from the code sync server to the client.
 
 * Setup the code sync server. Setup a limited access SSH account, such as a 'util' account that only has access to the code sync directory. See the links below for more details on creating a limited access SSH account.
-http://www.paulkeck.com/ssh/
-http://www.hackinglinuxexposed.com/articles/20030115.html
+ * http://www.paulkeck.com/ssh/
+ * http://www.hackinglinuxexposed.com/articles/20030115.html
 
 * Update global variables in the modules in /modules to those that best fit your environment. For example, check_corp.sh requires a "CORP_URL" variable to be set to an internal url specific to your environment.
 
@@ -58,8 +58,8 @@ http://www.hackinglinuxexposed.com/articles/20030115.html
 Find us on IRC on irc.freenode.net / #ITThinkTank if there are questions or issues.
 
 ## Join the IT-CPE community
-* Website: fb.com/it
-* Facebook group: fb.com/groups/TheITThinkTank
+* [Facebook IT Website](https://fb.com/it)
+* [Facebook group] (https://fb.com/groups/TheITThinkTank)
 * irc: irc.freenode.net / #ITThinkTank
 
 ## License
