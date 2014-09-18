@@ -1,60 +1,65 @@
 #IT-CPE tools
-The IT-CPE ("Client Platform Engineering") repo contains a suite of tools that we use to manage our fleet of client
-machines.  We currently manage over 10,000 machines using these tools.
+The IT-CPE ("Client Platform Engineering") repo contains a suite of tools that we use to manage our fleet of over 10,000 client
+machines.
 
 ## Examples
-The CPE team found that we were writing a lot of functions to do our day to day
-work. Instead of copying and pasting needed functions to each script, we started
-storing commonly used functions on our machines. But then how do we keep
-these functions up-to-date? That's when we wrote 'code sync'. The CPE team constantly writes functions and scripts to achieve a variety of different tasks. These scripts execute locally on the client machines. To utilize the code library, we needed a mechanism to deploy the code library to client machines. The CPE team embodies the Facebook mantra, "Move Fast and Break Things." We continually iterate and improve the code library. We needed a mechanism to keep up with our rapid development cycle, to solve the problem we wrote code sync.
+Watch our presentation at MacIT: http://www.youtube.com/watch?v=Z3gMXUxI0Hs
 
-Next we noticed that it was difficult to remember where each function was 
-actually stored. So we then wrote 'autoinit'. Autoinit sources all your 
-functions into each of your scripts, giving you a global namespace. 
-This makes it much easier to reference any functions you have written 
-previously and provides for cleaner code. Bash is not forgiving when sourcing a multitude of functions. It requires the memorization of function paths. This became tedious, introduced unnecessary errors, and stalled the development process not allowing us to "move fast." To remove the headaches of development and following "the hacker way" of iteration, we wrote 'autoinit' to automatically source the code library's functions and provide a global namespace. Not only does this make development straightforward, the readability of code has greatly improved.
+Code sync
+We are constantly developing functions to make our scripts more robust. Both functions and scripts are deployed to all client machines via 'code sync' to ensure the latest code is always running.
 
-We were also noticing issues with our current client management tool. 
-It would periodically lose connection to client systems causing them to become unmanaged. This meant critical patches and updates could not be sent. To solve this, we built "Launch Daemon Init (LDI)," a system daemon that verifies the management status of the machine. But over time LDI evolved in to an easy way to run any script or function on a set interval (startup, daily, every15, weekly).
+Autoinit
+A common problem that our team ran into was sourcing functions in multiple
+libraries. In order to increase developer efficiency and code readability, we create 'autoinit' to automatically source functions into the script and introduce a global namespace.
+
+Launch Daemon Init (LDI)
+We also noticed issues with our previous client management tool. Periodically, client machines would lose connection with the mangement tools and become unmanaged.
+Critical patches and updates were unable to be sent to the client. To solve this, we built "Launch Daemon Init (LDI)," a system daemon that runs scripts and functions on set intervals (startup, daily, every15, weekly).
+
+_tools.py
+While the bash functions greatly increased our productivity, we realized that bash made using more advanced data types and error handling difficult. Python has enabled use to write more robust scripts and handle errors/edge cases more easily. The modules folder contain abstractions we've built to make things such as validating network states easy.
+
+Pyexec
+Similiar to autoinit for bash, we wanted a solution to automatically import our custom modules. Pyexec handles the necessary path modifications so you can focus more time on writing powerful scripts.
 
 
 ## Requirements
-IT-CPE tools requires:
-* Mac OS X or Linux server running SSH and rsync. This server stores the code base for clients to rsync down. We will call this the code sync server.
-* Linux Apache server hosting the ssh rsync key.  We will call this the key server.
+* (code sync server) server running ssh and rsync. Responds to 'code sync' requests 
+* (key server) server running apache/nginx to host the rsync key - can be on the code sync server 
 * A fleet of Mac machines to manage
-
+* _tools.py requirements, download the modules below and move them into the /modules directory:
+  * Envoy - github.com/kennethreitz/envoy
+  * Requests - github.com/kennethreitz/requests
 ## Installing IT-CPE tools repo
 
 * Set the hostnames of your code sync and key server in the code_sync.sh file. These values will be used by all clients when they sync the code library
 
-* Generate a key scan of your code sync server. To do this from a terminal type: ssh -t rsa yourcodesyncserver.com.  Place the resulting fingerprint into your /etc/ssh_known_hosts file on all your client machines.  This establishes the trust to the code sync server. A sample file is placed at IT-CPE/code/lib/conf/ssh_known_hosts.
+* Generate a key scan of your code sync server to establish trust between clients and the code sync server via `ssh -t rsa yourcodesyncserver.com`. Place the resulting fingerprint into your /etc/ssh_known_hosts file on all your client machines. A sample file is placed at IT-CPE/code/lib/conf/ssh_known_hosts.
 
-* Setup the key server. This server should be running Apache and should serve the contents of the single-use SSH key.  Clients will download the rsync key from this server using a curl.  Once downloaded, they will use this key for access to do the rsync from the code sync server to grab the latest version of the code base.
+* The key server should run apache/nginx to servere the contents of the single-use SSH key. Clients will download the rsync key from this server using a curl. Clients will use this key to rsync code from the code sync server to the client.
 
-* Setup the code sync server. Setup a limited access SSH account. We call this account a 'util' account that only has access to the code sync directory. Reference the sites below for details on how to make a limited access SSH account.
+* Setup the code sync server. Setup a limited access SSH account, such as a 'util' account that only has access to the code sync directory. See the links below for more details on creating a limited access SSH account.
 http://www.paulkeck.com/ssh/
 http://www.hackinglinuxexposed.com/articles/20030115.html
 
-* Configure global variables for your environment. Under each script in the /modules folder, assign variables that fit your environment where required by the code.  For example, check_corp.sh requires a "CORP_URL" variable to be set for your environment.
+* Update global variables in the modules in /modules to those that best fit your environment. For example, check_corp.sh requires a "CORP_URL" variable to be set to an internal url specific to your environment.
 
-* Setup your code base on the code sync server. Copy the contents of the /conf, /modules and /scripts folder over to your code sync server in a shared folder.  This is the folder that clients will rsync from to grab the latest version of the codebase.
+* Setup your code base on the code sync server. Copy the contents of the /conf, /modules and /scripts folders over to your code sync server in a shared folder served by apache/nginx. The clients will rsync against the shared folder for the latest codebase.
 
   
 ## Repo layout
-* /conf.  Contains configuration files.  ssh_known_hosts is a file that shows how to grab the fingerprint of your code sync server.
-* /modules.  Contains a variety of functions that are useful for clients to have.  Each function should have a detailed description within the file contents.
-* /scripts.  Contain scripts that we want the clients to execute. 
-* /SSH_server. Contains a script that runs on the SSH Server that verifies that the client SSH command is to download the contents of the code sync library.
+* /conf. Configuration files, e.g. ssh_known_hosts that contains the fingerprint of the code sync server
+* /modules. Python and bash modules/functions designed to be re-used in your scripts.
+* /scripts. Scripts to be stored/executed on client machines
+* /SSH_server. Contains a ssh validation script to verify clients will be able to download the codebase
 
 
 ## Help and Support
 Find us on IRC on irc.freenode.net / #ITThinkTank if there are questions or issues.
 
 ## Join the IT-CPE community
-* Website: facebook.com/IT
-* Facebook page: fb.com/groups/TheITThinkTank/
-* Mailing list
+* Website: fb.com/it
+* Facebook group: fb.com/groups/TheITThinkTank
 * irc: irc.freenode.net / #ITThinkTank
 
 ## License
