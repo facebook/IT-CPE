@@ -49,6 +49,14 @@ try:  # Catch potential pyexec bugs
         help="eval code, auto import CPE modules"
     )
 
+    # Optional arg to open the Python interpreter (REPL)
+    parser.add_argument(
+        "-i",
+        "--interp",
+        action="store_true",
+        help="open the REPL"
+    )
+
     # Required arg for script to run and its args
     parser.add_argument(
         "file_args",
@@ -77,22 +85,27 @@ try:  # Catch potential pyexec bugs
         except EOFError:
             exit_gracefully()
 
-    d = dict(__name__="__main__")
-    try:
+    if args.interp:
+        import code
+        banner = "==> Pyexec Python REPL <== \n %s" % args
+        code.interact(banner, local=globals())
+    else:
+        d = dict(__name__="__main__")
         try:
-            # execfile can't launch scripts with args, so set them manually
-            # http://stackoverflow.com/a/14905087
-            sys.argv = args.file_args
-            execfile(args.file_args[0], d)
-        except EOFError:
-            # execfile will continue executing here if the executed script
-            # doesn't quit() or throw an exception
-            exit_gracefully()
-    except Exception:
-        if args.onerror:
-            execfile(args.onerror)
-        else:
-            raise
+            try:
+                # execfile can't launch scripts with args, so set them manually
+                # http://stackoverflow.com/a/14905087
+                sys.argv = args.file_args
+                execfile(args.file_args[0], d)
+            except EOFError:
+                # execfile will continue executing here if the executed script
+                # doesn't quit() or throw an exception
+                exit_gracefully()
+        except Exception:
+            if args.onerror:
+                execfile(args.onerror)
+            else:
+                raise
 except Exception as pyexec_exception:
     print pyexec_exception
     traceback.print_exc()
