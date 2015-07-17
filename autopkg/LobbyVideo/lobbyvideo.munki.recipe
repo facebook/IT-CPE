@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+<!--
+#
+#  Copyright (c) 2015, Facebook, Inc.
+#  All rights reserved.
+#
+#  This source code is licensed under the BSD-style license found in the
+#  LICENSE file in the root directory of this source tree. An additional grant
+#  of patent rights can be found in the PATENTS file in the same directory.
+-->
+    <key>Description</key>
+    <string>Creates a dmg of the lobbyvideo and imports into Munki.</string>
+    <key>Identifier</key>
+    <string>com.facebook.autopkg.munki.lobbyvideo</string>
+    <key>Input</key>
+    <dict>
+        <key>NAME</key>
+        <string>lobbyvideo</string>
+        <key>MUNKI_REPO_SUBDIR</key>
+        <string>apps/lobby/</string>
+        <key>pkginfo</key>
+        <dict>
+            <key>catalogs</key>
+            <array>
+                <string>testing</string>
+            </array>
+            <key>description</key>
+            <string>Lobby Video</string>
+            <key>display_name</key>
+            <string>%NAME%</string>
+            <key>name</key>
+            <string>%NAME%</string>
+            <key>unattended_install</key>
+            <true/>
+        </dict>
+    </dict>
+    <key>MinimumVersion</key>
+    <string>0.2.0</string>
+    <key>ParentRecipe</key>
+    <string>com.facebook.autopkg.dmg.lobbyvideo</string>
+    <key>Process</key>
+    <array>
+      <dict>
+        <key>Processor</key>
+        <string>MunkiPkginfoMerger</string>
+        <key>Arguments</key>
+        <dict>
+          <key>additional_pkginfo</key>
+          <dict>
+            <key>version</key>
+            <string>%version%</string>
+          </dict>
+        </dict>
+      </dict>
+      <dict>
+          <key>Arguments</key>
+          <dict>
+            <key>pkg_path</key>
+            <string>%dmg_path%</string>
+            <key>repo_subdirectory</key>
+            <string>%MUNKI_REPO_SUBDIR%</string>
+            <key>additional_makepkginfo_options</key>
+            <array>
+              <string>--itemname=%RULESET_NAME%</string>
+              <string>--destinationpath=%DESTINATION_PATH%</string>
+              <string>--owner=root</string>
+              <string>--group=wheel</string>
+              <string>--mode=u+rwx,go+rx</string>
+            </array>
+          </dict>
+            <key>Processor</key>
+            <string>MunkiImporter</string>
+      </dict>
+    </array>
+</dict>
+</plist>

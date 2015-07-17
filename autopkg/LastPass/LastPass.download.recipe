@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+<!--
+#
+#  Copyright (c) 2015, Facebook, Inc.
+#  All rights reserved.
+#
+#  This source code is licensed under the BSD-style license found in the
+#  LICENSE file in the root directory of this source tree. An additional grant
+#  of patent rights can be found in the PATENTS file in the same directory.
+-->
+    <key>Description</key>
+    <string>Downloads latest version of LastPass Enterprise customized for Facebook. You must provide the URL.</string>
+    <key>Identifier</key>
+    <string>com.facebook.autopkg.download.lastpass</string>
+    <key>Input</key>
+    <dict>
+        <key>NAME</key>
+        <string>LastPass</string>
+    </dict>
+    <key>MinimumVersion</key>
+    <string>0.2.0</string>
+    <key>Process</key>
+    <array>
+        <dict>
+            <key>Arguments</key>
+            <dict>
+                <key>url</key>
+                <string>https://lastpass.com/installer/?cid=x</string>
+                <key>filename</key>
+                <string>%NAME%.zip</string>
+                <key>request_headers</key>
+                <dict>
+                    <key>User-Agent</key>
+                    <string>Mozilla/5.0 (Macintosh; Intel Mac OS X 10)'</string>
+                </dict>
+            </dict>
+            <key>Processor</key>
+            <string>URLDownloader</string>
+        </dict>
+        <dict>
+            <key>Processor</key>
+            <string>EndOfCheckPhase</string>
+        </dict>
+    </array>
+</dict>
+</plist>

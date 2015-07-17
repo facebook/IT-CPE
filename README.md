@@ -22,6 +22,8 @@ While the bash functions greatly increased our productivity, we realized that ba
 ####Pyexec
 Similiar to autoinit for bash, we wanted a solution to automatically import our custom modules. Pyexec handles the necessary path modifications so you can focus more time on writing powerful scripts.
 
+####AutoPkg recipes
+These are custom recipes for [AutoPkg](https://github.com/autopkg/autopkg/) written by Facebook. These recipes are intended as demonstrations, proof of concepts, or examples, and may not necessarily be useful or functional in other environments without some editing.
 
 ## Requirements
 * (code sync server) server running ssh and rsync. Responds to 'code sync' requests 
@@ -48,10 +50,11 @@ Similiar to autoinit for bash, we wanted a solution to automatically import our 
 
   
 ## Repo layout
-* /conf. Configuration files, e.g. ssh_known_hosts that contains the fingerprint of the code sync server
+* /conf. Configuration files, e.g. ssh_known_hosts that contains the fingerprint of the code sync server.
 * /modules. Python and bash modules/functions designed to be re-used in your scripts.
-* /scripts. Scripts to be stored/executed on client machines
-* /SSH_server. Contains a ssh validation script to verify clients will be able to download the codebase
+* /scripts. Scripts to be stored/executed on client machines.
+* /SSH_server. Contains a ssh validation script to verify clients will be able to download the codebase.
+* /autopkg. Contains AutoPkg recipes.
 
 
 ## Help and Support

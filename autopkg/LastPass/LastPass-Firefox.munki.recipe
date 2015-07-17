@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+<!--
+#
+#  Copyright (c) 2015, Facebook, Inc.
+#  All rights reserved.
+#
+#  This source code is licensed under the BSD-style license found in the
+#  LICENSE file in the root directory of this source tree. An additional grant
+#  of patent rights can be found in the PATENTS file in the same directory.
+-->
+<key>Description</key>
+    <string>Imports the LastPass Enterprise package for Firefox into Munki.</string>
+    <key>Identifier</key>
+    <string>com.facebook.autopkg.munki.lastpass.firefox</string>
+    <key>Input</key>
+    <dict>
+        <key>NAME</key>
+        <string>LastPass</string>
+        <key>MUNKI_REPO_SUBDIR</key>
+        <string>apps/LastPass</string>
+        <key>FFAUTOCONFIGPATH</key>
+        <string>autoconfig</string>
+        <key>pkginfo</key>
+        <dict>
+            <key>catalogs</key>
+            <array>   
+                <string>testing</string>
+            </array>
+            <key>description</key>
+            <string>Only remember one password - your LastPass master password. Save all your usernames and passwords to LastPass, and it will autologin to your sites and sync your data everywhere you need it.</string>
+            <key>display_name</key>
+            <string>LastPass - Firefox</string>
+            <key>name</key>
+            <string>%NAME%-Firefox</string>
+            <key>icon_name</key>
+            <string>LastPass.png</string>
+            <key>category</key>
+            <string>Productivity</string>
+            <key>developer</key>
+            <string>Lastpass</string>
+            <key>unattended_install</key>
+            <true/>
+        </dict>
+    </dict>
+    <key>ParentRecipe</key>
+    <string>com.facebook.autopkg.pkg.lastpass.firefox</string>
+    <key>MinimumVersion</key>
+    <string>0.2.0</string>
+    <key>Process</key>
+    <array>
+        <dict>
+            <key>Processor</key>
+            <string>MunkiImporter</string>
+            <key>Arguments</key>
+            <dict>
+                <key>pkg_path</key>
+                <string>%RECIPE_CACHE_DIR%/LastPass-Firefox.pkg</string>
+                <key>repo_subdirectory</key>
+                <string>%MUNKI_REPO_SUBDIR%</string>
+            </dict>
+        </dict>
+    </array>
+</dict>
+</plist>

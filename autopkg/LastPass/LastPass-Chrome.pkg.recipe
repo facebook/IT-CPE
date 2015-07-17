@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+<!--
+#
+#  Copyright (c) 2015, Facebook, Inc.
+#  All rights reserved.
+#
+#  This source code is licensed under the BSD-style license found in the
+#  LICENSE file in the root directory of this source tree. An additional grant
+#  of patent rights can be found in the PATENTS file in the same directory.
+-->
+    <key>Description</key>
+    <string>Packages the latest version of LastPass Enterprise's Chrome extension customized for Facebook.</string>
+    <key>Identifier</key>
+    <string>com.facebook.autopkg.pkg.lastpass.chrome</string>
+    <key>Input</key>
+    <dict>
+        <key>NAME</key>
+        <string>LastPass</string>
+    </dict>
+    <key>ParentRecipe</key>
+    <string>com.facebook.autopkg.download.lastpass</string>
+    <key>MinimumVersion</key>
+    <string>0.2.0</string>
+    <key>Process</key>
+    <array>
+        <dict>
+            <key>Processor</key>
+            <string>Unarchiver</string>
+            <key>Arguments</key>
+            <dict>
+                <key>purge_destination</key>
+                <true/>
+            </dict>
+        </dict>
+        <!-- Chrome:
+                Extract nplastpass.app.zip into /Library/Google/Chrome/NativeMessagingHosts/
+                Create com.lastpass.nplastpass.json in same directory with content from postflight
+                Create /Library/Application Support/Google/Chrome/External Extensions/hdokiejnpimakedhajhdlcegeplioahd.json
+                    with content from postflight
+        -->
+        <dict>
+            <key>Processor</key>
+            <string>PkgRootCreator</string>
+            <key>Arguments</key>
+            <dict>
+                <key>pkgroot</key>
+                <string>%RECIPE_CACHE_DIR%/Chrome</string>
+                <key>pkgdirs</key>
+                <dict>
+                    <key>Library</key>
+                    <string>0755</string>
+                    <key>Library/Google</key>
+                    <string>0775</string>
+                    <key>Library/Google/Chrome</key>
+                    <string>0775</string>
+                    <key>Library/Google/Chrome/NativeMessagingHosts</key>
+                    <string>0775</string>
+                    <key>Library/Application Support</key>
+                    <string>0775</string>
+                    <key>Library/Application Support/Google</key>
+                    <string>0775</string>
+                    <key>Library/Application Support/Google/Chrome</key>
+                    <string>0775</string>
+                    <key>Library/Application Support/Google/Chrome/External Extensions</key>
+                    <string>0775</string>
+                </dict>
+            </dict>
+        </dict>
+        <dict>
+            <key>Processor</key>
+            <string>Unarchiver</string>
+            <key>Arguments</key>
+            <dict>
+                <key>archive_path</key>
+                <string>%RECIPE_CACHE_DIR%/LastPass/LastPass Installer.app/Contents/Resources/nplastpass.app.zip</string>
+                <key>destination_path</key>
+                <string>%pkgroot%/Library/Google/Chrome/NativeMessagingHosts/</string>            
+            </dict>
+        </dict>
+        <dict>
+            <key>Processor</key>
+            <string>Versioner</string>
+            <key>Arguments</key>
+            <dict>
+                <key>input_plist_path</key>
+                <string>%pkgroot%/Library/Google/Chrome/NativeMessagingHosts/nplastpass.app/Contents/Info.plist</string>
+            </dict>
+        </dict>
+        <dict>
+            <key>Processor</key>
+            <string>FileCreator</string>
+            <key>Arguments</key>
+            <dict>
+                <key>file_path</key>
+                <string>%pkgroot%/Library/Google/Chrome/NativeMessagingHosts/com.lastpass.nplastpass.json</string>
+                <key>file_content</key>
+                <string>{ "name": "com.lastpass.nplastpass", "description": "LastPass", "path": "/Library/Google/Chrome/NativeMessagingHosts/nplastpass.app/Contents/MacOS/nplastpass", "type": "stdio", "allowed_origins": [ "chrome-extension://hdokiejnpimakedhajhdlcegeplioahd/", "chrome-extension://debgaelkhoipmbjnhpoblmbacnmmgbeg/", "chrome-extension://hnjalnkldgigidggphhmacmimbdlafdo/", "chrome-extension://hgnkdfamjgnljokmokheijphenjjhkjc/" ] }</string>           
+            </dict>
+        </dict>
+        <dict>
+            <key>Processor</key>
+            <string>FileCreator</string>
+            <key>Arguments</key>
+            <dict>
+                <key>file_path</key>
+                <string>%pkgroot%/Library/Application Support/Google/Chrome/External Extensions/hdokiejnpimakedhajhdlcegeplioahd.json</string>
+                <key>file_content</key>
+                <string>{ "external_update_url": "http://clients2.google.com/service/update2/crx" }</string>
+            </dict>
+        </dict>
+        <dict>
+            <key>Processor</key>
+            <string>PkgCreator</string>
+            <key>Arguments</key>
+            <dict>
+                <key>pkgname</key>
+                <string>%NAME%-Chrome</string>
+                <key>pkg_request</key>
+                <dict>
+                    <key>pkgdir</key>
+                    <string>%RECIPE_CACHE_DIR%</string>
+                    <key>id</key>
+                    <string>com.facebook.pkg.lastpass.chrome</string>
+                    <key>options</key>
+                    <string>purge_ds_store</string>
+                    <key>chown</key>
+                    <array>
+                        <dict>
+                            <key>path</key>
+                            <string>Library</string>
+                            <key>user</key>
+                            <string>root</string>
+                            <key>group</key>
+                            <string>wheel</string>
+                        </dict>
+                    </array>
+                </dict>
+            </dict>
+        </dict>
+    </array>
+</dict>
+</plist>
