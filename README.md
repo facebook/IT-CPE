@@ -22,8 +22,9 @@ While the bash functions greatly increased our productivity, we realized that ba
 ####Pyexec
 Similiar to autoinit for bash, we wanted a solution to automatically import our custom modules. Pyexec handles the necessary path modifications so you can focus more time on writing powerful scripts.
 
-####AutoPkg recipes
-These are custom recipes for [AutoPkg](https://github.com/autopkg/autopkg/) written by Facebook. These recipes are intended as demonstrations, proof of concepts, or examples, and may not necessarily be useful or functional in other environments without some editing.
+####AutoPkg Runner
+This is an [AutoPkg](https://github.com/autopkg/autopkg/) wrapper script that makes use of git to handle importing items into Munki git repo. It creates a separate git feature branch and puts up a commit for each item that is imported, to help automate controlled flow of new packages into Munki.
+See the internal README for more information.
 
 ## Requirements
 * (code sync server) server running ssh and rsync. Responds to 'code sync' requests 
