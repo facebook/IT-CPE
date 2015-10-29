@@ -15,7 +15,6 @@ Requirements
 * This script assumes that RECIPE_SEARCH_DIR only has two entries: 
 	* .
 	* A path that you will execute recipes from (such as `/Users/autopkg/recipe_path`).  
-	If you do not want this behavior, you can comment it out in lines 244-260.
 * You will need to write your own notification code in the `create_task()` function to send an email, file a task/ticket, or generate some notification. This script will still work as is, but obviously won't generate any notifications unless that function is populated.
 * The report plist path will be stored as "autopkg.plist" in the directory specified by RECIPE_REPO_DIR, so that directory must be writable by the user account running the AutoPkg script.
 
@@ -37,7 +36,6 @@ For each run, the following steps will happen:
 
 1. A list of all parent recipes necessary for execution of the recipe list will be generated.
 2. All of those parent recipes will be rsynced over to the RECIPE_SEARCH_DIR as specified above (*specifically, it will rsync all the recipes into the second entry of the RECIPE_SEARCH_DIR array*).  
-**NOTE**: If you do not want this behavior, comment out lines 244-260.
 3. Each recipe will be run in sequence, with MakeCatalogs.munki. For each recipe:
 	1. Run the recipe with MakeCatalogs.munki and store the output as a plist.
 	2. Parse the report plist for results.
