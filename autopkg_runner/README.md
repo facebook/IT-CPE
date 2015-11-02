@@ -20,7 +20,7 @@ Requirements
 
 Usage
 ---
-First, you'll need to populate the list of recipes on Line 237:  
+First, you'll need to populate the list of recipes on Line 33:  
 
 ```
   recipes = [

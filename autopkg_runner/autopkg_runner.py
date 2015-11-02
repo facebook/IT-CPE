@@ -30,6 +30,14 @@ except ImportError:
   print "Can't find autopkglib!"
   sys.exit(1)
 
+# Change the list of recipes to run here:
+RECIPES = [
+  'AdobeFlashPlayer.munki',
+  'Firefox.munki',
+  'GoogleChrome.munki',
+  'OracleJava8JDK.munki',
+]
+
 
 def create_task(task_title, task_description):
   """
@@ -234,14 +242,8 @@ if __name__ == '__main__':
     'autopkg.plist'
   )
 
-  recipes = [
-    'AdobeFlashPlayer.munki',
-    'Firefox.munki',
-    'GoogleChrome.munki',
-    'OracleJava8JDK.munki',
-  ]
   # Build the list of all parent recipes we'll need to run these recipes
-  parent_list = create_parent_list(recipes)
+  parent_list = create_parent_list(RECIPES)
   dest_dir = os.path.expanduser(autopkglib.get_pref('RECIPE_SEARCH_DIRS')[1])
   # print "dest_dir: %s" % dest_dir
   print "Creating destination directories..."
@@ -260,7 +262,7 @@ if __name__ == '__main__':
     rsync_run(parentdir, dest_dir + "/")
 
   # Run all recipes
-  for recipe in recipes:
+  for recipe in RECIPES:
     # Run each recipe individually, storing a report plist
     autopkg_run(recipe, report_plist_path)
     print "Parsing plist."
