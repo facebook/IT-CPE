@@ -10,7 +10,7 @@ import tempfile
 import urllib2
 import time
 
-from autodmg import pkgbuild, run
+from autodmg_utility import pkgbuild, run
 
 current_frame = inspect.currentframe()
 my_path = os.path.abspath(inspect.getfile(current_frame))
