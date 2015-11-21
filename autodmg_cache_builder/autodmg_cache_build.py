@@ -10,7 +10,9 @@ import tempfile
 import urllib2
 import time
 
-from autodmg_utility import pkgbuild, run
+from autodmg_utility import pkgbuild, run, build_pkg
+# FACEBOOK ONLY
+from autodmg_fb import build_pkgs, compare_hash_dicts
 
 current_frame = inspect.currentframe()
 my_path = os.path.abspath(inspect.getfile(current_frame))
@@ -222,6 +224,123 @@ def is_newer_than_local(local_item, new_item):
   return is_dirty
 
 
+# local management functions
+def suppress_registration(cache_path):
+  '''Builds a package to suppress Setup Assistant, returns path to it'''
+  pkg_output_file = os.path.join(cache_path, 'suppress_registration.pkg')
+  if not os.path.isfile(pkg_output_file):
+    print "Building registration suppression package..."
+    temp_dir = tempfile.mkdtemp(prefix='suppressreg', dir='/tmp')
+    receipt = os.path.join(temp_dir, 'Library/Receipts')
+    os.makedirs(receipt)
+    open(os.path.join(receipt, '.SetupRegComplete'), 'a').close()
+    vardb = os.path.join(temp_dir, 'private/var/db/')
+    os.makedirs(vardb)
+    open(os.path.join(vardb, '.AppleSetupDone'), 'a').close()
+    pkgbuild(
+      temp_dir,
+      'com.facebook.cpe.suppress_registration',
+      '1.0',
+      pkg_output_file
+    )
+    shutil.rmtree(temp_dir, ignore_errors=True)
+    return pkg_output_file
+  # If we failed for some reason, return None
+  return None
+
+
+def create_local_path(path):
+  '''Attempts to create a local folder. Returns True if succeeded.'''
+  if not os.path.isdir(path):
+    try:
+      os.makedirs(path)
+      return True
+    except OSError as err:
+      print "Failed to create %s: %s" % (path, err)
+      return False
+  return True
+
+
+def prepare_local_paths(path_list):
+  '''Sets up the necessary paths for the script'''
+  fails = 0
+  for path in path_list:
+    if not create_local_path(path):
+      fails += 1
+  return fails
+
+
+def cleanup_local_cache(item_list, local_path):
+  '''Compares contents of local_path to an item list, removes
+    all items in path that don't match'''
+  for item in os.listdir(local_path):
+    if item not in item_list:
+      print "Removing: %s" % item
+      os.remove(os.path.join(local_path, item))
+
+
+def parse_extras(extras_file):
+  '''Parse a JSON file for "exceptions" and "additions", returns
+    a dict containing a list of both'''
+  parsed = ''
+  extras = {'exceptions': [], 'additions': []}
+  try:
+    with open(extras_file, 'rb') as thefile:
+      print "Parsing extras file..."
+      parsed = json.load(thefile)
+  except IOError as err:
+    print "Error parsing extras file: %s" % err
+  # Check for exceptions
+  extras['exceptions'] = parsed.get("exceptions_list", [])
+  if extras['exceptions']:
+    print "Found exceptions."
+  # Check for additions
+  extras['additions'] = parsed.get("additions_list", [])
+  if extras['additions']:
+    print "Found additions."
+  return extras
+
+
+def handle_dl(item_name, item_url, download_dir,
+              force_download, exceptions=False):
+  '''Downloads an item into the cache, returns
+    True if downloaded'''
+  target = 'cache'
+  if exceptions:
+    target = 'exceptions'
+  try:
+    print "Downloading into %s: %s" % (target, item_name)
+    changed = download_url_to_cache(
+      item_url,
+      download_dir,
+      force_download
+    )
+    if not changed:
+      print "Found %s in %s" % (item_name, target)
+    return True
+  except MunkiDownloadError as err:
+    print >> sys.stderr, "Download error: %s" % err
+  return False
+
+
+def populate_ds_repo(image_path, repo):
+  '''Moves a built image into the DS repo'''
+  repo_hfs = os.path.join(repo, 'Masters', 'HFS')
+  image_name = os.path.basename(image_path)
+  if not image_path.endswith('.hfs.dmg') and image_path.endswith('.dmg'):
+    # DS masters must end in '.hfs.dmg'
+    print 'Renaming image to ".hfs.dmg" for DS support'
+    image_name = image_name.split('.dmg')[0] + '.hfs.dmg'
+  repo_target = os.path.join(repo_hfs, image_name)
+  if os.path.isfile(repo_target):
+    # If the target already exists, name it "-OLD"
+    print "Renaming old image."
+    os.rename(repo_target, repo_target + '-OLD')
+  # now copy the newly built image over
+  print "Copying new image to DS Repo."
+  shutil.copyfile(image_path, repo_target)
+
+
 def main():
   parser = argparse.ArgumentParser(
     description='Built a precached AutoDMG image.')
@@ -274,6 +393,10 @@ def main():
   parser.add_argument(
     '--extras', help='Path to JSON file containing additions '
                      ' and exceptions lists.')
+  parser.add_argument(
+    '--keepsetup', help='Do NOT suppress Setup Assistant and registration. '
+                        'Defaults to False.',
+    action='store_true', default=False)
   args = parser.parse_args()
 
   if args.munkirepo:
@@ -301,204 +424,143 @@ def main():
 
   print time.strftime("%c")
   print "Starting run..."
-  # Create the local cache if necessary
-  if not os.path.isdir(os.path.join(CACHE, 'manifests')) or not (
-    os.path.isdir(os.path.join(CACHE, 'catalogs'))):
-    try:
-      os.makedirs(os.path.join(CACHE, 'manifests'))
-      os.makedirs(os.path.join(CACHE, 'catalogs'))
-    except OSError as err:
-      print "Error creating local cache: %s" % err
-      sys.exit(-1)
+  # Create the local cache directories
+  dir_struct = {
+    'additions': os.path.join(CACHE, 'additions'),
+    'catalogs': os.path.join(CACHE, 'catalogs'),
+    'downloads': os.path.join(CACHE, 'downloads'),
+    'exceptions': os.path.join(CACHE, 'exceptions'),
+    'manifests': os.path.join(CACHE, 'manifests'),
+    'icons': os.path.join(CACHE, 'icons')
+  }
+  path_creation = prepare_local_paths(dir_struct.values())
+  if path_creation > 0:
+    print "Error setting up local cache directories."
+    sys.exit(-1)
 
   # Populate the CATALOG global
   get_catalogs([args.catalog])
   # Populate a local manifest dict
   manifest = get_manifest(args.manifest)
 
-  exceptions_list = []
-  additions_list = []
-  download_path = os.path.join(CACHE, 'downloads')
-  except_path = os.path.join(CACHE, 'exceptions')
   # Prior to downloading anything, populate the lists
-  parsed = ''
   total_adds = 0
   total_excepts = 0
+  additions_list = list()
+  extras = {'additions': [], 'exceptions': []}
   if args.extras:
-    try:
-      with open(args.extras, 'rb') as thefile:
-        print "Parsing exceptions file..."
-        parsed = json.load(thefile)
-    except IOError as err:
-      print "Error parsing additions file: %s" % err
-    # Check for exceptions
-    exceptions_list = parsed.get("exceptions_list", [])
-    if exceptions_list:
-      print "Found exceptions."
-
+    # Extras now contains 'additions' and 'exceptions'
+    extras = parse_extras(args.extras)
     # Check for additional packages
-    more_additions = parsed.get("additions_list", [])
-    add_cache = os.path.join(CACHE, "additions")
-    if not os.path.isdir(add_cache):
-      os.mkdir(add_cache)
-    if more_additions:
+    if extras['additions']:
       print "Adding additional packages."
-      for addition in more_additions:
+      for addition in extras['additions']:
+        item_name = getURLitemBasename(addition)
         if "http" in addition:
-          # It's a URL, download to cache
           print "Considering %s" % addition
-          changed = download_url_to_cache(addition, add_cache, args.download)
-          if changed:
+          if handle_dl(item_name, addition, dir_struct['additions'],
+                       args.download):
             total_adds += 1
-          else:
-            print "Considering %s in cache" % getURLitemBasename(addition)
-          additions_list.append(os.path.join(
-            add_cache,
-            getURLitemBasename(addition))
-          )
+            additions_list.append(os.path.join(dir_struct['additions'],
+                                  item_name))
         else:
           "Adding %s locally" % addition
           additions_list.append(addition)
 
   # Check for managed_install items and download them
-  if not os.path.isdir(download_path):
-    try:
-      os.makedirs(download_path)
-    except OSError as err:
-      print "Error creating downloads folder: %s" % err
-      sys.exit(-1)
-  if not os.path.isdir(except_path):
-    try:
-      os.makedirs(except_path)
-    except OSError as err:
-      print "Error creating exceptions folder: %s" % err
-      sys.exit(-1)
-
   print "Checking for managed installs..."
-  print "Exceptions list: %s" % exceptions_list
+  print "Exceptions list: %s" % extras['exceptions']
   install_list = process_manifest_installs(manifest)
   item_list = list()
   except_list = list()
   for item in install_list:
     itemurl = get_item_url(item, [args.catalog])
+    item_basename = getURLitemBasename(itemurl)
+    print "Looking at: %s" % item_basename
     if 'Nopkg' in itemurl:
       print "Nopkg found: %s" % item
-    elif getURLitemBasename(itemurl) in exceptions_list:
-      except_list.append(urllib2.unquote(getURLitemBasename(itemurl)))
-      try:
-        print "Downloading into exceptions: %s" % item
-        changed = download_url_to_cache(itemurl, except_path, args.download)
-        if not changed:
-          print "Found %s in exceptions" % item
-          continue
+    elif item_basename in extras['exceptions']:
+      # Try to download the exception into the exceptions directory
+      # Increment the exceptions total, and add it to the exceptions list
+      if handle_dl(item, itemurl, dir_struct['exceptions'],
+                   args.download, exceptions=True):
         total_excepts += 1
-      except MunkiDownloadError as err:
-        print >> sys.stderr, "Download error: %s" % err
+        except_list.append(urllib2.unquote(item_basename))
     else:
-      item_list.append(urllib2.unquote(getURLitemBasename(itemurl)))
-      try:
-        print "Downloading: %s" % item
-        changed = download_url_to_cache(itemurl, download_path, args.download)
-        if not changed:
-          print "Found %s in cache" % item
-          continue
+      # Add it to the item list
+      # Increment the additions total
+      if handle_dl(item, itemurl, dir_struct['additions'],
+                   args.download):
         total_adds += 1
-      except MunkiDownloadError as err:
-        print >> sys.stderr, "Download error: %s" % err
+        item_list.append(urllib2.unquote(item_basename))
 
   # Clean up cache of items we don't recognize
-  for item in os.listdir(download_path):
-    if item not in item_list:
-      print "Removing: %s" % item
-      os.remove(os.path.join(download_path, item))
-  for item in os.listdir(except_path):
-    if item not in except_list:
-      print "Removing: %s" % item
-      os.remove(os.path.join(except_path, item))
+  cleanup_local_cache(item_list, dir_struct['downloads'])
+  cleanup_local_cache(except_list, dir_struct['exceptions'])
 
   # Icon handling
   pkg_output_file = os.path.join(CACHE, 'munki_icons.pkg')
   if not args.noicons:
     print "Checking for icons..."
     # Check for optional_install items and download icons
-    icon_cache_dir = os.path.join(CACHE, 'icons')
-    if not os.path.isdir(icon_cache_dir):
-      try:
-        os.makedirs(icon_cache_dir)
-      except OSError as err:
-        print "Error creating icon folder: %s" % err
-        sys.exit(-1)
-
     install_list = process_manifest_optionals(manifest)
     total_changes = 0
     for item in install_list:
       itemicon = get_item_icon(item, [args.catalog])
-      try:
-        changed = download_url_to_cache(itemicon, icon_cache_dir)
-        if changed:
-          total_changes += 1
-          print "Downloaded icon %s" % item
-      except MunkiDownloadError as err:
-        print >> sys.stderr, "Download error: %s" % err
+      if handle_dl(item, itemicon, dir_struct['icons'], args.download):
+        total_changes += 1
     # Build a package of optional Munki icons, so we don't need to cache
     if (not total_changes == 0) or not os.path.isfile(pkg_output_file):
       # We downloaded at least one icon, rebuild the package
-      print "Creating the icon package."
-      temp_dir = tempfile.mkdtemp(prefix='munkiicons', dir='/tmp')
-      icon_dir = os.path.join(temp_dir, 'Library/Managed Installs/icons')
-      shutil.copytree(icon_cache_dir, icon_dir)
-      pkgbuild(
-        temp_dir,
+      success = build_pkg(
+        dir_struct['icons'],
+        'munki_icons',
         'com.facebook.cpe.munki_icons',
-        '1.0',
-        pkg_output_file
+        '/Library/Managed Installs/icons',
+        CACHE,
+        'Creating the icon package.'
       )
-      shutil.rmtree(temp_dir, ignore_errors=True)
-      total_adds += 1
+      if success:
+        total_adds += 1
     else:
       print "No new icons, using existing icon package."
     # Add the icon package to the additional packages list for the template.
-    additions_list.extend([pkg_output_file])
+    if os.path.isfile(pkg_output_file):
+      additions_list.extend([pkg_output_file])
 
   # Build the package of exceptions
   pkg_output_file = os.path.join(CACHE, 'munki_cache.pkg')
   if total_excepts > 0 or not os.path.isfile(pkg_output_file):
-    print "Building exceptions package"
-    temp_dir = tempfile.mkdtemp(prefix='munkiexcptcache', dir='/tmp')
-    cache_dir = os.path.join(temp_dir, 'Library/Managed Installs/Cache')
-    shutil.copytree(except_path, cache_dir)
-    pkgbuild(
-      temp_dir,
+    success = build_pkg(
+      dir_struct['exceptions'],
+      'muniexcptcache',
       'com.facebook.cpe.munki_exceptions',
-      '1.0',
-      pkg_output_file
+      '/Library/Managed Installs/Cache',
+      CACHE,
+      'Building exceptions package'
     )
-    shutil.rmtree(temp_dir, ignore_errors=True)
-    total_adds += 1
+    if success:
+      total_adds += 1
   else:
     print "No new exceptions, using existing exceptions package."
   # Add the icon package to the additional packages list for the template.
-  additions_list.extend([pkg_output_file])
+  if os.path.isfile(pkg_output_file):
+    additions_list.extend([pkg_output_file])
 
   # Suppress the Setup Assistant
-  print "Building in Registration suppression..."
-  pkg_output_file = os.path.join(CACHE, 'suppress_registration.pkg')
-  if not os.path.isfile(pkg_output_file):
-    temp_dir = tempfile.mkdtemp(prefix='suppressreg', dir='/tmp')
-    receipt = os.path.join(temp_dir, 'Library/Receipts')
-    os.makedirs(receipt)
-    open(os.path.join(receipt, '.SetupRegComplete'), 'a').close()
-    vardb = os.path.join(temp_dir, 'private/var/db/')
-    os.makedirs(vardb)
-    open(os.path.join(vardb, '.AppleSetupDone'), 'a').close()
-    pkgbuild(
-      temp_dir,
-      'com.facebook.cpe.suppress_registration',
-      '1.0',
-      pkg_output_file
-    )
-    shutil.rmtree(temp_dir, ignore_errors=True)
-    additions_list.extend([pkg_output_file])
+  if not args.keepsetup:
+    registration_pkg = suppress_registration(CACHE)
+    if registration_pkg:
+      additions_list.extend([registration_pkg])
+
+  # FACEBOOK ONLY: Build FB Packages here, compare hashes
+  pkg_hash_dict = build_pkgs()
+  if compare_hash_dicts(pkg_hash_dict):
+    # Check the hashes of each output package
+    # If the hashes don't match our last run, we need to rebuild
+    print "Hashes don't match, rebuilding DMG."
+    total_adds += 1
+  additions_list.extend(pkg_hash_dict.keys())
 
   total = total_adds + total_excepts
   dmg_output_path = os.path.join(CACHE, args.output)
@@ -520,11 +582,11 @@ def main():
   plist["VolumeName"] = args.volumename
   plist["AdditionalPackages"] = [
     os.path.join(
-      download_path, f) for f in os.listdir(
-        download_path) if (not f == '.DS_Store') and
-    (f not in exceptions_list)]
+      dir_struct['downloads'], f) for f in os.listdir(
+        dir_struct['downloads']) if (not f == '.DS_Store') and
+    (f not in additions_list)]
 
-  if additions_list:
+  if extras['additions']:
     plist["AdditionalPackages"].extend(additions_list)
 
   # Complete the AutoDMG-full.adtmpl template
@@ -557,17 +619,7 @@ def main():
 
   # Check the Deploystudio masters to see if this image already exists
   if args.dsrepo:
-    if os.path.isfile(os.path.join(
-      os.path.join(args.dsrepo, 'Masters/HFS'), args.output)):
-      # if it does, rename the old one
-      os.rename(os.path.join(
-        os.path.join(args.dsrepo, 'Masters/HFS'), args.output),
-        os.path.join(
-          os.path.join(args.dsrepo, 'Masters/HFS'), args.output + '-OLD'))
-    # now copy the newly built image over
-    print "Copying new image to DS Repo."
-    shutil.copyfile(os.path.join(CACHE, args.output), os.path.join(
-      os.path.join(args.dsrepo, 'Masters/HFS'), args.output))
+    populate_ds_repo(dmg_output_path, args.repo)
 
   print "Ending run."
   print time.strftime("%c")
