@@ -11,8 +11,6 @@ import urllib2
 import time
 
 from autodmg_utility import pkgbuild, run, build_pkg
-# FACEBOOK ONLY
-from autodmg_fb import build_pkgs, compare_hash_dicts
 
 current_frame = inspect.currentframe()
 my_path = os.path.abspath(inspect.getfile(current_frame))
@@ -552,15 +550,6 @@ def main():
     registration_pkg = suppress_registration(CACHE)
     if registration_pkg:
       additions_list.extend([registration_pkg])
-
-  # FACEBOOK ONLY: Build FB Packages here, compare hashes
-  pkg_hash_dict = build_pkgs()
-  if compare_hash_dicts(pkg_hash_dict):
-    # Check the hashes of each output package
-    # If the hashes don't match our last run, we need to rebuild
-    print "Hashes don't match, rebuilding DMG."
-    total_adds += 1
-  additions_list.extend(pkg_hash_dict.keys())
 
   total = total_adds + total_excepts
   dmg_output_path = os.path.join(CACHE, args.output)
