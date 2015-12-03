@@ -487,7 +487,7 @@ def main():
     else:
       # Add it to the item list
       # Increment the additions total
-      if handle_dl(item, itemurl, dir_struct['additions'],
+      if handle_dl(item, itemurl, dir_struct['downloads'],
                    args.download):
         total_adds += 1
         item_list.append(urllib2.unquote(item_basename))
