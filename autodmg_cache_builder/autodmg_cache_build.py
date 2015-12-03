@@ -477,7 +477,7 @@ def main():
     print "Looking at: %s" % item_basename
     if 'Nopkg' in itemurl:
       print "Nopkg found: %s" % item
-    elif item_basename in extras['exceptions']:
+    elif any(x in item_basename for x in extras['exceptions']):
       # Try to download the exception into the exceptions directory
       # Increment the exceptions total, and add it to the exceptions list
       if handle_dl(item, itemurl, dir_struct['exceptions'],
