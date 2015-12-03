@@ -8,6 +8,6 @@
     "https://munki/munki_repo/pkgs/apps/Office2016/MSWord2016-15.15.0-15.15.pkg"
   ],
   "exceptions_list": [
-    "BrokenPackage-1.5.pkg"
+    "BrokenPackage"
   ]
 }
