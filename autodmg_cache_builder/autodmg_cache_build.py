@@ -29,6 +29,10 @@ try:
 except ImportError as err:
   print "Something went wrong! %s" % err
 
+if not os.path.exists('/Applications/AutoDMG.app/Contents/MacOS/AutoDMG'):
+  print "AutoDMG not at expected path in /Applications, quitting!"
+  sys.exit(1)
+
 MUNKI_URL = pref('SoftwareRepoURL')
 MANIFESTS_URL = MUNKI_URL + '/manifests'
 CATALOG_URL = MUNKI_URL + '/catalogs'
@@ -477,9 +481,14 @@ def main():
     print "Looking at: %s" % item_basename
     if 'Nopkg' in itemurl:
       print "Nopkg found: %s" % item
-    elif any(x in item_basename for x in extras['exceptions']):
+    elif itemurl.endswith('.mobileconfig'):
       # Try to download the exception into the exceptions directory
       # Increment the exceptions total, and add it to the exceptions list
+      if handle_dl(item, itemurl, dir_struct['exceptions'],
+                   args.download, exceptions=True):
+        total_excepts += 1
+        except_list.append(urllib2.unquote(item_basename))
+    elif any(x in item_basename for x in extras['exceptions']):
       if handle_dl(item, itemurl, dir_struct['exceptions'],
                    args.download, exceptions=True):
         total_excepts += 1
@@ -531,7 +540,7 @@ def main():
   if total_excepts > 0 or not os.path.isfile(pkg_output_file):
     success = build_pkg(
       dir_struct['exceptions'],
-      'muniexcptcache',
+      'munki_cache',
       'com.facebook.cpe.munki_exceptions',
       '/Library/Managed Installs/Cache',
       CACHE,
