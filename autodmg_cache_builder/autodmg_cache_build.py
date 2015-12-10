@@ -29,10 +29,6 @@ try:
 except ImportError as err:
   print "Something went wrong! %s" % err
 
-if not os.path.exists('/Applications/AutoDMG.app/Contents/MacOS/AutoDMG'):
-  print "AutoDMG not at expected path in /Applications, quitting!"
-  sys.exit(1)
-
 MUNKI_URL = pref('SoftwareRepoURL')
 MANIFESTS_URL = MUNKI_URL + '/manifests'
 CATALOG_URL = MUNKI_URL + '/catalogs'
@@ -344,6 +340,9 @@ def populate_ds_repo(image_path, repo):
 
 
 def main():
+  if not os.path.exists('/Applications/AutoDMG.app/Contents/MacOS/AutoDMG'):
+    print "AutoDMG not at expected path in /Applications, quitting!"
+    sys.exit(1)
   parser = argparse.ArgumentParser(
     description='Built a precached AutoDMG image.')
   parser.add_argument(
