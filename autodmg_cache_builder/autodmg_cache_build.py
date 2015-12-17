@@ -10,7 +10,7 @@ import tempfile
 import urllib2
 import time
 
-from autodmg_utility import pkgbuild, run, build_pkg
+from autodmg_utility import pkgbuild, run, build_pkg, populate_ds_repo
 
 current_frame = inspect.currentframe()
 my_path = os.path.abspath(inspect.getfile(current_frame))
@@ -180,9 +180,6 @@ def get_item_url(item, catalogs):
   '''Takes an item dict from get_item_detail() and returns the URL
       it can be downloaded from'''
   detail = get_item_detail(item, catalogs)
-  if detail is None:
-    # If the item isn't in any of the catalogs
-    return None
   if detail.get("installer_type") == "nopkg":
     return 'Nopkg: %s' % str(item)
   return PKGS_URL + '/' + urllib2.quote(detail["installer_item_location"])
@@ -324,24 +321,6 @@ def handle_dl(item_name, item_url, download_dir,
   return False
 
 
-def populate_ds_repo(image_path, repo):
-  '''Moves a built image into the DS repo'''
-  repo_hfs = os.path.join(repo, 'Masters', 'HFS')
-  image_name = os.path.basename(image_path)
-  if not image_path.endswith('.hfs.dmg') and image_path.endswith('.dmg'):
-    # DS masters must end in '.hfs.dmg'
-    print 'Renaming image to ".hfs.dmg" for DS support'
-    image_name = image_name.split('.dmg')[0] + '.hfs.dmg'
-  repo_target = os.path.join(repo_hfs, image_name)
-  if os.path.isfile(repo_target):
-    # If the target already exists, name it "-OLD"
-    print "Renaming old image."
-    os.rename(repo_target, repo_target + '-OLD')
-  # now copy the newly built image over
-  print "Copying new image to DS Repo."
-  shutil.copyfile(image_path, repo_target)
-
-
 def main():
   if not os.path.exists('/Applications/AutoDMG.app/Contents/MacOS/AutoDMG'):
     print "AutoDMG not at expected path in /Applications, quitting!"
@@ -464,20 +443,18 @@ def main():
         item_name = getURLitemBasename(addition)
         if "http" in addition:
           print "Considering %s" % addition
-          if handle_dl(item_name, addition, dir_struct['additions'],
-                       args.download):
-            if item_name.endswith('.mobileconfig'):
-              # profiles must be moved into the 'exceptions' directory
-              shutil.move(
-                os.path.join(dir_struct['additions'], item_name),
-                dir_struct['exceptions']
-              )
+          if item_name.endswith('.mobileconfig'):
+            # profiles must be downloaded into the 'exceptions' directory
+            if handle_dl(item_name, addition, dir_struct['exceptions'],
+                         args.download):
               total_excepts += 1
               except_list.append(item_name)
-              continue
-            total_adds += 1
-            additions_list.append(os.path.join(dir_struct['additions'],
-                                  item_name))
+          else:
+            if handle_dl(item_name, addition, dir_struct['additions'],
+                         args.download):
+              total_adds += 1
+              additions_list.append(os.path.join(dir_struct['additions'],
+                                    item_name))
         else:
           "Adding %s locally" % addition
           additions_list.append(addition)
@@ -488,9 +465,6 @@ def main():
   install_list = process_manifest_installs(manifest)
   for item in install_list:
     itemurl = get_item_url(item, [args.catalog])
-    if itemurl is None:
-      print "WARNING: %s not found in any catalogs, skipping!" % item
-      continue
     item_basename = getURLitemBasename(itemurl)
     print "Looking at: %s" % item_basename
     if 'Nopkg' in itemurl:

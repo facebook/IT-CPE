@@ -74,3 +74,23 @@ def build_pkg(source, output, receipt, destination, cache_dir, comment=''):
     return pkg_hash
   # If nothing was built, return empty string
   return ''
+
+
+def populate_ds_repo(image_path, repo):
+  '''Moves a built image into the DS repo'''
+  repo_hfs = os.path.join(repo, 'Masters', 'HFS')
+  image_name = os.path.basename(image_path)
+  if not image_path.endswith('.hfs.dmg') and image_path.endswith('.dmg'):
+    # DS masters must end in '.hfs.dmg'
+    print 'Renaming image to ".hfs.dmg" for DS support'
+    image_name = image_name.split('.dmg')[0] + '.hfs.dmg'
+  repo_target = os.path.join(repo_hfs, image_name)
+  if os.path.isfile(repo_target):
+    # If the target already exists, name it "-OLD"
+    print "Renaming old image."
+    os.rename(repo_target, repo_target + '-OLD')
+  # now copy the newly built image over
+  print "Copying new image to DS Repo."
+  print "Image path: %s" % image_path
+  print "Repo target: %s" % repo_target
+  shutil.copyfile(image_path, repo_target)
