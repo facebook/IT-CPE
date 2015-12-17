@@ -180,6 +180,9 @@ def get_item_url(item, catalogs):
   '''Takes an item dict from get_item_detail() and returns the URL
       it can be downloaded from'''
   detail = get_item_detail(item, catalogs)
+  if detail is None:
+    # If the item isn't in any of the catalogs
+    return None
   if detail.get("installer_type") == "nopkg":
     return 'Nopkg: %s' % str(item)
   return PKGS_URL + '/' + urllib2.quote(detail["installer_item_location"])
@@ -465,6 +468,9 @@ def main():
   install_list = process_manifest_installs(manifest)
   for item in install_list:
     itemurl = get_item_url(item, [args.catalog])
+    if itemurl is None:
+      print "WARNING: %s not found in any catalogs, skipping!" % item
+      continue
     item_basename = getURLitemBasename(itemurl)
     print "Looking at: %s" % item_basename
     if 'Nopkg' in itemurl:
