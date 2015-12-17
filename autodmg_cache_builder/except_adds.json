@@ -1,11 +1,11 @@
 {
   "additions_list": [
     "https://munki/munki_repo/pkgs/apps/Office2016/Microsoft_Office_2016_Volume_Installer-15.13.4.pkg",
-    "https://munki/munki_repo/pkgs/apps/Office2016/MSExcel2016-15.15.0-15.15.pkg",
-    "https://munki/munki_repo/pkgs/apps/Office2016/MSOneNote2016-15.15.1.pkg",
-    "https://munki/munki_repo/pkgs/apps/Office2016/MSOutlook2016-15.15.0-15.15.pkg",
-    "https://munki/munki_repo/pkgs/apps/Office2016/MSPowerPoint2016-15.15.0-15.15.pkg",
-    "https://munki/munki_repo/pkgs/apps/Office2016/MSWord2016-15.15.0-15.15.pkg"
+    "https://munki/munki_repo/pkgs/apps/Office2016/MSExcel2016-15.17.0-15.17.pkg",
+    "https://munki/munki_repo/pkgs/apps/Office2016/MSOneNote2016-15.17.1.pkg",
+    "https://munki/munki_repo/pkgs/apps/Office2016/MSOutlook2016-15.17.0-15.17.pkg",
+    "https://munki/munki_repo/pkgs/apps/Office2016/MSPowerPoint2016-15.17.0-15.17.pkg",
+    "https://munki/munki_repo/pkgs/apps/Office2016/MSWord2016-15.17.0-15.17.pkg"
   ],
   "exceptions_list": [
     "BrokenPackage"

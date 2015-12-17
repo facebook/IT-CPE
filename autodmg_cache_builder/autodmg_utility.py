@@ -3,28 +3,24 @@
 # These are utility functions used by other parts of the AutoDMG build tools
 
 import subprocess
-import sys
 import hashlib
 import os
 import tempfile
 import shutil
 
 
-def run(cmd, error_text=''):
-  '''Runs a command with subprocess, returns a tuple of out/err'''
+def run(cmd, disowned=False):
+  '''Runs a command with subprocess, printing output in realtime'''
   proc = subprocess.Popen(
     cmd,
-    stdout=subprocess.PIPE,
-    stderr=subprocess.PIPE
+    stdout=subprocess.PIPE if not disowned else None,
+    stderr=subprocess.STDOUT if not disowned else None
   )
-  (out, err) = proc.communicate()
-  print out
-  errors = err
-  if error_text:
-    errors = "%s: %s" % (error_text, err)
-  if (err):
-    print >> sys.stderr, errors
-    sys.exit(-1)
+  if not disowned:
+    while proc.poll() is None:
+      l = proc.stdout.readline()
+      print l,
+    print proc.stdout.read()
 
 
 def pkgbuild(root_dir, identifier, version, pkg_output_file):
@@ -36,7 +32,7 @@ def pkgbuild(root_dir, identifier, version, pkg_output_file):
     '--identifier', identifier,
     '--version', version,
     pkg_output_file]
-  run(cmd, "Pkgbuild error")
+  run(cmd)
 
 
 def hash_file(path):

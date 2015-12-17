@@ -317,7 +317,7 @@ def handle_dl(item_name, item_url, download_dir,
       print "Found %s in %s" % (item_name, target)
     return True
   except MunkiDownloadError as err:
-    print >> sys.stderr, "Download error: %s" % err
+    print >> sys.stderr, "Download error for %s: %s" % (item_name, err)
   return False
 
 
@@ -448,6 +448,8 @@ def main():
   total_adds = 0
   total_excepts = 0
   additions_list = list()
+  item_list = list()
+  except_list = list()
   extras = {'additions': [], 'exceptions': []}
   if args.extras:
     # Extras now contains 'additions' and 'exceptions'
@@ -461,6 +463,15 @@ def main():
           print "Considering %s" % addition
           if handle_dl(item_name, addition, dir_struct['additions'],
                        args.download):
+            if item_name.endswith('.mobileconfig'):
+              # profiles must be moved into the 'exceptions' directory
+              shutil.move(
+                os.path.join(dir_struct['additions'], item_name),
+                dir_struct['exceptions']
+              )
+              total_excepts += 1
+              except_list.append(item_name)
+              continue
             total_adds += 1
             additions_list.append(os.path.join(dir_struct['additions'],
                                   item_name))
@@ -472,8 +483,6 @@ def main():
   print "Checking for managed installs..."
   print "Exceptions list: %s" % extras['exceptions']
   install_list = process_manifest_installs(manifest)
-  item_list = list()
-  except_list = list()
   for item in install_list:
     itemurl = get_item_url(item, [args.catalog])
     item_basename = getURLitemBasename(itemurl)
@@ -481,13 +490,15 @@ def main():
     if 'Nopkg' in itemurl:
       print "Nopkg found: %s" % item
     elif itemurl.endswith('.mobileconfig'):
-      # Try to download the exception into the exceptions directory
+      # Try to download the profile into the exceptions directory
       # Increment the exceptions total, and add it to the exceptions list
       if handle_dl(item, itemurl, dir_struct['exceptions'],
                    args.download, exceptions=True):
         total_excepts += 1
         except_list.append(urllib2.unquote(item_basename))
     elif any(x in item_basename for x in extras['exceptions']):
+      # Try to download the exception into the exceptions directory
+      # Increment the exceptions total, and add it to the exceptions list
       if handle_dl(item, itemurl, dir_struct['exceptions'],
                    args.download, exceptions=True):
         total_excepts += 1
@@ -559,6 +570,8 @@ def main():
     if registration_pkg:
       additions_list.extend([registration_pkg])
 
+  loglevel = str(args.loglevel)
+
   total = total_adds + total_excepts
   dmg_output_path = os.path.join(CACHE, args.output)
   if not args.force and os.path.isfile(dmg_output_path) and not total:
@@ -579,9 +592,11 @@ def main():
   plist["VolumeName"] = args.volumename
   plist["AdditionalPackages"] = [
     os.path.join(
-      dir_struct['downloads'], f) for f in os.listdir(
-        dir_struct['downloads']) if (not f == '.DS_Store') and
-    (f not in additions_list)]
+      dir_struct['downloads'], f
+    ) for f in os.listdir(
+      dir_struct['downloads']
+    ) if (not f == '.DS_Store') and (f not in additions_list)
+  ]
 
   if extras['additions']:
     plist["AdditionalPackages"].extend(additions_list)
@@ -589,7 +604,8 @@ def main():
   # Complete the AutoDMG-full.adtmpl template
   plistlib.writePlist(plist, templatepath)
   autodmg_cmd = [
-    '/Applications/AutoDMG.app/Contents/MacOS/AutoDMG']
+    '/Applications/AutoDMG.app/Contents/MacOS/AutoDMG'
+  ]
   if os.getuid() == 0:
     # We are running as root
     print "Running as root."
@@ -598,11 +614,11 @@ def main():
     # Update the profiles plist too
     print "Updating UpdateProfiles.plist..."
     cmd = autodmg_cmd + ['update']
-    run(cmd, "AutoDMG Error")
+    run(cmd)
 
   # Now kick off the AutoDMG build
+  sys.stdout.flush()
   print "Building disk image..."
-  loglevel = str(args.loglevel)
   if os.path.isfile(dmg_output_path):
     os.remove(dmg_output_path)
   cmd = autodmg_cmd + [
@@ -612,11 +628,12 @@ def main():
     '--download-updates',
     '-o', dmg_output_path]
   print "Full command: %s" % cmd
-  run(cmd, "AutoDMG Error")
+  run(cmd)
 
   # Check the Deploystudio masters to see if this image already exists
+  sys.stdout.flush()
   if args.dsrepo:
-    populate_ds_repo(dmg_output_path, args.repo)
+    populate_ds_repo(dmg_output_path, args.dsrepo)
 
   print "Ending run."
   print time.strftime("%c")
