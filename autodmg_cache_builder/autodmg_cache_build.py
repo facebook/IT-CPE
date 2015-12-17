@@ -488,10 +488,10 @@ def main():
   install_list = process_manifest_installs(manifest)
   for item in install_list:
     itemurl = get_item_url(item, [args.catalog])
-    if itemurl is None:
-      print "WARNING: %s not found in any catalogs, skipping!"
-      continue
     item_basename = getURLitemBasename(itemurl)
+    if itemurl is None:
+      print "WARNING: %s not found in any catalogs, skipping!" % item_basename
+      continue
     print "Looking at: %s" % item_basename
     if 'Nopkg' in itemurl:
       print "Nopkg found: %s" % item
