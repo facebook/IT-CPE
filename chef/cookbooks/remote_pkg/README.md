@@ -1,6 +1,6 @@
 remote_pkg cookbook
 ============
-This cookbook has two different providers.  The first is the pkg provider (remote_pkg).  This provider is compatible with Mac and will install a package from a http server. 
+This cookbook has provider. It is the pkg provider (remote_pkg).  This provider is compatible with Mac and will install a package from a http server. 
 
 Requirements
 ------------
