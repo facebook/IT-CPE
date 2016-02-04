@@ -7,7 +7,9 @@
 # All rights reserved - Do Not Redistribute
 #
 
-default['remote']['username'] = '' #chef_download_user
+default['remote']['username'] = nil #chef_download_user
 # I used this link to encode the password in URL:
 # http://www.w3schools.com/tags/ref_urlencode.asp
-default['remote']['pass'] = '' #P@$$w0rD
+default['remote']['pass'] = nil #P@$$w0rD
+# Put there server and path of you pkgs
+default['remote_pkg']['server'] = PUT YOUR SERVER HERE
