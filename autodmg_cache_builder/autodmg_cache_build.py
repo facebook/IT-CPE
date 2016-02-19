@@ -103,7 +103,8 @@ def download_icons(item_list, icon_dir):
   """Download icons for items in the list.
 
   Based on updatecheck.py, modified.
-  Copied from https://github.com/munki/munki/blob/5a7197c69000b7c04495515ed13a29bfdb0be923/code/client/munkilib/updatecheck.py#L2824
+  Copied from
+  https://github.com/munki/munki/blob/master/code/client/munkilib/updatecheck.py#L2824
 
   Attempts to download icons (actually png files) for items in
      item_list
@@ -446,8 +447,9 @@ def main():
 
   # These are necessary to populate the globals used in updatecheck
   keychain_obj = keychain.MunkiKeychain()
-  manifestpath = updatecheck.getPrimaryManifest(args.catalog)
-  updatecheck.getPrimaryManifestCatalogs(args.catalog)
+  manifestpath = updatecheck.getPrimaryManifest(args.manifest)
+  updatecheck.getPrimaryManifestCatalogs(args.manifest)
+  updatecheck.getCatalogs([args.catalog])
 
   installinfo = {}
   installinfo['processed_installs'] = []
@@ -461,9 +463,9 @@ def main():
   # installinfo['managed_installs'] now contains a list of all managed_installs
   install_list = []
   for item in installinfo['managed_installs']:
-    install_list.append(
-      updatecheck.getItemDetail(item['name'], [args.catalog])
-    )
+    detail = updatecheck.getItemDetail(item['name'], [args.catalog])
+    if detail:
+      install_list.append(detail)
 
   # Prior to downloading anything, populate the lists
   additions_list = list()
