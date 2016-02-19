@@ -8,13 +8,11 @@ incorporate them into the image.
 import argparse
 import json
 import os
-import shutil
 import sys
-import tempfile
 import urllib2
 import time
 
-from autodmg_utility import pkgbuild, run, build_pkg, populate_ds_repo
+from autodmg_utility import run, build_pkg, populate_ds_repo
 
 # Append munkilib to the Python path
 with open('/private/etc/paths.d/munki', 'rb') as f:
@@ -152,55 +150,6 @@ def download_icons(item_list, icon_dir):
 
 
 # local management functions
-def munki_bootstrap(cache_path):
-  """Build a Munki bootstrap package."""
-  pkg_output_file = os.path.join(cache_path, 'munki_bootstrap.pkg')
-  if not os.path.isfile(pkg_output_file):
-    print "Building Munki bootstrap package..."
-    temp_dir = tempfile.mkdtemp(prefix='munkiboot', dir='/tmp')
-    shared = os.path.join(temp_dir, 'Users/Shared')
-    os.makedirs(shared)
-    open(os.path.join(
-      shared, '.com.googlecode.munki.checkandinstallatstartup'
-    ), 'a').close()
-    pkgbuild(
-      temp_dir,
-      'com.facebook.cpe.munki.bootstrap',
-      '1.0',
-      pkg_output_file
-    )
-    shutil.rmtree(temp_dir, ignore_errors=True)
-    if os.path.isfile(pkg_output_file):
-      return pkg_output_file
-  # If we failed for some reason, return None
-  return None
-
-
-def suppress_registration(cache_path):
-  """Build a package to suppress Setup Assistant, returns path to it."""
-  pkg_output_file = os.path.join(cache_path, 'suppress_registration.pkg')
-  if not os.path.isfile(pkg_output_file):
-    print "Building registration suppression package..."
-    temp_dir = tempfile.mkdtemp(prefix='suppressreg', dir='/tmp')
-    receipt = os.path.join(temp_dir, 'Library/Receipts')
-    os.makedirs(receipt)
-    open(os.path.join(receipt, '.SetupRegComplete'), 'a').close()
-    vardb = os.path.join(temp_dir, 'private/var/db/')
-    os.makedirs(vardb)
-    open(os.path.join(vardb, '.AppleSetupDone'), 'a').close()
-    pkgbuild(
-      temp_dir,
-      'com.facebook.cpe.suppress_registration',
-      '1.0',
-      pkg_output_file
-    )
-    shutil.rmtree(temp_dir, ignore_errors=True)
-    if os.path.isfile(pkg_output_file):
-      return pkg_output_file
-  # If we failed for some reason, return None
-  return None
-
-
 def create_local_path(path):
   """Attempt to create a local folder. Returns True if succeeded."""
   if not os.path.isdir(path):
@@ -539,17 +488,6 @@ def main():
       additions_list.extend([pkg_output_file])
     else:
       print "Failed to build exceptions package!"
-
-  # Suppress the Setup Assistant
-  if not args.keepsetup:
-    registration_pkg = suppress_registration(CACHE)
-    if registration_pkg:
-      additions_list.extend([registration_pkg])
-
-  # Add the Munki bootstrap
-  munki_bootstrap_pkg = munki_bootstrap(CACHE)
-  if munki_bootstrap_pkg:
-    additions_list.extend([munki_bootstrap_pkg])
 
   loglevel = str(args.loglevel)
 
