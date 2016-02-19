@@ -9,6 +9,6 @@
     "https://munki/munki_repo/pkgs/profiles/Office2016-SuppressFirstRun-1.0.mobileconfig"
   ],
   "exceptions_list": [
-    "BrokenPackage"
+    "BrokenPackageName"
   ]
 }
