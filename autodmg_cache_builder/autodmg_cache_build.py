@@ -13,6 +13,7 @@ import urllib2
 import time
 
 from autodmg_utility import run, build_pkg, populate_ds_repo
+import autodmg_org
 
 # Append munkilib to the Python path
 with open('/private/etc/paths.d/munki', 'rb') as f:
@@ -490,6 +491,11 @@ def main():
       print "Failed to build exceptions package!"
 
   loglevel = str(args.loglevel)
+
+  # Run any extra code or package builds
+  sys.stdout.flush()
+  pkg_list = autodmg_org.run_unique_code(args)
+  additions_list.extend(pkg_list)
 
   # Now that cache is downloaded, let's add it to the AutoDMG template.
   print "Creating AutoDMG-full.adtmpl."
