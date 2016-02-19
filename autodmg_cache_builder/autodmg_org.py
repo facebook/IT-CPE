@@ -18,8 +18,9 @@ except ImportError:
 # global DESTINATION
 DESTINATION = '/Library/AutoDMG'
 
-# This contains the Facebook-only extra code that autodmg_cache_build.py runs.
-# Currently this contains package construction code for a number of items.
+# Sample package construction list
+# Each dict contains the information necessary to build a package from a given
+# source, with receipt and file name, and potentially a target.
 PKG_LIST = [
   # Wallpapers are present at image time
   {
