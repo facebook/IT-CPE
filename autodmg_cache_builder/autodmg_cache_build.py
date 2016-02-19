@@ -31,6 +31,7 @@ try:
   from fetch import (getURLitemBasename, getResourceIfChangedAtomically,
                      MunkiDownloadError, writeCachedChecksum,
                      getxattr, XATTR_SHA)
+  import keychain
 except ImportError as err:
   print "Something went wrong! %s" % err
 
@@ -444,6 +445,7 @@ def main():
     sys.exit(-1)
 
   # These are necessary to populate the globals used in updatecheck
+  keychain_obj = keychain.MunkiKeychain()
   manifestpath = updatecheck.getPrimaryManifest(args.catalog)
   updatecheck.getPrimaryManifestCatalogs(args.catalog)
 
