@@ -8,4 +8,4 @@ require 'awesome_print'
 
 input_file = ARGV[0]
 profile_plist = Plist::parse_xml(input_file)
-ap profile_plist, :indent => -2
+ap profile_plist, :indent => -2, :index => false
