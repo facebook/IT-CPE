@@ -35,8 +35,6 @@ except ImportError as err:
   print "Something went wrong! %s" % err
 
 MUNKI_URL = pref('SoftwareRepoURL')
-MANIFESTS_URL = MUNKI_URL + '/manifests'
-CATALOG_URL = MUNKI_URL + '/catalogs'
 PKGS_URL = MUNKI_URL + '/pkgs'
 ICONS_URL = MUNKI_URL + '/icons'
 BASIC_AUTH = pref('AdditionalHttpHeaders')
@@ -84,18 +82,6 @@ def handle_dl(item_name, item_url, download_dir,
 def get_item_url(item):
   """Take an item dict, return the URL it can be downloaded from."""
   return PKGS_URL + '/' + urllib2.quote(item["installer_item_location"])
-
-
-def get_item_icon(item):
-  """Take an item dict and return the URL the icon can be downloaded from."""
-  if item.get("icon_name"):
-    # if an icon name is found, there's an icon, go get it
-    return ICONS_URL + '/' + urllib2.quote(item["icon_name"])
-  elif item.get("icon_hash"):
-    # if a hash is found, there's an icon
-    return ICONS_URL + '/' + urllib2.quote(item["name"] + ".png")
-  # No icon found
-  return None
 
 
 def download_icons(item_list, icon_dir):
@@ -150,7 +136,6 @@ def download_icons(item_list, icon_dir):
             writeCachedChecksum(icon_path)
 
 
-# local management functions
 def create_local_path(path):
   """Attempt to create a local folder. Returns True if succeeded."""
   if not os.path.isdir(path):
@@ -326,9 +311,6 @@ def main():
     '-r', '--munkirepo', help='URL for Munki repo. Defaults to '
                               '"SoftwareRepoURL" from Munki prefs.')
   parser.add_argument(
-    '-a', '--auth', help='Additional HTTP headers. Will read from '
-                         '"AdditionalHttpHeaders" from Munki prefs.')
-  parser.add_argument(
     '-s', '--source', help='Path to base OS installer.',
     default='/Applications/Install OS X Yosemite.app')
   parser.add_argument(
@@ -349,10 +331,6 @@ def main():
   parser.add_argument(
     '--extras', help='Path to JSON file containing additions '
                      ' and exceptions lists.')
-  parser.add_argument(
-    '--keepsetup', help='Do NOT suppress Setup Assistant and registration. '
-                        'Defaults to False.',
-    action='store_true', default=False)
   args = parser.parse_args()
 
   if args.munkirepo:
@@ -367,10 +345,6 @@ def main():
     PKGS_URL = MUNKI_URL + '/pkgs'
     ICONS_URL = MUNKI_URL + '/icons'
   print "Using Munki repo: %s" % MUNKI_URL
-  if args.auth:
-    global BASIC_AUTH
-    BASIC_AUTH = args.auth
-  # print "Additional headers: %s" % BASIC_AUTH
   global CACHE
   CACHE = args.cache
 
