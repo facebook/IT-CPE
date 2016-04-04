@@ -25,7 +25,7 @@ except ImportError:
   print "Using plistlib"
   import plistlib
 try:
-  from munkicommon import pref, getsha256hash
+  from munkicommon import pref, set_pref, getsha256hash
   import updatecheck
   from fetch import (getURLitemBasename, getResourceIfChangedAtomically,
                      MunkiDownloadError, writeCachedChecksum,
@@ -39,69 +39,6 @@ PKGS_URL = MUNKI_URL + '/pkgs'
 ICONS_URL = MUNKI_URL + '/icons'
 BASIC_AUTH = pref('AdditionalHttpHeaders')
 CACHE = '/tmp'
-
-
-# override Munki function
-def get_primary_manifest(alternate_id):
-  """Get the client manifest from the server."""
-  manifest = ""
-  manifesturl = MUNKI_URL + '/manifests'
-  if not manifesturl.endswith('?') and not manifesturl.endswith('/'):
-    manifesturl = manifesturl + '/'
-
-  clientidentifier = alternate_id or pref('ClientIdentifier')
-
-  if not alternate_id and pref('UseClientCertificate') and \
-  pref('UseClientCertificateCNAsClientIdentifier'):
-    # we're to use the client cert CN as the clientidentifier
-    if pref('UseClientCertificate'):
-      # find the client cert
-      client_cert_path = pref('ClientCertificatePath')
-      if not client_cert_path:
-        managed_install_dir = pref('managed_install_dir')
-        for name in ['cert.pem', 'client.pem', 'munki.pem']:
-          client_cert_path = os.path.join(managed_install_dir,
-                                          'certs', name)
-          if os.path.exists(client_cert_path):
-            break
-      if client_cert_path and os.path.exists(client_cert_path):
-        fileobj = open(client_cert_path)
-        data = fileobj.read()
-        fileobj.close()
-        x509 = load_certificate(FILETYPE_PEM, data)
-        clientidentifier = x509.get_subject().commonName
-
-  try:
-    if not clientidentifier:
-      # no client identifier specified, so use the hostname
-      hostname = os.uname()[1]
-      # there shouldn't be any characters in a hostname that need quoting,
-      # but see https://code.google.com/p/munki/issues/detail?id=276
-      clientidentifier = urllib2.quote(hostname)
-      manifest = updatecheck.getmanifest(
-        manifesturl + clientidentifier, suppress_errors=True)
-      if not manifest:
-        # try the short hostname
-        clientidentifier = urllib2.quote(hostname.split('.')[0])
-        manifest = updatecheck.getmanifest(
-          manifesturl + clientidentifier, suppress_errors=True)
-      if not manifest:
-          # try the machine serial number
-          clientidentifier = MACHINE['serial_number']
-          if clientidentifier != 'UNKNOWN':
-            manifest = updatecheck.getmanifest(
-              manifesturl + clientidentifier, suppress_errors=True)
-      if not manifest:
-        # last resort - try for the site_default manifest
-        clientidentifier = 'site_default'
-
-    if not manifest:
-        manifest = updatecheck.getmanifest(
-          manifesturl + urllib2.quote(clientidentifier.encode('UTF-8')))
-  except ManifestException:
-    # bad manifests throw an exception
-    pass
-  return manifest
 
 
 # download functions
@@ -432,11 +369,22 @@ def main():
     print "Error setting up local cache directories."
     sys.exit(-1)
 
+  # Store existing pref values for ManifestURL and CatalogURL
+  old_manifesturl = pref('ManifestURL')
+  old_catalogurl = pref('CatalogURL')
+  # Now change them so we can use them
+  set_pref('ManifestURL', MANIFESTS_URL)
+  set_pref('CatalogURL', CATALOG_URL)
+
   # These are necessary to populate the globals used in updatecheck
   keychain_obj = keychain.MunkiKeychain()
-  manifestpath = get_primary_manifest(args.manifest)
+  manifestpath = updatecheck.getPrimaryManifest(args.manifest)
   updatecheck.getPrimaryManifestCatalogs(args.manifest)
   updatecheck.getCatalogs([args.catalog])
+
+  # Set the old pref values back
+  set_pref('ManifestURL', old_manifesturl)
+  set_pref('CatalogURL', old_catalogurl)
 
   installinfo = {}
   installinfo['processed_installs'] = []
