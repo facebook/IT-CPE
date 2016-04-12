@@ -1,10 +1,14 @@
 #!/usr/bin/env ruby
 
-# Don't forget to install the gem!
-# sudo gem install awesome_print
+required_gems = ['plist', 'awesome_print']
+required_gems.each do |required_gem|
+  begin
+    require required_gem
+  rescue LoadError
+    abort("You must install the #{required_gem} gem")
 
-require 'plist'
-require 'awesome_print'
+  end
+end
 
 input_file = ARGV[0]
 profile_plist = Plist::parse_xml(input_file)
