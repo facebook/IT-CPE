@@ -6,7 +6,6 @@ required_gems.each do |required_gem|
     require required_gem
   rescue LoadError
     abort("You must install the #{required_gem} gem")
-
   end
 end
 
