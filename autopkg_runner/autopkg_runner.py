@@ -100,7 +100,7 @@ def change_feature_branch(branch):
     arccmd.append(newbranch)
     print run_cmd(arccmd)
   # Now switch to / create feature branch
-  arccmd = ['/usr/bin/git', 'branch', '-b']
+  arccmd = ['/usr/bin/git', 'checkout', '-b']
   arccmd.append(branch)
   return run_cmd(arccmd)
 
