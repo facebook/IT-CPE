@@ -376,6 +376,8 @@ def main():
   # Store existing pref values for ManifestURL and CatalogURL
   old_manifesturl = pref('ManifestURL')
   old_catalogurl = pref('CatalogURL')
+  print "Using manifest URL: %s" % MANIFESTS_URL
+  print "Using catalog URL: %s" % CATALOG_URL
   # Now change them so we can use them
   set_pref('ManifestURL', MANIFESTS_URL)
   set_pref('CatalogURL', CATALOG_URL)
