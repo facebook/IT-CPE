@@ -312,7 +312,7 @@ def main():
                               '"SoftwareRepoURL" from Munki prefs.')
   parser.add_argument(
     '-s', '--source', help='Path to base OS installer.',
-    default='/Applications/Install OS X Yosemite.app')
+    default='/Applications/Install OS X El Capitan.app')
   parser.add_argument(
     '-v', '--volumename', help='Name of volume after imaging. '
                                'Defaults to "Macintosh HD."',
@@ -351,6 +351,10 @@ def main():
   if "https" in MUNKI_URL and not BASIC_AUTH:
     print >> sys.stderr, "Error: HTTPS was used but no auth provided."
     sys.exit(2)
+
+  if not os.path.exists(args.source):
+    print >> sys.stderr, "Error: Source %s not found." % args.source
+    sys.exit(3)
 
   print time.strftime("%c")
   print "Starting run..."
