@@ -26,6 +26,7 @@ except ImportError:
   import plistlib
 try:
   from munkicommon import pref, set_pref, getsha256hash
+  # import munkicommon
   import updatecheck
   from fetch import (getURLitemBasename, getResourceIfChangedAtomically,
                      MunkiDownloadError, writeCachedChecksum,
@@ -35,7 +36,7 @@ except ImportError as err:
   print "Something went wrong! %s" % err
 
 MUNKI_URL = pref('SoftwareRepoURL')
-PKGS_URL = MUNKI_URL + '/pkgs'
+PKG_URL = MUNKI_URL + '/pkgs'
 ICONS_URL = MUNKI_URL + '/icons'
 BASIC_AUTH = pref('AdditionalHttpHeaders')
 CACHE = '/tmp'
@@ -81,7 +82,7 @@ def handle_dl(item_name, item_url, download_dir,
 # Based on updatecheck.py but modified for simpler use
 def get_item_url(item):
   """Take an item dict, return the URL it can be downloaded from."""
-  return PKGS_URL + '/' + urllib2.quote(item["installer_item_location"])
+  return PKG_URL + '/' + urllib2.quote(item["installer_item_location"])
 
 
 def download_icons(item_list, icon_dir):
@@ -337,12 +338,12 @@ def main():
     global MUNKI_URL
     global MANIFESTS_URL
     global CATALOG_URL
-    global PKGS_URL
+    global PKG_URL
     global ICONS_URL
     MUNKI_URL = args.munkirepo
     MANIFESTS_URL = MUNKI_URL + '/manifests'
     CATALOG_URL = MUNKI_URL + '/catalogs'
-    PKGS_URL = MUNKI_URL + '/pkgs'
+    PKG_URL = MUNKI_URL + '/pkgs'
     ICONS_URL = MUNKI_URL + '/icons'
   print "Using Munki repo: %s" % MUNKI_URL
   global CACHE
@@ -376,21 +377,27 @@ def main():
   # Store existing pref values for ManifestURL and CatalogURL
   old_manifesturl = pref('ManifestURL')
   old_catalogurl = pref('CatalogURL')
+  old_pkgurl = pref('PackageURL')
   print "Using manifest URL: %s" % MANIFESTS_URL
   print "Using catalog URL: %s" % CATALOG_URL
+  print "Using package URL: %s" % PKG_URL
   # Now change them so we can use them
   set_pref('ManifestURL', MANIFESTS_URL)
   set_pref('CatalogURL', CATALOG_URL)
+  set_pref('PackageURL', PKG_URL)
+
+  # If you need extra logging for what Munki is doing, uncomment this
+  # and line 29: `import munkicommon`
+  # munkicommon.verbose = 4
 
   # These are necessary to populate the globals used in updatecheck
   keychain_obj = keychain.MunkiKeychain()
+  print "Downloading manifest %s" % args.manifest
   manifestpath = updatecheck.getPrimaryManifest(args.manifest)
+  print "Getting catalogs for manifest %s" % args.manifest
   updatecheck.getPrimaryManifestCatalogs(args.manifest)
+  print "Getting catalogs..."
   updatecheck.getCatalogs([args.catalog])
-
-  # Set the old pref values back
-  set_pref('ManifestURL', old_manifesturl)
-  set_pref('CatalogURL', old_catalogurl)
 
   installinfo = {}
   installinfo['processed_installs'] = []
@@ -399,6 +406,7 @@ def main():
   installinfo['optional_installs'] = []
   installinfo['managed_installs'] = []
   installinfo['removals'] = []
+  print "Getting list of managed installs..."
   updatecheck.processManifestForKey(manifestpath, 'managed_installs',
                                     installinfo)
   # installinfo['managed_installs'] now contains a list of all managed_installs
@@ -460,6 +468,11 @@ def main():
       additions_list.extend([pkg_output_file])
     else:
       print "Failed to build icon package!"
+
+  # Set the old pref values back
+  set_pref('ManifestURL', old_manifesturl)
+  set_pref('CatalogURL', old_catalogurl)
+  set_pref('PackageURL', old_pkgurl)
 
   # Clean up cache of items we don't recognize
   cleanup_local_cache(item_list, dir_struct['downloads'])
