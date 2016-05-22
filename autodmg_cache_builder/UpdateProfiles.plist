@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>DeprecatedInstallers</key>
+	<dict>
+		<key>10.10.5-14F27</key>
+		<array>
+			<string>14A299l</string>
+			<string>14A329r</string>
+			<string>14A361p</string>
+			<string>14A379b</string>
+			<string>14A238x</string>
+			<string>14A314h</string>
+			<string>14A343f</string>
+			<string>14A379a</string>
+			<string>14A389</string>
+			<string>14B25</string>
+			<string>14C109</string>
+			<string>14C2043</string>
+			<string>14C2055</string>
+			<string>14D131</string>
+			<string>14D136</string>
+			<string>14D2134</string>
+			<string>14E46</string>
+		</array>
+		<key>10.11.3-15D21</key>
+		<array>
+			<string>15A178w</string>
+			<string>15A263e</string>
+			<string>15A282b</string>
+			<string>15A284</string>
+			<string>15B42</string>
+			<string>15C50</string>
+		</array>
+	</dict>
+	<key>Profiles</key>
+	<dict>
+		<key>10.10.5-14F27</key>
+		<array>
+			<string>RemoteDesktopClient</string>
+			<string>iTunes</string>
+			<string>SafariYo</string>
+			<string>SecurityYo</string>
+		</array>
+		<key>10.11.3-15D21</key>
+		<array>
+			<string>CameraRaw</string>
+		</array>
+	</dict>
+	<key>PublicationDate</key>
+	<date>2016-01-19T19:39:40Z</date>
+	<key>Updates</key>
+	<dict>
+		<key>RemoteDesktopClient</key>
+		<dict>
+			<key>name</key>
+			<string>Remote Desktop Client Update 3.8.4</string>
+			<key>sha1</key>
+			<string>45f0b439a8841cc9604e8c0dbaa4f3c171258340</string>
+			<key>size</key>
+			<integer>7273865</integer>
+			<key>url</key>
+			<string>http://swcdn.apple.com/content/downloads/37/16/031-21283/etbobep7bor00raxv1bf5xkzuu5lqi9fku/RemoteDesktopClient.pkg</string>
+		</dict>
+		<key>SafariYo</key>
+		<dict>
+			<key>name</key>
+			<string>Safari 9.0.3 for Yosemite</string>
+			<key>sha1</key>
+			<string>2d218191b0cccba914ae88e9eacd620bb9ff0e65</string>
+			<key>size</key>
+			<integer>85425549</integer>
+			<key>url</key>
+			<string>http://swcdn.apple.com/content/downloads/45/25/031-45945/7ezu54kv53ryt4zvm6tezk23m8c0xr17kl/Safari9.0.3Yosemite.pkg</string>
+		</dict>
+		<key>SecurityYo</key>
+		<dict>
+			<key>name</key>
+			<string>Security Update 2016-001 Yosemite</string>
+			<key>sha1</key>
+			<string>551212eaf3724ef9388815fdf0c5b6b32ad813d3</string>
+			<key>size</key>
+			<integer>369595822</integer>
+			<key>url</key>
+			<string>http://support.apple.com/downloads/DL1856/en_US/secupd2016-001yosemite.dmg</string>
+		</dict>
+		<key>iTunes</key>
+		<dict>
+			<key>name</key>
+			<string>iTunes 12.3.2</string>
+			<key>sha1</key>
+			<string>feaebf23e5031e89ce317de007158daf35102226</string>
+			<key>size</key>
+			<integer>253627430</integer>
+			<key>url</key>
+			<string>https://secure-appldnld.apple.com/itunes12/031-45965-20151210-23476c18-9f85-11e5-8230-9582f5563fd9/itunes12.3.2.dmg</string>
+		</dict>
+		<key>CameraRaw</key>
+		<dict>
+			<key>name</key>
+			<string>Camera Raw Update 6.18</string>
+			<key>sha1</key>
+			<string>c79cd2f45b5eb89a573f75a808392bf6ee8b5b03</string>
+			<key>size</key>
+			<integer>7975608</integer>
+			<key>url</key>
+			<string>http://support.apple.com/downloads/DL1855/en_US/rawcameraupdate6.dmg</string>
+		</dict>
+	</dict>
+</dict>
+</plist>
