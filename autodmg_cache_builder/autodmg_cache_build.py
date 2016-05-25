@@ -312,7 +312,7 @@ def main():
                               '"SoftwareRepoURL" from Munki prefs.')
   parser.add_argument(
     '-s', '--source', help='Path to base OS installer.',
-    default='/Applications/Install OS X Yosemite.app')
+    default='/Applications/Install OS X El Capitan.app')
   parser.add_argument(
     '-v', '--volumename', help='Name of volume after imaging. '
                                'Defaults to "Macintosh HD."',
