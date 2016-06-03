@@ -136,6 +136,60 @@ def download_icons(item_list, icon_dir):
             writeCachedChecksum(icon_path)
 
 
+def handle_icons(icon_dir, installinfo):
+  """Download icons and build the package."""
+  print "Downloading icons."
+  pkg_output_file = os.path.join(CACHE, 'munki_icons.pkg')
+  icon_list = list(installinfo.get('optional_installs', []))
+  icon_list.extend(installinfo['managed_installs'])
+  icon_list.extend(installinfo['removals'])
+  # Downloads all icons into the icon directory in the Munki cache
+  download_icons(icon_list, icon_dir)
+
+  # Build a package of optional Munki icons, so we don't need to cache
+  success = build_pkg(
+    icon_dir,
+    'munki_icons',
+    'com.facebook.cpe.munki_icons',
+    '/Library/Managed Installs/icons',
+    CACHE,
+    'Creating the icon package.'
+  )
+  # Add the icon package to the additional packages list for the template.
+  if success:
+    return pkg_output_file
+  else:
+    print >> sys.stderr, "Failed to build icon package!"
+    return None
+
+
+def handle_custom(custom_dir):
+  """Download custom resources and build the package."""
+  print "Downloading Munki client resources."
+  updatecheck.download_client_resources()
+  # Client Resoures are stored in
+  #   /Library/Managed Installs/client_resources/custom.zip
+  resource_dir = os.path.join(
+    pref('ManagedInstallDir'), 'client_resources')
+  resource_file = os.path.join(resource_dir, 'custom.zip')
+  if os.path.isfile(resource_file):
+    destination_path = custom_dir
+    pkg_output_file = os.path.join(CACHE, 'munki_custom.pkg')
+    success = build_pkg(
+      resource_dir,
+      'munki_custom',
+      'com.facebook.cpe.munki_custom',
+      destination_path,
+      CACHE,
+      'Creating the Munki custom resources package.'
+    )
+    if success:
+      return pkg_output_file
+    else:
+      print >> sys.stderr, "Failed to build Munki custom resources package!"
+      return None
+
+
 def create_local_path(path):
   """Attempt to create a local folder. Returns True if succeeded."""
   if not os.path.isdir(path):
@@ -230,6 +284,13 @@ def process_managed_installs(install_list, exceptions, except_list, item_list,
       exception = True
     elif 'installer_type' not in item:
       # Assume it's a package
+      if (
+        'postinstall_script',
+        'preinstall_script',
+        'installcheck_script'
+      ) in item:
+        # We shouldn't try to do anything with Munki scripts
+        exception = True
       exception = False
     elif item['installer_type'] == 'nopkg':
       # Obviously we don't attempt to handle these
@@ -308,8 +369,9 @@ def main():
     '-l', '--logpath', help='Path to log files for AutoDMG.',
     default='/Library/AutoDMG/logs/')
   parser.add_argument(
-    '-r', '--munkirepo', help='URL for Munki repo. Defaults to '
-                              '"SoftwareRepoURL" from Munki prefs.')
+    '--custom', help='Path to place custom resources. Defaults to '
+                     '/Library/Managed Installs/client_resources/.',
+    default='/Library/Managed Installs/client_resources/')
   parser.add_argument(
     '-s', '--source', help='Path to base OS installer.',
     default='/Applications/Install OS X El Capitan.app')
@@ -333,17 +395,6 @@ def main():
                      ' and exceptions lists.')
   args = parser.parse_args()
 
-  if args.munkirepo:
-    global MUNKI_URL
-    global MANIFESTS_URL
-    global CATALOG_URL
-    global PKGS_URL
-    global ICONS_URL
-    MUNKI_URL = args.munkirepo
-    MANIFESTS_URL = MUNKI_URL + '/manifests'
-    CATALOG_URL = MUNKI_URL + '/catalogs'
-    PKGS_URL = MUNKI_URL + '/pkgs'
-    ICONS_URL = MUNKI_URL + '/icons'
   print "Using Munki repo: %s" % MUNKI_URL
   global CACHE
   CACHE = args.cache
@@ -421,28 +472,14 @@ def main():
 
   # Icon handling
   if not args.noicons:
-    print "Downloading icons."
-    pkg_output_file = os.path.join(CACHE, 'munki_icons.pkg')
-    icon_list = list(installinfo.get('optional_installs', []))
-    icon_list.extend(installinfo['managed_installs'])
-    icon_list.extend(installinfo['removals'])
-    # Downloads all icons into the icon directory in the Munki cache
-    download_icons(icon_list, dir_struct['icons'])
+    icon_pkg_file = handle_icons(dir_struct['icons'], installinfo)
+  if icon_pkg_file:
+    additions_list.extend([icon_pkg_file])
 
-    # Build a package of optional Munki icons, so we don't need to cache
-    success = build_pkg(
-      dir_struct['icons'],
-      'munki_icons',
-      'com.facebook.cpe.munki_icons',
-      '/Library/Managed Installs/icons',
-      CACHE,
-      'Creating the icon package.'
-    )
-    # Add the icon package to the additional packages list for the template.
-    if success:
-      additions_list.extend([pkg_output_file])
-    else:
-      print "Failed to build icon package!"
+  # Munki custom resources handling
+  custom_pkg_file = handle_custom(args.custom)
+  if custom_pkg_file:
+    additions_list.extend([custom_pkg_file])
 
   # Clean up cache of items we don't recognize
   cleanup_local_cache(item_list, dir_struct['downloads'])
@@ -521,6 +558,9 @@ def main():
     '-o', dmg_output_path]
   print "Full command: %s" % cmd
   run(cmd)
+  if not os.path.isfile(dmg_output_path):
+    print >> sys.stderr, "Failed to create disk image!"
+    sys.exit(1)
 
   # Check the Deploystudio masters to see if this image already exists
   sys.stdout.flush()
