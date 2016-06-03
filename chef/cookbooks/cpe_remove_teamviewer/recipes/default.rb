@@ -5,7 +5,7 @@
 #
 # Copyright 2016-Present, Facebook
 #
-# All rights reserved - Do Not Redistibute
+# https://github.com/facebook/IT-CPE/blob/master/LICENSE
 #
 
 tv_paths = CPE.app_paths('com.teamviewer.TeamViewer')
