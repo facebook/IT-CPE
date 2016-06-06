@@ -144,7 +144,7 @@ def handle_icons(icon_dir, installinfo):
   """Download icons and build the package."""
   print "Downloading icons."
   pkg_output_file = os.path.join(CACHE, 'munki_icons.pkg')
-  icon_list = list(installinfo.get('optional_installs', []))
+  icon_list = installinfo['optional_installs']
   icon_list.extend(installinfo['managed_installs'])
   icon_list.extend(installinfo['removals'])
   # Downloads all icons into the icon directory in the Munki cache
