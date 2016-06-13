@@ -122,12 +122,16 @@ def download_icons(item_list, icon_dir):
       except OSError, err:
           print 'Could not create %s' % icon_subdir
           continue
+    custom_headers = ['']
+    if BASIC_AUTH:
+      # custom_headers = ['Authorization: Basic %s' % BASIC_AUTH]
+      custom_headers = BASIC_AUTH
     if pkginfo_icon_hash != xattr_hash:
       item_name = item.get('display_name') or item['name']
       message = 'Getting icon %s for %s...' % (icon_name, item_name)
       try:
         dummy_value = getResourceIfChangedAtomically(
-          icon_url, icon_path, message=message)
+          icon_url, icon_path, custom_headers=custom_headers, message=message)
       except MunkiDownloadError, err:
         print ('Could not retrieve icon %s from the server: %s',
                icon_name, err)
@@ -140,7 +144,7 @@ def handle_icons(icon_dir, installinfo):
   """Download icons and build the package."""
   print "Downloading icons."
   pkg_output_file = os.path.join(CACHE, 'munki_icons.pkg')
-  icon_list = list(installinfo.get('optional_installs', []))
+  icon_list = installinfo['optional_installs']
   icon_list.extend(installinfo['managed_installs'])
   icon_list.extend(installinfo['removals'])
   # Downloads all icons into the icon directory in the Munki cache
@@ -472,6 +476,13 @@ def main():
 
   # Icon handling
   if not args.noicons:
+    # Get icons for Managed Updates, Optional Installs and removals
+    updatecheck.processManifestForKey(manifestpath, 'managed_updates',
+                                    installinfo)
+    updatecheck.processManifestForKey(manifestpath, 'managed_uninstalls',
+                                    installinfo)
+    updatecheck.processManifestForKey(manifestpath, 'optional_installs',
+                                    installinfo)
     icon_pkg_file = handle_icons(dir_struct['icons'], installinfo)
   if icon_pkg_file:
     additions_list.extend([icon_pkg_file])
