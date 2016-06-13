@@ -1,8 +1,10 @@
 # vim: syntax=ruby:expandtab:shiftwidth=2:softtabstop=2:tabstop=2
 
-name 'custom_utils'
+name 'cpe_user_customizations'
 maintainer 'Facebook, Inc'
 license 'Apache 2.0'
-description 'Cookbook for common tools and libraries'
+description 'This cookbook holds recipes each person creates for themselves.'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
-version '0.1.0'
+version '0.0.1'
+
+depends 'custom_utils'
