@@ -108,7 +108,7 @@ Your Extras file must be valid JSON. Use a JSON linter to validate it.
 
 ## Org-Specific Code
 ----
-If you are familiar with Python, you can add any custom code to be run into the `automg_org` file.  
+If you are familiar with Python, you can add any custom code to be run into the `autodmg_org` file.  
 
 During the normal script run, it automatically calls `autodmg_org.run_unique_code(args)`.  Anything inside that function will be run, and the entire argument object will be passed along to it. `run_unique_code()` should always return a list of packages you want added to the AutoDMG template.
 
