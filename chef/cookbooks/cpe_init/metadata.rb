@@ -13,15 +13,14 @@ depends 'cpe_node_customizations'
 depends 'custom_utils'
 
 
-# API Cookbooks
-depends 'cpe_pathsd'
+### API Cookbooks
 depends 'cpe_bluetooth'
-depends 'cpe_chrome'
-depends 'cpe_firefox'
 depends 'cpe_hosts'
-depends 'cpe_powermanagement'
-depends 'cpe_safari'
-depends 'cpe_screensaver'
 depends 'cpe_launchd'
+depends 'cpe_pathsd'
 depends 'cpe_profiles'
 depends 'cpe_prompt_user'
+depends 'cpe_screensaver'
+
+## Web Browser API Cookbooks
+depends 'cpe_safari'
