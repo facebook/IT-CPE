@@ -3,8 +3,8 @@ The IT-CPE ("Client Platform Engineering") repo contains a suite of tools that w
 machines.
 
 ## Presentations
-Watch our [presentation at MacIT](http://www.youtube.com/watch?v=Z3gMXUxI0Hs)
-Watch our [presentation at MacADUK](https://www.youtube.com/watch?v=VIzgMavUFRQ)
+* Watch our [presentation at MacIT](http://www.youtube.com/watch?v=Z3gMXUxI0Hs)
+* Watch our [presentation at MacADUK](https://www.youtube.com/watch?v=VIzgMavUFRQ)
 
 
 ####Code sync
