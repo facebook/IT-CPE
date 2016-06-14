@@ -1,0 +1,3 @@
+<% node['cpe_pathsd'].each do |path| %>
+<%="#{path}"%>
+<% end %>
