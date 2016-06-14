@@ -2,8 +2,10 @@
 The IT-CPE ("Client Platform Engineering") repo contains a suite of tools that we use to manage our fleet of over 10,000 client
 machines.
 
-## Examples
+## Presentations
 Watch our [presentation at MacIT](http://www.youtube.com/watch?v=Z3gMXUxI0Hs)
+Watch our [presentation at MacADUK](https://www.youtube.com/watch?v=VIzgMavUFRQ)
+
 
 ####Code sync
 We are constantly developing functions to make our scripts more robust. Both functions and scripts are deployed to all client machines via 'code sync' to ensure the latest code is always running.
