@@ -22,8 +22,9 @@
 
 run_list = []
 
-# Default all machines
+# This is your recipe to place settings
 run_list += [
+  'cpe_init::company_init'
 ]
 
 # API Cookbooks go last
@@ -37,6 +38,8 @@ if node.macos?
     'cpe_powermanagement',
     'cpe_safari',
     'cpe_screensaver',
+    # Here Be Dragons... Ordering is important.
+    # launchd and profiles need to be last, as other apis depend on these
     'cpe_launchd',
     'cpe_profiles',
   ]
