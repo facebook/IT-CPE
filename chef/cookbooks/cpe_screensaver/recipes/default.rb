@@ -25,9 +25,6 @@ ruby_block 'screensaver_profile' do
         'Screensaver password delay is too high!'
       )
     end
-    # Turn off ScreenSaver
-    node.default['cpe_screensaver']['idleTime'] = 0
-    node.default['cpe_screensaver']['askForPassword'] = 0
     prefix = node['cpe_profiles']['prefix']
     organization = node['organization'] ? node['organization'] : 'Facebook'
     node.default['cpe_profiles']["#{prefix}.screensaver"] = {
