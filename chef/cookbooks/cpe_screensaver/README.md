@@ -19,7 +19,7 @@ configured in your company's custom init recipe.
 
 The profile delivers a payload for the above keys in `node['cpe_screensaver']`.  The three provided have a sane default, which can be overridden in another recipe if desired.
 
-For example, you could tweak the above values 
+For example, you could tweak the above values
 
     node.default['cpe_screensaver']['idleTime'] = 300
     node.default['cpe_screensaver']['askForPasswordDelay'] = 2

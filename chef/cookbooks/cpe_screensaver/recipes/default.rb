@@ -12,38 +12,22 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 #
 
-dashboard_lobby_wf = node.type?(['dashboard', 'lobby', 'wayfinder'])
-
-# Remove the broken Facebook Friends screensaver
-directory '/Library/Screen Savers/Facebook Friends.saver' do
-  recursive true
-  action :delete
-end
-
 # Enforce screen saver settings
 ruby_block 'screensaver_profile' do
   block do
-    # This outer 'unless' will be removed once the dashboards, lobbies, and
-    # wayfinders have been refactored
-    unless dashboard_lobby_wf
-      unless node['cpe_screensaver']['idleTime'] <= 600
-        Chef::Log.warn(
-          'Screensaver idle time is too high!'
-        )
-      end
-      unless node['cpe_screensaver']['askForPasswordDelay'] <= 5
-        Chef::Log.warn(
-          'Screensaver password delay is too high!'
-        )
-      end
+    unless node['cpe_screensaver']['idleTime'] <= 600
+      Chef::Log.warn(
+        'Screensaver idle time is too high!'
+      )
     end
-    # This will also be removed once the dashboards, lobbies, and
-    # wayfinders have been refactored
-    if dashboard_lobby_wf
-      # Turn off ScreenSaver
-      node.default['cpe_screensaver']['idleTime'] = 0
-      node.default['cpe_screensaver']['askForPassword'] = 0
+    unless node['cpe_screensaver']['askForPasswordDelay'] <= 5
+      Chef::Log.warn(
+        'Screensaver password delay is too high!'
+      )
     end
+    # Turn off ScreenSaver
+    node.default['cpe_screensaver']['idleTime'] = 0
+    node.default['cpe_screensaver']['askForPassword'] = 0
     prefix = node['cpe_profiles']['prefix']
     organization = node['organization'] ? node['organization'] : 'Facebook'
     node.default['cpe_profiles']["#{prefix}.screensaver"] = {
