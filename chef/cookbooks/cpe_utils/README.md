@@ -1,4 +1,4 @@
-custom_utils Cookbook
+cpe_utils Cookbook
 ==================
 This cookbook is where we keep all the common function / classes
 

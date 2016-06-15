@@ -1,6 +1,6 @@
 # vim: syntax=ruby:expandtab:shiftwidth=2:softtabstop=2:tabstop=2
 
-name 'custom_utils'
+name 'cpe_utils'
 maintainer 'Facebook, Inc'
 license 'Apache 2.0'
 description 'Cookbook for common tools and libraries'

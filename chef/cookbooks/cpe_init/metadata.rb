@@ -10,7 +10,7 @@ version '0.1.0'
 # Multi-platform
 depends 'cpe_user_customizations'
 depends 'cpe_node_customizations'
-depends 'custom_utils'
+depends 'cpe_utils'
 
 
 ### API Cookbooks

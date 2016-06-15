@@ -1,4 +1,4 @@
-# Cookbook Name:: custom_utils
+# Cookbook Name:: cpe_utils
 # Library::node_functions
 #
 # Copyright (c) 2016-present, Facebook, Inc.
@@ -296,7 +296,7 @@ class Chef
           )['managed_installs_list'].map(&:downcase)
         rescue
           Chef::Log.warn(
-            'custom_utils/node.munki_installed:' +
+            'cpe_utils/node.munki_installed:' +
             ' Failed to retrieve applications installed by Munki'
           )
         end
