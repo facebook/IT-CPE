@@ -1,4 +1,12 @@
 #!/usr/bin/env python
+#
+# Copyright (c) 2016-present, Facebook, Inc.
+# All rights reserved.
+#
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree. An additional grant
+# of patent rights can be found in the PATENTS file in the same directory.
+#
 
 # Thanks to Nick McSpadden for documenting how to do this in python:
 # https://osxdominion.wordpress.com/2015/10/02/generating-pbkdf2-password-hashes-in-python-not-ruby/
