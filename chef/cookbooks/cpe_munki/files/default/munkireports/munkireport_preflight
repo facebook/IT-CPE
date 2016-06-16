@@ -1,0 +1,42 @@
+#!/usr/bin/python
+# encoding: utf-8
+''' Preflight script'''
+import sys
+#Added /usr/local/munki to search path
+sys.path.append('/usr/local/munki/')
+import os
+from munkilib import reportcommon
+
+def main():
+    '''Main'''
+    # Munkireport submit script TODO: make config item
+    submitscript = 'submit.preflight'
+
+    # Try to get the munki verbosity level
+    verbosity = os.environ.get('MUNKI_VERBOSITY_LEVEL')
+    if (verbosity):
+        reportcommon.set_verbosity(int(verbosity))
+    else:
+        reportcommon.set_verbosity(3)
+
+    # get runtype
+    if (len(sys.argv) > 1):
+        runtype = sys.argv[1]
+    else:
+        runtype = 'custom'
+
+    # define path to directory with preflight scripts
+    scriptdir = os.path.realpath(os.path.dirname(sys.argv[0]))
+
+    # Try to run preflight_abort.d
+    preflightscriptdir = os.path.join(scriptdir, "preflight_abort.d")
+    reportcommon.rundir(preflightscriptdir, runtype, True)
+
+    # Try to run preflight.d
+    preflightscriptdir = os.path.join(scriptdir, "preflight.d")
+    reportcommon.rundir(preflightscriptdir, runtype, False, submitscript)
+
+    exit(0)
+
+if __name__ == '__main__':
+    main()

@@ -1,0 +1,17 @@
+#!/bin/bash
+
+if [ "$1" = 'manualcheck' ]; then
+	echo 'Manual check: skipping'
+	exit 0
+fi
+
+# Create cache dir if it does not exist
+DIR=$(dirname $0)
+mkdir -p "$DIR/cache"
+
+# Store results status in filevaultstatus.txt
+
+fv_status=`/usr/local/munki/preflight.d/filevault_2_status_check.sh`
+fv_users=`fdesetup list | cut -d "," -f 1 | awk '{print}' ORS=' '`
+
+echo -e "fv_status = ${fv_status}"'\n'"fv_users = ${fv_users}" > "$DIR/cache/filevaultstatus.txt"
