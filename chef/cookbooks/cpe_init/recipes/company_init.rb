@@ -12,6 +12,8 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 #
 
+# HERE: This is where you would set attributes that are consumed by the API
+# cookbooks.
 node.default['organization'] = 'MYCOMPANY'
 node.default['cpe_launchd']['prefix'] = 'com.MYCOMPANY.chef'
 node.default['cpe_profiles']['prefix'] = 'com.MYCOMPANY.chef'
