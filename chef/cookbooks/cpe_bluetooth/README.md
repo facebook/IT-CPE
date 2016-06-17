@@ -17,7 +17,8 @@ Usage
 The profile will manage the `com.apple.Bluetooth` preference domain. 
 
 The profile's organization key defaults to `Facebook` unless `node['organization']` is
-configured in your company's custom init recipe.
+configured in your company's custom init recipe. The profile will also use
+whichever prefix is set in node['cpe_profiles']['prefix'], which defaults to `com.facebook.chef`
 
 The profile delivers a payload of all keys in `node['cpe_bluetooth']` that are non-nil values.  The two provided keys `node['cpe_bluetooth']['BluetoothAutoSeekKeyboard']` and `node['cpe_bluetooth']['BluetoothAutoSeekPointingDevice']` are nil, so that no profile is installed by default.
 

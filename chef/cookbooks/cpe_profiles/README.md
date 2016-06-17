@@ -15,21 +15,30 @@ Attributes
 
 Usage
 -----
-Include this recipe and add any configuration profiles in the format in the
+Include this recipe and add any configuration profiles matching the format in the
 example below.
 
 **Note:** Ensure that you override the default value of `node['cpe_profiles']['prefix']`. 
-If you do not do this, it will assume an identifier prefix of `com.facebook.chef`.
-
+If you do not do this, it will assume an PayloadIdentifier prefix of `com.facebook.chef`. This
+should be configued in your company_init.rb file, found in the cpe_init cookbook.
 
 **THIS MUST GO IN A RECIPE. DO NOT PUT THIS IN ATTRIBUTES, OR IT MAY CAUSE PAIN
 AND SUFFERING FOR YOUR FLEET!**
 
 To add a new config profile, in your recipe, add a key matching the 
-profile identifier with a value that contains the hash of the profile
+profile PayloadIdentifier with a value that contains the hash of the profile
 to `node.default['cpe_profiles']`
 
-For instance, add a hash to manage the screensaver and use the default prefix: 
+
+**If you already have profiles installed using an existing prefix, be sure to 
+convert all of them over to the new prefix. There will be pain and suffering if this
+is not done.**
+
+**Note: This is an example. If you wish to manage the screensaver, use the 
+cpe_screensaver cookbook.**
+
+If you want to use the default prefix, add a profile hash to manage the screensaver using
+`com.facebook.chef` as the prefix.
 
     node.default['cpe_profiles']['com.facebook.chef.screensaver'] = {
       'PayloadIdentifier' => 'com.facebook.chef.screensaver',
@@ -39,12 +48,12 @@ For instance, add a hash to manage the screensaver and use the default prefix:
       'PayloadUUID' => 'E257207C-17F4-4FE7-B287-3F111D60FF50',
       'PayloadOrganization' => 'Facebook',
       'PayloadVersion' => 1,
-      'PayloadDisplayName' => 'Settings for Nate',
+      'PayloadDisplayName' => 'Company Screensaver Settings',
       'PayloadContent'=> [
         {
           'PayloadType' => 'com.apple.ManagedClient.preferences',
           'PayloadVersion' => 1,
-          'PayloadIdentifier' => 'com.cpe.nwalck.settings',
+          'PayloadIdentifier' => 'com.company.chef.screensaver.settings',
           'PayloadUUID' => 'AC66C802-DE14-4C92-8BFE-2369FFA8D029',
           'PayloadEnabled' => true,
           'PayloadDisplayName' => 'Custom: (com.apple.screensaver)',
@@ -65,15 +74,15 @@ For instance, add a hash to manage the screensaver and use the default prefix:
       ]
     }
 
-
-**If you already have profiles installed using an existing prefix, be sure to 
-convert all of them over to the new prefix. There will be pain and suffering if this
-is not done.**
-
-Or, if you want to customize the prefix and then add a profile, you would do:
+If you want to customize the prefix and then add a profile, you would customize
+the prefix in your company_init.rb file:
 
     # Override the default prefix value of 'com.facebook.chef'
     node.default['cpe_profiles']['prefix'] = 'com.company.chef'
+
+Then, in whichever recipe manages the given settings, add your profile to the
+cpe_profiles attr:
+
     # Use the specified prefix to name the configuration profile
     node.default['cpe_profiles']['com.company.chef.screensaver'] = {
       'PayloadIdentifier' => 'com.company.chef.screensaver',
@@ -83,12 +92,12 @@ Or, if you want to customize the prefix and then add a profile, you would do:
       'PayloadUUID' => 'E257207C-17F4-4FE7-B287-3F111D60FF50',
       'PayloadOrganization' => 'Company',
       'PayloadVersion' => 1,
-      'PayloadDisplayName' => 'Settings for screensaver',
+      'PayloadDisplayName' => 'Company Screensaver Settings',
       'PayloadContent'=> [
         {
           'PayloadType' => 'com.apple.ManagedClient.preferences',
           'PayloadVersion' => 1,
-          'PayloadIdentifier' => 'com.cpe.nwalck.settings',
+          'PayloadIdentifier' => 'com.company.chef.screensaver.settings',
           'PayloadUUID' => 'AC66C802-DE14-4C92-8BFE-2369FFA8D029',
           'PayloadEnabled' => true,
           'PayloadDisplayName' => 'Custom: (com.apple.screensaver)',
@@ -108,4 +117,5 @@ Or, if you want to customize the prefix and then add a profile, you would do:
         }
       ]
     } 
+
 
