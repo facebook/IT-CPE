@@ -19,7 +19,7 @@ Include this recipe and add any launchd items in the format shdown in the
 example below.
 
 **Note:** Ensure that you override the default value of `node['cpe_profiles']['prefix']`. 
-If you do not do this, it will assume an label prefix of `com.facebook.chef`. This
+If you do not do this, it will assume a label prefix of `com.facebook.chef`. This
 should be configued in your company_init.rb file, found in the cpe_init cookbook.
 
 **THIS MUST GO IN A RECIPE. DO NOT PUT THIS IN ATTRIBUTES, OR IT MAY CAUSE PAIN
