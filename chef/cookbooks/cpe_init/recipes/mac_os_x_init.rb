@@ -37,6 +37,7 @@ if node.macos?
     # 'cpe_powermanagement',
     # Here Be Dragons... Ordering is important.
     # launchd and profiles need to be last, as other apis depend on these
+    'cpe_munki',
     'cpe_launchd',
     'cpe_profiles',
   ]

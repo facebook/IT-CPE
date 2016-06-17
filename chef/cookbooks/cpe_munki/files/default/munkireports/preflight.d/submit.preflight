@@ -1,0 +1,54 @@
+#!/usr/bin/python
+# encoding: utf-8
+''' Preflight script'''
+
+import hashlib
+import sys
+import os
+
+sys.path.insert(0,'/usr/local/munki') # TODO: make this relative
+
+from munkilib import munkicommon
+from munkilib import reportcommon
+from munkilib import FoundationPlist
+
+def main():
+    '''Main'''
+    # get runtype
+    if (len(sys.argv) > 1):
+        runtype = sys.argv[1]
+    else:
+        runtype = 'custom'
+    
+    # Collect some hardware info
+    hardware_info = munkicommon.get_hardware_info()
+    hardware_info['computer_name'] = reportcommon.get_computername()
+    hardware_info['cpu'] = reportcommon.get_cpuinfo()
+    hardware_info['cpu_arch'] = os.uname()[4]
+    hardware_info['hostname'] = os.uname()[1]
+    hardware_info['os_version'] = \
+        munkicommon.getOsVersion(only_major_minor=False)
+    serial = hardware_info.get('serial_number', 'NO_SERIAL')
+    hw_info_plist = FoundationPlist.writePlistToString(hardware_info)
+    
+    # Collect some report info
+    report_info = {}
+    report_info['console_user'] = "%s" % munkicommon.getconsoleuser()
+    report_info['long_username'] = reportcommon.get_long_username(report_info['console_user'])
+    report_info['runtype'] = runtype
+    report_info['runstate'] = 'done'
+    report_info['uptime'] = reportcommon.get_uptime()    
+    report_info_plist = FoundationPlist.writePlistToString(report_info)
+    
+    items = {'machine': \
+        {'hash':hashlib.md5(hw_info_plist).hexdigest(), 'data':hw_info_plist}, \
+            'reportdata': \
+        {'hash':hashlib.md5(report_info_plist).hexdigest(), \
+            'data':report_info_plist}}
+    
+    reportcommon.process(serial, items)
+    
+    exit(0)
+
+if __name__ == '__main__':
+    main()
