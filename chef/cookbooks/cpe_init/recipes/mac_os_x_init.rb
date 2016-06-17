@@ -15,7 +15,8 @@
 
 run_list = []
 
-# This is your recipe to place settings
+# HERE: This is your recipe to place settings and additional cookbooks you
+# would like to include
 run_list += [
   'cpe_init::company_init'
 ]
@@ -23,14 +24,17 @@ run_list += [
 # API Cookbooks go last
 if node.macos?
   run_list += [
-    'cpe_pathsd',
     'cpe_bluetooth',
-    'cpe_chrome',
-    'cpe_firefox',
     'cpe_hosts',
-    'cpe_powermanagement',
+    'cpe_pathsd',
     'cpe_safari',
     'cpe_screensaver',
+    # HERE: Coming soon! Will be opensourced at a later date
+    # 'cpe_chrome',
+    # 'cpe_firefox',
+    # 'cpe_firewall_config',
+    # 'cpe_splunk',
+    # 'cpe_powermanagement',
     # Here Be Dragons... Ordering is important.
     # launchd and profiles need to be last, as other apis depend on these
     'cpe_launchd',
