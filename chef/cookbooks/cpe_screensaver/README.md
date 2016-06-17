@@ -15,7 +15,8 @@ Usage
 The profile will manage the `com.apple.Screensaver` preference domain.
 
 The profile's organization key defaults to `Facebook` unless `node['organization']` is
-configured in your company's custom init recipe.
+configured in your company's custom init recipe. The profile will also use
+whichever prefix is set in node['cpe_profiles']['prefix'], which defaults to `com.facebook.chef`
 
 The profile delivers a payload for the above keys in `node['cpe_screensaver']`.  The three provided have a sane default, which can be overridden in another recipe if desired.
 
