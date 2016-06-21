@@ -19,7 +19,7 @@ based on the contents of the `extra_entries` attribute.
 
 For example, adding the following in some depenedent cookbook:
 
-  node.default['cpe']['hosts']['extra_entries']['123.4.5.6'] = ['myaddress.com']
+  node.default['cpe_hosts']['extra_entries']['123.4.5.6'] = ['myaddress.com']
 
 will create an entry in /etc/hosts like:
 

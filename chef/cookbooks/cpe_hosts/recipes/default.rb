@@ -14,9 +14,6 @@
 
 require 'English'
 
-START_MARKER = '#Start-CPE-Managed-Hosts'
-END_MARKER = '#End-CPE-Managed-Hosts'
-
 LINE_MARKER = ' # Chef Managed' + $RS
 
 HOSTS_FILE = '/etc/hosts'
@@ -34,19 +31,4 @@ end
 # changed, and will do so atomically.
 file HOSTS_FILE do
   content lines.join
-end
-
-delete_lines "remove old start marker from file" do
-  path HOSTS_FILE
-  pattern "^#{START_MARKER}"
-end
-
-delete_lines "remove old end marker from file" do
-  path HOSTS_FILE
-  pattern "^#{END_MARKER}"
-end
-
-append_if_no_line "Note about adding your own chef config" do
-  path HOSTS_FILE
-  line "## Talk to your IT department about customizing this file ##"
 end
