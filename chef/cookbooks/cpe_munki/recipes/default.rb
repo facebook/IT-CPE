@@ -14,9 +14,9 @@
 
 return unless node.macosx? 
 
-include_recipe 'cpe_munki::install' if ['cpe_munki']['install']
+include_recipe 'cpe_munki::install' if node['cpe_munki']['install']
 include_recipe 'cpe_munki::local'
-include_recipe 'cpe_munki::config' if ['cpe_munki']['configure']
+include_recipe 'cpe_munki::config' if node['cpe_munki']['configure']
 
 if node['cpe_munki']['munkireports']['install']
   include_recipe 'cpe_munki::munkireports'
