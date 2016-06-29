@@ -1,0 +1,6 @@
+{
+  "minimal_ohai" : true,
+  "run_list": [
+    "recipe[cpe_init]"
+  ]
+} 
