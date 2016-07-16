@@ -15,7 +15,7 @@
 tv_paths = CPE.app_paths('com.teamviewer.TeamViewer')
 Chef::Log.info(
   "#{cookbook_name}/#{recipe_name}: Found Teamviewer at #{tv_paths}"
-) if tv_paths
+) if tv_paths.any?
 
 tv_launchds = [
   'com.teamviewer.Helper',
