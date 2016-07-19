@@ -3,8 +3,8 @@
 
 Use [AutoDMG](https://github.com/MagerValp/AutoDMG) to build an image that includes [Munki](https://github.com/munki/munki) installs preloaded in.
 
-The image will try to include: 
- 
+The image will try to include:
+
 * All available `managed_installs` in the provided manifest and catalogs.  
 	* Items that cannot be safely installed at image time will be preloaded into the Munki cache folder (`/Library/Managed Installs/Cache`).  
 * All available Munki icons.  
@@ -29,6 +29,9 @@ Most basic usage:
 To automatically move the built image to a [DeployStudio](https://www.deploystudio.com) repo:  
 `autodmg_cache_build.py  --dsrepo /Users/Shared/Deploystudio`
 
+To automatically move the built image to another location (such as your root for Imagr):
+`autodmg_cache_build.py  --movefile /Users/Shared/ImagrRepo
+
 To use an Extras file (see below):  
 `autodmg_cache_build.py  
   --extras except_adds.json  
@@ -52,6 +55,7 @@ Use the help to see the full list of command line arguments:
 9. Trigger an AutoDMG "download" of Apple software updates according to the UpdateProfiles.plist.
 10. Begin the AutoDMG build. Build log is stored in `/Library/AutoDMG/logs/build.log`.
 11. If a DeployStudio repo is provided, automatically copy the image into the DeployStudio repo's `Masters/HFS` directory.
+12. If another target location is provided, automatically copy the image into this directory.
 
 ### "Safe" vs. "Unsafe" Items
 "Safe" items are:
@@ -81,7 +85,7 @@ No checking or verification is done for these packages. AutoDMG will attempt to 
 
 As part of the "Safe" vs. "Unsafe" rules, you can also include an `exceptions` array in the Extras file.  These should be Munki item names that you do not want to install at image time.  
 
-If the `name` key of an item from the catalog matches an Exception, it will still be downloaded and cached locally, but will be placed into the Munki cache folder on the image.  When Munki runs, it will automatically decide what to do with the contents of its cache folder. 
+If the `name` key of an item from the catalog matches an Exception, it will still be downloaded and cached locally, but will be placed into the Munki cache folder on the image.  When Munki runs, it will automatically decide what to do with the contents of its cache folder.
 
 There are many reasons you may want to list an item as an exception. Most of those are described on the [AutoDMG Wiki page about suitable packages](https://github.com/MagerValp/AutoDMG/wiki/Packages-Suitable-for-Deployment). Generally, if the package runs any kind of postflight script, you should very carefully read it to make sure it will run on the _target disk_ properly and not on the AutoDMG host computer. Since most package postflight scripts are built with the assumption that they will only be executed by a logged in user, please carefully curate your Munki items to make sure that only safe package payloads are being incorporated into your images.
 
@@ -96,7 +100,7 @@ This will likely require some trial-and-error, and some admin consideration.
     "https://munki/munki_repo/pkgs/apps/microsoft/office2016/Microsoft_Office_2016_15.22.0_160506_Installer-15.22.0.pkg",
     "https://munki/munki_repo/pkgs/profiles/Office2016-SuppressFirstRun-1.2.mobileconfig"
   ],
-  "exceptions_list": [ 
+  "exceptions_list": [
     # These are Munki items that should be installed by Munki bootstrapping
     "BomgarClient",
     "MicrosoftOffice2016_Serializer"

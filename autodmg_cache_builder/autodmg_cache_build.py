@@ -12,7 +12,7 @@ import sys
 import urllib2
 import time
 
-from autodmg_utility import run, build_pkg, populate_ds_repo
+from autodmg_utility import run, build_pkg, populate_ds_repo, move_file
 import autodmg_org
 
 # Append munkilib to the Python path
@@ -391,6 +391,8 @@ def main():
     '-u', '--update', help='Update the profiles plist.',
     action='store_true', default=False)
   parser.add_argument(
+    '--movefile', help="Path to move file to after building.")
+  parser.add_argument(
     '--extras', help='Path to JSON file containing additions '
                      ' and exceptions lists.')
   args = parser.parse_args()
@@ -566,6 +568,9 @@ def main():
   sys.stdout.flush()
   if args.dsrepo:
     populate_ds_repo(dmg_output_path, args.dsrepo)
+
+  if args.movefile:
+    move_file(dmg_output_path, args.movefile)
 
   print "Ending run."
   print time.strftime("%c")
