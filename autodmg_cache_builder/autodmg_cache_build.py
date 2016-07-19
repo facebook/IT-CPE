@@ -391,6 +391,9 @@ def main():
     '-u', '--update', help='Update the profiles plist.',
     action='store_true', default=False)
   parser.add_argument(
+    '--disableupdates', help='Disable updates to built image via AutoDMG',
+    action='store_false', default=True)
+  parser.add_argument(
     '--movefile', help="Path to move file to after building.")
   parser.add_argument(
     '--extras', help='Path to JSON file containing additions '
@@ -515,7 +518,7 @@ def main():
   templatepath = os.path.join(CACHE, 'AutoDMG-full.adtmpl')
 
   plist = dict()
-  plist["ApplyUpdates"] = True
+  plist["ApplyUpdates"] = args.disableupdates
   plist["SourcePath"] = args.source
   plist["TemplateFormat"] = "1.0"
   plist["VolumeName"] = args.volumename
