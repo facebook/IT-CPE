@@ -1,6 +1,6 @@
 #
-# Cookbook Name:: cpe_chocolatey
-# Recipe:: chocolatey_required_apps
+# Cookbook Name:: cpe_choco
+# Recipe:: required_apps
 #
 # vim: syntax=ruby:expandtab:shiftwidth=2:softtabstop=2:tabstop=2
 #
@@ -18,28 +18,28 @@ choco_managed_installs = {}
 choco_managed_installs['chocolatey'] = {
   'name' => 'chocolatey',
   'version' => '0.9.10.2',
-  'feed' => node['cpe_chocolatey']['default_feed'],
+  'feed' => node['cpe_choco']['default_feed'],
 }
 
 choco_managed_installs['firefox'] = {
   'name' => 'firefox',
   'version' => '47.0',
-  'feed' => node['cpe_chocolatey']['default_feed'],
+  'feed' => node['cpe_choco']['default_feed'],
 }
 
 choco_managed_installs['git'] = {
   'name' => 'git',
   'version' => '2.9.0',
-  'feed' => node['cpe_chocolatey']['default_feed'],
+  'feed' => node['cpe_choco']['default_feed'],
 }
 
 choco_managed_installs['GoogleChrome'] = {
   'name' => 'GoogleChrome',
   'version' => '51.0.2704.103',
-  'feed' => node['cpe_chocolatey']['default_feed'],
+  'feed' => node['cpe_choco']['default_feed'],
 }
 
 # Send package list data to cache file
-file "#{node['cpe_chocolatey']['app_cache']}" do
+file "#{node['cpe_choco']['app_cache']}" do
   content choco_managed_installs.to_json
 end

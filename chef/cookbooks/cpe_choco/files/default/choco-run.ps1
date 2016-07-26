@@ -18,18 +18,17 @@ $list = @()
 foreach ($line in $local_list) {
     # Split on the blank space
     $line = $line -split '\s'
-    
+
     # Add to array
     $list += $line[0]
 }
-
 
 # Run chocolatey depending on the feed specified.
 foreach ($app in $choco_managed_installs | Get-Member -MemberType *Property) {
     $feed = $choco_managed_installs.$($app.Name).feed
     $name = $choco_managed_installs.$($app.Name).name
     $version = $choco_managed_installs.$($app.Name).version
-    
+
     if ($list -Contains $name) {
         & cup $name -s $feed --version $version -y
     }
