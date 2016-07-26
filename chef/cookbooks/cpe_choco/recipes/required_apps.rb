@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: cpe_chocolatey
+# Cookbook Name:: cpe_choco
 # Recipe:: required_apps
 #
 # vim: syntax=ruby:expandtab:shiftwidth=2:softtabstop=2:tabstop=2
