@@ -29,7 +29,7 @@ Most basic usage:
 To automatically move the built image to a [DeployStudio](https://www.deploystudio.com) repo:  
 `autodmg_cache_build.py  --dsrepo /Users/Shared/Deploystudio`
 
-To automatically move the built image to another location (such as your root for Imagr):
+To automatically move the built image to another arbitrary location (such as your root for Imagr):
 `autodmg_cache_build.py  --movefile /Users/Shared/ImagrRepo
 
 To use an Extras file (see below):  
@@ -52,7 +52,7 @@ Use the help to see the full list of command line arguments:
 6. Download & package the Munki client customization resources.
 7. Run the "Org-Specific Code" to allow building custom packages to be included.
 8. Build an AutoDMG template file containing all of the packages.
-9. Trigger an AutoDMG "download" of Apple software updates according to the UpdateProfiles.plist.
+9. Trigger an AutoDMG "download" of Apple software updates according to the UpdateProfiles.plist if `--disableupdates` is not used.
 10. Begin the AutoDMG build. Build log is stored in `/Library/AutoDMG/logs/build.log`.
 11. If a DeployStudio repo is provided, automatically copy the image into the DeployStudio repo's `Masters/HFS` directory.
 12. If another target location is provided, automatically copy the image into this directory.
