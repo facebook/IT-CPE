@@ -385,7 +385,7 @@ def main():
     default='Macintosh HD')
   parser.add_argument(
     '--loglevel', help='Set loglevel between 1 and 7. Defaults to 6.',
-    choices=range(1, 8), default=6)
+    choices=range(1, 8), default=6, type=int)
   parser.add_argument(
     '--dsrepo', help='Path to DeployStudio repo. ')
   parser.add_argument(
