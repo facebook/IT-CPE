@@ -79,3 +79,19 @@ def populate_ds_repo(image_path, repo):
   print "Image path: %s" % image_path
   print "Repo target: %s" % repo_target
   shutil.copyfile(image_path, repo_target)
+
+
+def move_file(image_path, target):
+  """Move a built image into a target directory."""
+  image_name = os.path.basename(image_path)
+  repo_target = os.path.join(target, image_name)
+  if os.path.isfile(repo_target):
+    # If the target already exists, name it "-OLD"
+    newname = repo_target.split('.dmg')[0] + '-OLD.dmg'
+    print "Renaming old image to %s" % newname
+    os.rename(repo_target, newname)
+  # now copy the newly built image over
+  print "Copying new image to target."
+  print "Image path: %s" % image_path
+  print "Repo target: %s" % repo_target
+  shutil.copyfile(image_path, repo_target)

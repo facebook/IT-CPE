@@ -12,7 +12,7 @@ import sys
 import urllib2
 import time
 
-from autodmg_utility import run, build_pkg, populate_ds_repo
+from autodmg_utility import run, build_pkg, populate_ds_repo, move_file
 import autodmg_org
 
 # Append munkilib to the Python path
@@ -395,6 +395,11 @@ def main():
     '-u', '--update', help='Update the profiles plist.',
     action='store_true', default=False)
   parser.add_argument(
+    '--disableupdates', help='Disable updates to built image via AutoDMG',
+    action='store_false', default=True)
+  parser.add_argument(
+    '--movefile', help="Path to move file to after building.")
+  parser.add_argument(
     '--extras', help='Path to JSON file containing additions '
                      ' and exceptions lists.')
   args = parser.parse_args()
@@ -524,7 +529,7 @@ def main():
   templatepath = os.path.join(CACHE, 'AutoDMG-full.adtmpl')
 
   plist = dict()
-  plist["ApplyUpdates"] = True
+  plist["ApplyUpdates"] = args.disableupdates
   plist["SourcePath"] = args.source
   plist["TemplateFormat"] = "1.0"
   plist["VolumeName"] = args.volumename
@@ -577,6 +582,9 @@ def main():
   sys.stdout.flush()
   if args.dsrepo:
     populate_ds_repo(dmg_output_path, args.dsrepo)
+
+  if args.movefile:
+    move_file(dmg_output_path, args.movefile)
 
   print "Ending run."
   print time.strftime("%c")
