@@ -16,13 +16,9 @@
 # limitations under the License.
 #
 
-require "chef/resource"
-#require "chef/provider/launchd"
-
 class Chef
   class Resource
-    class Launchd < Chef::Resource
-      super
+    class Launchd
       property :keep_alive, [ TrueClass, FalseClass, Hash ]
     end
   end
