@@ -96,7 +96,7 @@ def find_managed_plist_labels
     )
     entries.any? ? results << entries : results
   end
-  plists[0]
+  plists.flatten
 end
 
 def process_plist_labels
