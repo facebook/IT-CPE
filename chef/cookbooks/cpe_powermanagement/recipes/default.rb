@@ -5,26 +5,16 @@
 # vim: syntax=ruby:expandtab:shiftwidth=2:softtabstop=2:tabstop=2
 #
 # Copyright (c) 2016-present, Facebook, Inc.
+# All rights reserved.
 #
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 #
 
-require 'plist'
-
 # Does the node have a battery?
-machine_type = 'desktop'
-power_xml = Mixlib::ShellOut.new(
-  '/usr/sbin/system_profiler SPPowerDataType -xml'
-).run_command.stdout
-power_plist = Plist.parse_xml(power_xml)
-power_plist[0]['_items'].each do |item|
-  if item.key?('_name') && item['_name'] == 'spbattery_information'
-    machine_type = 'portable'
-  end
-end
-
+machine_type =
+  node['hardware'].attribute?('battery') ? 'portable' : 'desktop'
 pm_prefs = {
   'ACPower' => {},
   'Battery' => {}

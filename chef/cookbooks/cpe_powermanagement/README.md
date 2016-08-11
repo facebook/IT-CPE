@@ -8,7 +8,6 @@ If any of the values of the attributes are non-nil, a profile is created and app
 Requirements
 ------------
 * Mac OS X
-* 'plist' gem
 
 Attributes
 ----------
