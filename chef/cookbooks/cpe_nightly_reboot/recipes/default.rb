@@ -10,6 +10,22 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 #
 
+require 'Pathname'
+
+# Set up the logout script
+directory Pathname.new(node['cpe_nightly_reboot']['script']).dirname.to_s do
+  recursive true
+  action :create
+end
+
+cookbook_file node['cpe_nightly_reboot']['script'] do
+  source 'logout_bootstrap.py'
+  owner 'root'
+  group 'wheel'
+  mode 0755
+  action :create
+end
+
 restart_launchd = {
   'program_arguments' => [
     '/sbin/reboot'
@@ -19,7 +35,7 @@ restart_launchd = {
 
 logout_launchd = {
   'program_arguments' => [
-    '/Library/CPE/lib/flib/scripts/logout_bootstrap.py'
+    node['cpe_nightly_reboot']['script']
   ],
   'start_calendar_interval' => {}
 }
@@ -37,7 +53,8 @@ ruby_block 'restart' do
         restart_launchd
     end
     logout_hash = node['cpe_nightly_reboot']['logout'].reject { |_k, v| v.nil? }
-    unless logout_hash.empty?
+    unless logout_hash.empty? ||
+           !File.exist?(node['cpe_nightly_reboot']['script'])
       logout_launchd['start_calendar_interval'] = logout_hash
       node.default['cpe_launchd']['com.CPE.logout'] =
         logout_launchd

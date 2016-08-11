@@ -10,6 +10,9 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 #
 
+default['cpe_nightly_reboot']['script'] =
+  '/opt/chef/scripts/logout_bootstrap.py'
+
 default['cpe_nightly_reboot']['restart'] = {
   'Month' => nil,
   'Day' => nil,
