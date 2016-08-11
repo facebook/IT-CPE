@@ -29,6 +29,7 @@ if node.macos?
     'cpe_pathsd',
     'cpe_safari',
     'cpe_screensaver',
+    'cpe_nightly_reboot',
     # HERE: Coming soon! Will be opensourced at a later date
     # 'cpe_chrome',
     # 'cpe_firefox',
