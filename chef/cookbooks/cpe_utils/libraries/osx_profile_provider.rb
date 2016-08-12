@@ -20,37 +20,37 @@ class Chef
   class Provider
     class OsxProfile
 
-	  def load_current_resource
-		@current_resource = Chef::Resource::OsxProfile.new(@new_resource.name)
-		@current_resource.profile_name(@new_resource.profile_name)
+      def load_current_resource
+        @current_resource = Chef::Resource::OsxProfile.new(@new_resource.name)
+        @current_resource.profile_name(@new_resource.profile_name)
 
-		all_profiles = get_installed_profiles
-		@new_resource.profile(
-		  @new_resource.profile ||
-		  @new_resource.profile_name
-		)
+        all_profiles = get_installed_profiles
+        @new_resource.profile(
+          @new_resource.profile ||
+          @new_resource.profile_name
+        )
 
-		@new_profile_hash = get_profile_hash(@new_resource.profile)
-		@new_profile_hash["PayloadUUID"] =
-		  config_uuid(@new_profile_hash) if @new_profile_hash
+        @new_profile_hash = get_profile_hash(@new_resource.profile)
+        @new_profile_hash["PayloadUUID"] =
+          config_uuid(@new_profile_hash) if @new_profile_hash
 
-		if @new_profile_hash
-		  @new_profile_identifier = @new_profile_hash["PayloadIdentifier"]
-		else
-		  @new_profile_identifier = @new_resource.identifier ||
-			@new_resource.profile_name
-		end
+        if @new_profile_hash
+          @new_profile_identifier = @new_profile_hash["PayloadIdentifier"]
+        else
+          @new_profile_identifier = @new_resource.identifier ||
+            @new_resource.profile_name
+        end
 
-		current_profile = nil
-		if all_profiles &&
-			!all_profiles.empty? &&
-			all_profiles.key?('_computerlevel')
-		  current_profile = all_profiles['_computerlevel'].find do |item|
-			item['ProfileIdentifier'] == @new_profile_identifier
-		  end
-		end
-		@current_resource.profile(current_profile)
-	  end
+        current_profile = nil
+        if all_profiles &&
+          !all_profiles.empty? &&
+          all_profiles.key?('_computerlevel')
+          current_profile = all_profiles['_computerlevel'].find do |item|
+            item['ProfileIdentifier'] == @new_profile_identifier
+          end
+        end
+        @current_resource.profile(current_profile)
+      end
     end
   end
 end
