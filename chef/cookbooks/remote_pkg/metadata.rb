@@ -2,7 +2,7 @@
 # Encoding: utf-8
 name 'remote_pkg'
 maintainer 'facebook, Inc'
-maintainer_email 'mikedodge04@fb.com'
+maintainer_email 'noreply@facebook.com'
 license 'BSD'
 description 'pkg and file providers to download and / or install packages from a https server'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))

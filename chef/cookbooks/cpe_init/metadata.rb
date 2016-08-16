@@ -2,6 +2,7 @@
 
 name 'cpe_init'
 maintainer 'Facebook, Inc'
+maintainer_email 'noreply@facebook.com'
 license 'BSD'
 description 'This is the very basic cookbook that starts it all.'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
