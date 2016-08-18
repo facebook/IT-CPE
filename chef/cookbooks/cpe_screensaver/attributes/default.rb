@@ -19,14 +19,21 @@ default['cpe_screensaver']['askForPasswordDelay'] = 0
 # Although you can manage the screensaver "modules" with profiles, the ui is not locked down like it
 # is with the screensaver "security" options
 
-# TODO : think about "Choose Folder"
+# TODO : think about real world usage, make it less confusing, no point setting a MESSAGE and iLifeSlideshows etc
+
 # Defaults to node['organization'] if nil
 default['cpe_screensaver']['MESSAGE'] = nil
+
 # USAGE : Computer Name, iLifeSlideshows
 default['cpe_screensaver']['moduleName'] = 'Computer Name'
+
 # Transition style, only valid when moduleName is iLifeSlideshows, defaults to KenBurns if nil
 # USAGE : Floating, Flipup, Reflections, Origami, ShiftingTiles, SlidingPanels, PhotoMobile, HolidayMobile, PhotoWall, VintagePrints, KenBurns, Classic
 default['cpe_screensaver']['styleKey'] = nil
-# "source" only valid when moduleName is iLifeSlideshows, defaults to 4-Nature Patterns if nil
-# 1-National Geographic, 2-Aerial, 3-Cosmos, 4-Nature Patterns
+
+# A Default Collection "source" is only valid when moduleName is iLifeSlideshows, defaults to 4-Nature Patterns if nil
+# USAGE : 1-National Geographic, 2-Aerial, 3-Cosmos, 4-Nature Patterns, or a Custom Folder Path
 default['cpe_screensaver']['SelectedFolderPath'] = nil
+
+# USAGE : 0, 1
+default['cpe_screensaver']['ShufflesPhotos'] = 0

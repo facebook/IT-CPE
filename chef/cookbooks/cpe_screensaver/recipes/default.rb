@@ -33,11 +33,18 @@ ruby_block 'screensaver_profile' do
     MESSAGE = node['cpe_screensaver']['MESSAGE'] ? node['cpe_screensaver']['MESSAGE'] : organization
     path = '/System/Library/Frameworks/ScreenSaver.framework/Resources/' + node['cpe_screensaver']['moduleName'] + '.saver'
     styleKey = node['cpe_screensaver']['styleKey'] ? node['cpe_screensaver']['styleKey'] : 'KenBurns'
+    
     source = node['cpe_screensaver']['SelectedFolderPath'] ? node['cpe_screensaver']['SelectedFolderPath'] : '4-Nature Patterns'
     identifier = "/Library/Screen Savers/Default Collections"
     selectedFolderPath = identifier + "/" + source
+    selectedSource = 3
+    if source.include? "/"
+      identifier = source
+      selectedFolderPath = source
+      selectedSource = 4
+    end
     name = File.basename(identifier)
-
+    
     node.default['cpe_profiles']["#{prefix}.screensaver"] = {
       'PayloadIdentifier' => "#{prefix}.screensaver",
       'PayloadRemovalDisallowed' => true,
@@ -75,7 +82,7 @@ ruby_block 'screensaver_profile' do
           'PayloadIdentifier' => "#{prefix}.screensaver.ByHost",
           'PayloadUUID' => '01cb34f8-36f8-4fb6-babc-5ae3aa6c165b',
           'PayloadEnabled' => true,
-          'PayloadDisplayName' => 'moduleName',
+          'PayloadDisplayName' => 'Module',
           'PayloadContent' => {
             'com.apple.screensaver.ByHost' => {
               'Forced' => [
@@ -136,7 +143,7 @@ ruby_block 'screensaver_profile' do
           'PayloadIdentifier' => "#{prefix}.screensaver.ScreenSaverPhotoChooser",
           'PayloadUUID' => '67775986-eab2-4723-a16c-3719397745fb',
           'PayloadEnabled' => true,
-          'PayloadDisplayName' => 'Default Collections or Custom Folders',
+          'PayloadDisplayName' => 'Default Collections or Custom Folder',
           'PayloadContent' => {
             'com.apple.ScreenSaver.ScreenSaverPhotoChooser.ByHost' => {
               'Forced' => [
@@ -147,8 +154,8 @@ ruby_block 'screensaver_profile' do
                       'name' => name
                     },
                     'SelectedFolderPath' => selectedFolderPath,
-                    'SelectedSource' => 3,
-                    'ShufflesPhotos' => 0,
+                    'SelectedSource' => selectedSource,
+                    'ShufflesPhotos' => node['cpe_screensaver']['ShufflesPhotos']
                   }
                 }
               ]
