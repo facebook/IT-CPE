@@ -28,10 +28,10 @@ if node.macos?
     'cpe_hosts',
     'cpe_pathsd',
     'cpe_safari',
+    'cpe_chrome',
     'cpe_screensaver',
     'cpe_powermanagement',
     # HERE: Coming soon! Will be opensourced at a later date
-    # 'cpe_chrome',
     # 'cpe_firefox',
     # 'cpe_firewall_config',
     # 'cpe_splunk',

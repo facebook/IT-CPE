@@ -57,7 +57,7 @@ class Chef
     end
 
     def console_user
-      unless self.macos?
+      unless macos?
         Chef::Log.warn('node.console_user called on non-OS X!')
         return
       end
@@ -69,7 +69,7 @@ class Chef
     end
 
     def serial
-      unless self.macos?
+      unless macos?
         Chef::Log.warn('node.serial called on non-OS X!')
         return
       end
@@ -83,7 +83,7 @@ class Chef
     end
 
     def uuid 
-      unless macosx?
+      unless macos?
         Chef::Log.warn('node.serial called on non-OS X!')
         return
       end
@@ -261,7 +261,7 @@ class Chef
       return node['platform'] == 'mac_os_x'
     end
 
-    def macosx?
+    def macos?
       self.macos?
     end
 
@@ -299,6 +299,34 @@ class Chef
       node.override['munki']['installed_apps'] = installed_apps
       # Return true or false if applicaion is installed by munki
       installed_apps.include?(application)
+    end
+
+    def loginwindow?
+      unless macos?
+        Chef::Log.warn('node.loginwindow? called on non-OS X!')
+        return
+      end
+      console_user == 'root'
+    end
+
+    def app_paths(bundle_identifier)
+      unless macos?
+        Chef::Log.warn('node.app_paths called on non-OS X!')
+        return []
+      end
+      # Search Spotlight for matching identifier, strip newlines
+      Mixlib::ShellOut.new(
+        "/usr/bin/mdfind \"kMDItemCFBundleIdentifier==#{bundle_identifier}\""
+      ).run_command.stdout.split('\n').map!(&:chomp)
+    end
+
+    def installed?(bundle_identifier)
+      unless macos?
+        Chef::Log.warn('node.installed? called on non-OS X!')
+        return false
+      end
+      paths = app_paths(bundle_identifier)
+      !paths.empty?
     end
   end
 end
