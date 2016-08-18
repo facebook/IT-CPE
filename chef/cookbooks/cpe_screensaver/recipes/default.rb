@@ -36,6 +36,7 @@ ruby_block 'screensaver_profile' do
     identifier = "/Library/Screen Savers/Default Collections"
     selected_folder = identifier + "/" + source
     selected_source = 3
+    shuffle_photos = node['cpe_screensaver']['ShufflesPhotos'] ? node['cpe_screensaver']['ShufflesPhotos'] : 0
     if source.include? "/"
       identifier = source
       selected_folder = source
@@ -153,7 +154,7 @@ ruby_block 'screensaver_profile' do
                     },
                     'SelectedFolderPath' => selected_folder,
                     'SelectedSource' => selected_source,
-                    'ShufflesPhotos' => node['cpe_screensaver']['ShufflesPhotos']
+                    'ShufflesPhotos' => shuffle_photos
                   }
                 }
               ]
