@@ -25,8 +25,13 @@ ruby_block 'screensaver_profile' do
         'Screensaver password delay is too high!'
       )
     end
+    
     prefix = node['cpe_profiles']['prefix']
     organization = node['organization'] ? node['organization'] : 'Facebook'
+
+    # if the attribute is nil use a default "organization"
+    MESSAGE = node['cpe_screensaver']['MESSAGE'] ? node['cpe_screensaver']['MESSAGE'] : organization
+
     node.default['cpe_profiles']["#{prefix}.screensaver"] = {
       'PayloadIdentifier' => "#{prefix}.screensaver",
       'PayloadRemovalDisallowed' => true,
@@ -50,10 +55,50 @@ ruby_block 'screensaver_profile' do
                 {
                   'mcx_preference_settings' => {
                     'idleTime' => node['cpe_screensaver']['idleTime'],
-                    'askForPassword' =>
-                      node['cpe_screensaver']['askForPassword'],
-                    'askForPasswordDelay' =>
-                      node['cpe_screensaver']['askForPasswordDelay']
+                    'askForPassword' => node['cpe_screensaver']['askForPassword'],
+                    'askForPasswordDelay' => node['cpe_screensaver']['askForPasswordDelay']
+                  }
+                }
+              ]
+            }
+          }
+        },
+        {
+          'PayloadType' => 'com.apple.ManagedClient.preferences',
+          'PayloadVersion' => 1,
+          'PayloadIdentifier' => "#{prefix}.screensaver.ByHost",
+          'PayloadUUID' => '01cb34f8-36f8-4fb6-babc-5ae3aa6c165b',
+          'PayloadEnabled' => true,
+          'PayloadDisplayName' => 'moduleName',
+          'PayloadContent' => {
+            'com.apple.screensaver.ByHost' => {
+              'Forced' => [
+                {
+                  'mcx_preference_settings' => {
+                    'moduleDict' => {
+                      'moduleName' => node['cpe_screensaver']['moduleName'],
+                      'path' => node['cpe_screensaver']['path'],
+                      'type' => 0
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        {
+          'PayloadType' => 'com.apple.ManagedClient.preferences',
+          'PayloadVersion' => 1,
+          'PayloadIdentifier' => "#{prefix}.screensaver.Basic",
+          'PayloadUUID' => '8dd9a983-f59b-47c3-a408-ac55d287cbd4',
+          'PayloadEnabled' => true,
+          'PayloadDisplayName' => 'MESSAGE',
+          'PayloadContent' => {
+            'com.apple.screensaver.Basic.ByHost' => {
+              'Forced' => [
+                {
+                  'mcx_preference_settings' => {
+                    'MESSAGE' => MESSAGE
                   }
                 }
               ]
