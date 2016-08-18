@@ -22,7 +22,7 @@ node.default['cpe_profiles']['prefix'] = 'com.MYCOMPANY.chef'
 
 # Install munki
 node.default['cpe_munki']['install'] = true
-# Configure muni
+# Configure munki
 node.default['cpe_munki']['configure'] = true
 # Override default munki settings
 node.default['cpe_munki']['preferences']['SoftwareRepoURL'] =
