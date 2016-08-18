@@ -30,6 +30,7 @@ if node.macos?
     'cpe_safari',
     'cpe_screensaver',
     'cpe_powermanagement',
+    'cpe_preference_panes',
     # HERE: Coming soon! Will be opensourced at a later date
     # 'cpe_chrome',
     # 'cpe_firefox',
