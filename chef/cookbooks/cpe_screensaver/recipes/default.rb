@@ -29,19 +29,17 @@ ruby_block 'screensaver_profile' do
     prefix = node['cpe_profiles']['prefix']
     organization = node['organization'] ? node['organization'] : 'Facebook'
 
-    # if the MESSAGE attribute is nil, use a default, "organization"
-    MESSAGE = node['cpe_screensaver']['MESSAGE'] ? node['cpe_screensaver']['MESSAGE'] : organization
+    message = node['cpe_screensaver']['MESSAGE'] ? node['cpe_screensaver']['MESSAGE'] : organization
     path = '/System/Library/Frameworks/ScreenSaver.framework/Resources/' + node['cpe_screensaver']['moduleName'] + '.saver'
-    styleKey = node['cpe_screensaver']['styleKey'] ? node['cpe_screensaver']['styleKey'] : 'KenBurns'
-    
+    style_key = node['cpe_screensaver']['styleKey'] ? node['cpe_screensaver']['styleKey'] : 'KenBurns'
     source = node['cpe_screensaver']['SelectedFolderPath'] ? node['cpe_screensaver']['SelectedFolderPath'] : '4-Nature Patterns'
     identifier = "/Library/Screen Savers/Default Collections"
-    selectedFolderPath = identifier + "/" + source
-    selectedSource = 3
+    selected_folder = identifier + "/" + source
+    selected_source = 3
     if source.include? "/"
       identifier = source
-      selectedFolderPath = source
-      selectedSource = 4
+      selected_folder = source
+      selected_source = 4
     end
     name = File.basename(identifier)
     
@@ -111,7 +109,7 @@ ruby_block 'screensaver_profile' do
               'Forced' => [
                 {
                   'mcx_preference_settings' => {
-                    'MESSAGE' => MESSAGE
+                    'MESSAGE' => message
                   }
                 }
               ]
@@ -130,7 +128,7 @@ ruby_block 'screensaver_profile' do
               'Forced' => [
                 {
                   'mcx_preference_settings' => {
-                    'styleKey' => styleKey
+                    'styleKey' => style_key
                   }
                 }
               ]
@@ -153,8 +151,8 @@ ruby_block 'screensaver_profile' do
                       'identifier' => identifier,
                       'name' => name
                     },
-                    'SelectedFolderPath' => selectedFolderPath,
-                    'SelectedSource' => selectedSource,
+                    'SelectedFolderPath' => selected_folder,
+                    'SelectedSource' => selected_source,
                     'ShufflesPhotos' => node['cpe_screensaver']['ShufflesPhotos']
                   }
                 }
