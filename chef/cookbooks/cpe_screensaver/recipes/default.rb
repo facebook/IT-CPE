@@ -32,6 +32,11 @@ ruby_block 'screensaver_profile' do
     # if the MESSAGE attribute is nil, use a default, "organization"
     MESSAGE = node['cpe_screensaver']['MESSAGE'] ? node['cpe_screensaver']['MESSAGE'] : organization
     path = '/System/Library/Frameworks/ScreenSaver.framework/Resources/' + node['cpe_screensaver']['moduleName'] + '.saver'
+    styleKey = node['cpe_screensaver']['styleKey'] ? node['cpe_screensaver']['styleKey'] : 'KenBurns'
+    source = node['cpe_screensaver']['SelectedFolderPath'] ? node['cpe_screensaver']['SelectedFolderPath'] : '4-Nature Patterns'
+    identifier = "/Library/Screen Savers/Default Collections"
+    selectedFolderPath = identifier + "/" + source
+    name = File.basename(identifier)
 
     node.default['cpe_profiles']["#{prefix}.screensaver"] = {
       'PayloadIdentifier' => "#{prefix}.screensaver",
@@ -100,6 +105,50 @@ ruby_block 'screensaver_profile' do
                 {
                   'mcx_preference_settings' => {
                     'MESSAGE' => MESSAGE
+                  }
+                }
+              ]
+            }
+          }
+        },
+        {
+          'PayloadType' => 'com.apple.ManagedClient.preferences',
+          'PayloadVersion' => 1,
+          'PayloadIdentifier' => "#{prefix}.screensaver.iLifeSlideShows",
+          'PayloadUUID' => 'c3efe8e7-3516-4438-a959-80f85a294035',
+          'PayloadEnabled' => true,
+          'PayloadDisplayName' => 'Transitions',
+          'PayloadContent' => {
+            'com.apple.ScreenSaver.iLifeSlideShows.ByHost' => {
+              'Forced' => [
+                {
+                  'mcx_preference_settings' => {
+                    'styleKey' => styleKey
+                  }
+                }
+              ]
+            }
+          }
+        },
+        {
+          'PayloadType' => 'com.apple.ManagedClient.preferences',
+          'PayloadVersion' => 1,
+          'PayloadIdentifier' => "#{prefix}.screensaver.ScreenSaverPhotoChooser",
+          'PayloadUUID' => '67775986-eab2-4723-a16c-3719397745fb',
+          'PayloadEnabled' => true,
+          'PayloadDisplayName' => 'Default Collections or Custom Folders',
+          'PayloadContent' => {
+            'com.apple.ScreenSaver.ScreenSaverPhotoChooser.ByHost' => {
+              'Forced' => [
+                {
+                  'mcx_preference_settings' => {
+                    'CustomFolderDict' => {
+                      'identifier' => identifier,
+                      'name' => name
+                    },
+                    'SelectedFolderPath' => selectedFolderPath,
+                    'SelectedSource' => 3,
+                    'ShufflesPhotos' => 0,
                   }
                 }
               ]
