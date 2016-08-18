@@ -19,7 +19,8 @@ default['cpe_screensaver']['askForPasswordDelay'] = 0
 # Although you can manage the screensaver "modules" with profiles, the ui is not locked down like it
 # is with the screensaver "security" options
 
-# First, test static values with the Message screen saver
+# TODO : think about moduleName "iLifeSlideshows"
+# Defaults to node['organization'] if nil
 default['cpe_screensaver']['MESSAGE'] = nil
-default['cpe_screensaver']['moduleName'] = "Computer Name"
-default['cpe_screensaver']['path'] = "/System/Library/Frameworks/ScreenSaver.framework/Resources/Computer Name.saver"
+# Computer Name
+default['cpe_screensaver']['moduleName'] = 'Computer Name'

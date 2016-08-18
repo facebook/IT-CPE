@@ -29,8 +29,9 @@ ruby_block 'screensaver_profile' do
     prefix = node['cpe_profiles']['prefix']
     organization = node['organization'] ? node['organization'] : 'Facebook'
 
-    # if the attribute is nil use a default "organization"
+    # if the MESSAGE attribute is nil, use a default, "organization"
     MESSAGE = node['cpe_screensaver']['MESSAGE'] ? node['cpe_screensaver']['MESSAGE'] : organization
+    path = '/System/Library/Frameworks/ScreenSaver.framework/Resources/' + node['cpe_screensaver']['moduleName'] + '.saver'
 
     node.default['cpe_profiles']["#{prefix}.screensaver"] = {
       'PayloadIdentifier' => "#{prefix}.screensaver",
@@ -77,7 +78,7 @@ ruby_block 'screensaver_profile' do
                   'mcx_preference_settings' => {
                     'moduleDict' => {
                       'moduleName' => node['cpe_screensaver']['moduleName'],
-                      'path' => node['cpe_screensaver']['path'],
+                      'path' => path,
                       'type' => 0
                     }
                   }
