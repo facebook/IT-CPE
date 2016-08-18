@@ -58,11 +58,6 @@ ruby_block 'chrome_prefs' do
   action :run
 end
 
-# Remove old profile
-osx_profile 'com.facebook.CPE.chrome' do
-  action :remove
-end
-
 if node.installed?('com.google.Chrome.canary')
   include_recipe 'cpe_chrome::mac_os_x_chrome_canary'
 end

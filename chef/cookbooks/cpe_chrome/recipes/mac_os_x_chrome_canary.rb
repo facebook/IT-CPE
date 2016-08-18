@@ -55,8 +55,3 @@ ruby_block 'canary_prefs' do
   end
   action :run
 end
-
-# Remove old profile
-osx_profile 'com.facebook.CPE.chrome.canary' do
-  action :remove
-end
