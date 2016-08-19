@@ -89,9 +89,8 @@ ruby_block 'ss_prefs' do
           }
         }
       })
-    end
-
-    unless node['cpe_screensaver']['MESSAGE'].to_s == ''
+ 
+      message = node['cpe_screensaver']['MESSAGE'] ? node['cpe_screensaver']['MESSAGE'] : organization
       screensaver_profile['PayloadContent'].push({
         'PayloadType' => 'com.apple.ManagedClient.preferences',
         'PayloadVersion' => 1,
@@ -104,7 +103,7 @@ ruby_block 'ss_prefs' do
             'Forced' => [
               {
                 'mcx_preference_settings' => {
-                  'MESSAGE' => node['cpe_screensaver']['MESSAGE']
+                  'MESSAGE' => message
                 }
               }
             ]
@@ -134,9 +133,7 @@ ruby_block 'ss_prefs' do
           }
         }
       })
-    end
 
-    if node['cpe_screensaver']['moduleName'].to_s == 'iLifeSlideshows'
       identifier = "/Library/Screen Savers/Default Collections"
       source = node['cpe_screensaver']['SelectedFolderPath'] ? node['cpe_screensaver']['SelectedFolderPath'] : '4-Nature Patterns'
       selected_folder = identifier + "/" + source
