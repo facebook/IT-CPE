@@ -25,7 +25,7 @@ default['cpe_screensaver']['askForPasswordDelay'] = 0
 # AND
 
 # USAGE : Computer Name, iLifeSlideshows
-default['cpe_screensaver']['moduleName'] = 'Computer Name'
+default['cpe_screensaver']['moduleName'] = ''
 
 #### OR ####
 
