@@ -9,6 +9,11 @@ Attributes
 * node['cpe_screensaver']['idleTime']
 * node['cpe_screensaver']['askForPassword']
 * node['cpe_screensaver']['askForPasswordDelay']
+* node['cpe_screensaver']['moduleName']
+* node['cpe_screensaver']['MESSAGE']
+* node['cpe_screensaver']['styleKey']
+* node['cpe_screensaver']['SelectedFolderPath']
+* node['cpe_screensaver']['ShufflesPhotos']
 
 Usage
 -----
@@ -24,3 +29,19 @@ For example, you could tweak the above values
 
     node.default['cpe_screensaver']['idleTime'] = 300
     node.default['cpe_screensaver']['askForPasswordDelay'] = 2
+
+    # Acceptable values: Computer Name, iLifeSlideshows
+    node.node['cpe_screensaver']['moduleName'] = 'Computer Name'
+
+    node.node['cpe_screensaver']['moduleName'] = 'Unauthorised access is prohibited.'
+
+    # Acceptable (defaults to KenBurns) values: Floating, Flipup, Reflections, Origami,
+    # ShiftingTiles, SlidingPanels, PhotoMobile, HolidayMobile, PhotoWall, VintagePrints,
+    # KenBurns, Classic OR a custom path '/Users/YOURUSERNAME/Pictures'
+    node.default['cpe_screensaver']['styleKey']
+
+    # Acceptable (defaults to 1-National Geographic) values: 1-National Geographic, 2-Aerial, 3-Cosmos, 4-Nature Patterns
+    node.default['cpe_screensaver']['SelectedFolderPath'] = 1-National Geographic
+
+    # Acceptable (defaults to 0) values: 0  or 1
+    node.default['cpe_screensaver']['ShufflesPhotos'] = 0
