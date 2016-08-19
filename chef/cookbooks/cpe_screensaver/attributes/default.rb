@@ -20,12 +20,12 @@ default['cpe_screensaver']['askForPassword'] = 1
 default['cpe_screensaver']['askForPasswordDelay'] = 0
 
 # USAGE : add a string value like this example, defaults to node['organization'] if nil
-#default['cpe_screensaver']['MESSAGE'] = 'Unauthorised access is prohibited!'
+default['cpe_screensaver']['MESSAGE'] = ''
 
 # AND
 
 # USAGE : Computer Name, iLifeSlideshows
-default['cpe_screensaver']['moduleName'] = 'Computer Name'
+default['cpe_screensaver']['moduleName'] = ''
 
 #### OR ####
 

@@ -12,8 +12,22 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 #
 
+prefix = node['cpe_profiles']['prefix']
+organization = node['organization'] ? node['organization'] : 'Facebook'
+screensaver_profile = {
+  'PayloadIdentifier' => "#{prefix}.screensaver",
+      'PayloadRemovalDisallowed' => true,
+      'PayloadScope' => 'System',
+      'PayloadType' => 'Configuration',
+      'PayloadUUID' => 'CEA1E58D-9D0F-453A-AA52-830986A8366C',
+      'PayloadOrganization' => organization,
+      'PayloadVersion' => 1,
+      'PayloadDisplayName' => 'Screensaver',
+      'PayloadContent' => []
+}
+
 # Enforce screen saver settings
-ruby_block 'screensaver_profile' do
+ruby_block 'ss_prefs' do
   block do
     unless node['cpe_screensaver']['idleTime'] <= 600
       Chef::Log.warn(
@@ -26,142 +40,143 @@ ruby_block 'screensaver_profile' do
       )
     end
     
-    prefix = node['cpe_profiles']['prefix']
-    organization = node['organization'] ? node['organization'] : 'Facebook'
-
     message = node['cpe_screensaver']['MESSAGE'] ? node['cpe_screensaver']['MESSAGE'] : organization
     path = '/System/Library/Frameworks/ScreenSaver.framework/Resources/' + node['cpe_screensaver']['moduleName'] + '.saver'
-    style_key = node['cpe_screensaver']['styleKey'] ? node['cpe_screensaver']['styleKey'] : 'KenBurns'
-    source = node['cpe_screensaver']['SelectedFolderPath'] ? node['cpe_screensaver']['SelectedFolderPath'] : '4-Nature Patterns'
-    identifier = "/Library/Screen Savers/Default Collections"
-    selected_folder = identifier + "/" + source
-    selected_source = 3
-    shuffle_photos = node['cpe_screensaver']['ShufflesPhotos'] ? node['cpe_screensaver']['ShufflesPhotos'] : 0
-    if source.include? "/"
-      identifier = source
-      selected_folder = source
-      selected_source = 4
-    end
-    name = File.basename(identifier)
     
-    node.default['cpe_profiles']["#{prefix}.screensaver"] = {
-      'PayloadIdentifier' => "#{prefix}.screensaver",
-      'PayloadRemovalDisallowed' => true,
-      'PayloadScope' => 'System',
-      'PayloadType' => 'Configuration',
-      'PayloadUUID' => 'CEA1E58D-9D0F-453A-AA52-830986A8366C',
-      'PayloadOrganization' => organization,
+    screensaver_profile['PayloadContent'].push({
+      'PayloadType' => 'com.apple.ManagedClient.preferences',
       'PayloadVersion' => 1,
-      'PayloadDisplayName' => 'Screensaver',
-      'PayloadContent' => [
-        {
-          'PayloadType' => 'com.apple.ManagedClient.preferences',
-          'PayloadVersion' => 1,
-          'PayloadIdentifier' => "#{prefix}.screensaver",
-          'PayloadUUID' => '3B2AD6A9-F99E-4813-980A-4147617B2E75',
-          'PayloadEnabled' => true,
-          'PayloadDisplayName' => 'ScreenSaver',
-          'PayloadContent' => {
-            'com.apple.screensaver' => {
-              'Forced' => [
-                {
-                  'mcx_preference_settings' => {
-                    'idleTime' => node['cpe_screensaver']['idleTime'],
-                    'askForPassword' => node['cpe_screensaver']['askForPassword'],
-                    'askForPasswordDelay' => node['cpe_screensaver']['askForPasswordDelay']
+      'PayloadIdentifier' => "#{prefix}.screensaver",
+      'PayloadUUID' => '3B2AD6A9-F99E-4813-980A-4147617B2E75',
+      'PayloadEnabled' => true,
+      'PayloadDisplayName' => 'ScreenSaver',
+      'PayloadContent' => {
+        'com.apple.screensaver' => {
+          'Forced' => [
+            {
+              'mcx_preference_settings' => {
+                'idleTime' => node['cpe_screensaver']['idleTime'],
+                'askForPassword' => node['cpe_screensaver']['askForPassword'],
+                'askForPasswordDelay' => node['cpe_screensaver']['askForPasswordDelay']
+              }
+            }
+          ]
+        }
+      }
+    })
+
+    unless node['cpe_screensaver']['moduleName'].to_s == ''
+      screensaver_profile['PayloadContent'].push({
+        'PayloadType' => 'com.apple.ManagedClient.preferences',
+        'PayloadVersion' => 1,
+        'PayloadIdentifier' => "#{prefix}.screensaver.ByHost",
+        'PayloadUUID' => '01cb34f8-36f8-4fb6-babc-5ae3aa6c165b',
+        'PayloadEnabled' => true,
+        'PayloadDisplayName' => 'Module',
+        'PayloadContent' => {
+          'com.apple.screensaver.ByHost' => {
+            'Forced' => [
+              {
+                'mcx_preference_settings' => {
+                  'moduleDict' => {
+                    'moduleName' => node['cpe_screensaver']['moduleName'],
+                    'path' => path,
+                    'type' => 0
                   }
                 }
-              ]
-            }
-          }
-        },
-        {
-          'PayloadType' => 'com.apple.ManagedClient.preferences',
-          'PayloadVersion' => 1,
-          'PayloadIdentifier' => "#{prefix}.screensaver.ByHost",
-          'PayloadUUID' => '01cb34f8-36f8-4fb6-babc-5ae3aa6c165b',
-          'PayloadEnabled' => true,
-          'PayloadDisplayName' => 'Module',
-          'PayloadContent' => {
-            'com.apple.screensaver.ByHost' => {
-              'Forced' => [
-                {
-                  'mcx_preference_settings' => {
-                    'moduleDict' => {
-                      'moduleName' => node['cpe_screensaver']['moduleName'],
-                      'path' => path,
-                      'type' => 0
-                    }
-                  }
-                }
-              ]
-            }
-          }
-        },
-        {
-          'PayloadType' => 'com.apple.ManagedClient.preferences',
-          'PayloadVersion' => 1,
-          'PayloadIdentifier' => "#{prefix}.screensaver.Basic",
-          'PayloadUUID' => '8dd9a983-f59b-47c3-a408-ac55d287cbd4',
-          'PayloadEnabled' => true,
-          'PayloadDisplayName' => 'MESSAGE',
-          'PayloadContent' => {
-            'com.apple.screensaver.Basic.ByHost' => {
-              'Forced' => [
-                {
-                  'mcx_preference_settings' => {
-                    'MESSAGE' => message
-                  }
-                }
-              ]
-            }
-          }
-        },
-        {
-          'PayloadType' => 'com.apple.ManagedClient.preferences',
-          'PayloadVersion' => 1,
-          'PayloadIdentifier' => "#{prefix}.screensaver.iLifeSlideShows",
-          'PayloadUUID' => 'c3efe8e7-3516-4438-a959-80f85a294035',
-          'PayloadEnabled' => true,
-          'PayloadDisplayName' => 'Transitions',
-          'PayloadContent' => {
-            'com.apple.ScreenSaver.iLifeSlideShows.ByHost' => {
-              'Forced' => [
-                {
-                  'mcx_preference_settings' => {
-                    'styleKey' => style_key
-                  }
-                }
-              ]
-            }
-          }
-        },
-        {
-          'PayloadType' => 'com.apple.ManagedClient.preferences',
-          'PayloadVersion' => 1,
-          'PayloadIdentifier' => "#{prefix}.screensaver.ScreenSaverPhotoChooser",
-          'PayloadUUID' => '67775986-eab2-4723-a16c-3719397745fb',
-          'PayloadEnabled' => true,
-          'PayloadDisplayName' => 'Default Collections or Custom Folder',
-          'PayloadContent' => {
-            'com.apple.ScreenSaver.ScreenSaverPhotoChooser.ByHost' => {
-              'Forced' => [
-                {
-                  'mcx_preference_settings' => {
-                    'CustomFolderDict' => {
-                      'identifier' => identifier,
-                      'name' => name
-                    },
-                    'SelectedFolderPath' => selected_folder,
-                    'SelectedSource' => selected_source,
-                    'ShufflesPhotos' => shuffle_photos
-                  }
-                }
-              ]
-            }
+              }
+            ]
           }
         }
-      ]
-    }
+      })
+    end
+
+    unless node['cpe_screensaver']['MESSAGE'].to_s == ''
+      screensaver_profile['PayloadContent'].push({
+        'PayloadType' => 'com.apple.ManagedClient.preferences',
+        'PayloadVersion' => 1,
+        'PayloadIdentifier' => "#{prefix}.screensaver.Basic",
+        'PayloadUUID' => '8dd9a983-f59b-47c3-a408-ac55d287cbd4',
+        'PayloadEnabled' => true,
+        'PayloadDisplayName' => 'MESSAGE',
+        'PayloadContent' => {
+          'com.apple.screensaver.Basic.ByHost' => {
+            'Forced' => [
+              {
+                'mcx_preference_settings' => {
+                  'MESSAGE' => node['cpe_screensaver']['MESSAGE']
+                }
+              }
+            ]
+          }
+        }
+      })
+    end
+
+    if node['cpe_screensaver']['moduleName'].to_s == 'iLifeSlideshows'
+      style_key = node['cpe_screensaver']['styleKey'] ? node['cpe_screensaver']['styleKey'] : 'KenBurns'
+      screensaver_profile['PayloadContent'].push({
+        'PayloadType' => 'com.apple.ManagedClient.preferences',
+        'PayloadVersion' => 1,
+        'PayloadIdentifier' => "#{prefix}.screensaver.iLifeSlideShows",
+        'PayloadUUID' => 'c3efe8e7-3516-4438-a959-80f85a294035',
+        'PayloadEnabled' => true,
+        'PayloadDisplayName' => 'Transitions',
+        'PayloadContent' => {
+          'com.apple.ScreenSaver.iLifeSlideShows.ByHost' => {
+            'Forced' => [
+              {
+                'mcx_preference_settings' => {
+                  'styleKey' => style_key
+                }
+              }
+            ]
+          }
+        }
+      })
+    end
+
+    if node['cpe_screensaver']['moduleName'].to_s == 'iLifeSlideshows'
+      identifier = "/Library/Screen Savers/Default Collections"
+      source = node['cpe_screensaver']['SelectedFolderPath'] ? node['cpe_screensaver']['SelectedFolderPath'] : '4-Nature Patterns'
+      selected_folder = identifier + "/" + source
+      selected_source = 3
+      if source.include? "/"
+        identifier = source
+        selected_folder = source
+        selected_source = 4
+      end
+      name = File.basename(identifier)
+      shuffle_photos = node['cpe_screensaver']['ShufflesPhotos'] ? node['cpe_screensaver']['ShufflesPhotos'] : 0
+      screensaver_profile['PayloadContent'].push({
+        'PayloadType' => 'com.apple.ManagedClient.preferences',
+        'PayloadVersion' => 1,
+        'PayloadIdentifier' => "#{prefix}.screensaver.ScreenSaverPhotoChooser",
+        'PayloadUUID' => '67775986-eab2-4723-a16c-3719397745fb',
+        'PayloadEnabled' => true,
+        'PayloadDisplayName' => 'Default Collections or Custom Folder',
+        'PayloadContent' => {
+          'com.apple.ScreenSaver.ScreenSaverPhotoChooser.ByHost' => {
+            'Forced' => [
+              {
+                'mcx_preference_settings' => {
+                  'CustomFolderDict' => {
+                    'identifier' => identifier,
+                    'name' => name
+                  },
+                  'SelectedFolderPath' => selected_folder,
+                  'SelectedSource' => selected_source,
+                  'ShufflesPhotos' => shuffle_photos
+                }
+              }
+            ]
+          }
+        }
+      })
+    end
+    
+    node.default['cpe_profiles']["#{prefix}.screensaver"] =
+        screensaver_profile
   end
 end
+
