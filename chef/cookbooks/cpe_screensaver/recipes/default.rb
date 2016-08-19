@@ -11,6 +11,7 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 #
+module_name = ''
 
 prefix = node['cpe_profiles']['prefix']
 organization = node['organization'] ? node['organization'] : 'Facebook'
@@ -39,9 +40,11 @@ ruby_block 'ss_prefs' do
         'Screensaver password delay is too high!'
       )
     end
-    
-    message = node['cpe_screensaver']['MESSAGE'] ? node['cpe_screensaver']['MESSAGE'] : organization
-    path = '/System/Library/Frameworks/ScreenSaver.framework/Resources/' + node['cpe_screensaver']['moduleName'] + '.saver'
+    unless node['cpe_screensaver']['MESSAGE'].empty? && node['cpe_screensaver']['SelectedFolderPath'].empty?
+      Chef::Log.warn(
+        'Screensaver module management has conflicting keys!'
+      )
+    end
     
     screensaver_profile['PayloadContent'].push({
       'PayloadType' => 'com.apple.ManagedClient.preferences',
@@ -65,32 +68,9 @@ ruby_block 'ss_prefs' do
       }
     })
 
-    unless node['cpe_screensaver']['moduleName'].to_s == ''
-      screensaver_profile['PayloadContent'].push({
-        'PayloadType' => 'com.apple.ManagedClient.preferences',
-        'PayloadVersion' => 1,
-        'PayloadIdentifier' => "#{prefix}.screensaver.ByHost",
-        'PayloadUUID' => '01cb34f8-36f8-4fb6-babc-5ae3aa6c165b',
-        'PayloadEnabled' => true,
-        'PayloadDisplayName' => 'Module',
-        'PayloadContent' => {
-          'com.apple.screensaver.ByHost' => {
-            'Forced' => [
-              {
-                'mcx_preference_settings' => {
-                  'moduleDict' => {
-                    'moduleName' => node['cpe_screensaver']['moduleName'],
-                    'path' => path,
-                    'type' => 0
-                  }
-                }
-              }
-            ]
-          }
-        }
-      })
- 
+    unless node['cpe_screensaver']['MESSAGE'].to_s == ''
       message = node['cpe_screensaver']['MESSAGE'] ? node['cpe_screensaver']['MESSAGE'] : organization
+      module_name = 'Computer Name'
       screensaver_profile['PayloadContent'].push({
         'PayloadType' => 'com.apple.ManagedClient.preferences',
         'PayloadVersion' => 1,
@@ -112,8 +92,36 @@ ruby_block 'ss_prefs' do
       })
     end
 
-    if node['cpe_screensaver']['moduleName'].to_s == 'iLifeSlideshows'
-      style_key = node['cpe_screensaver']['styleKey'] ? node['cpe_screensaver']['styleKey'] : 'KenBurns'
+    unless module_name == '' && node['cpe_screensaver']['SelectedFolderPath'].to_s == ''
+      module_name = 'iLifeSlideshows' if module_name.to_s.empty?
+      module_path = '/System/Library/Frameworks/ScreenSaver.framework/Resources/' + module_name + '.saver'
+      screensaver_profile['PayloadContent'].push({
+        'PayloadType' => 'com.apple.ManagedClient.preferences',
+        'PayloadVersion' => 1,
+        'PayloadIdentifier' => "#{prefix}.screensaver.ByHost",
+        'PayloadUUID' => '01cb34f8-36f8-4fb6-babc-5ae3aa6c165b',
+        'PayloadEnabled' => true,
+        'PayloadDisplayName' => 'Module',
+        'PayloadContent' => {
+          'com.apple.screensaver.ByHost' => {
+            'Forced' => [
+              {
+                'mcx_preference_settings' => {
+                  'moduleDict' => {
+                    'moduleName' => module_name,
+                    'path' => module_path,
+                    'type' => 0
+                  }
+                }
+              }
+            ]
+          }
+        }
+      })
+    end
+    
+    if module_name == 'iLifeSlideshows'
+      style_key = 'KenBurns' if node['cpe_screensaver']['styleKey'].to_s.empty?
       screensaver_profile['PayloadContent'].push({
         'PayloadType' => 'com.apple.ManagedClient.preferences',
         'PayloadVersion' => 1,
@@ -144,7 +152,7 @@ ruby_block 'ss_prefs' do
         selected_source = 4
       end
       name = File.basename(identifier)
-      shuffle_photos = node['cpe_screensaver']['ShufflesPhotos'] ? node['cpe_screensaver']['ShufflesPhotos'] : 0
+      shuffle_photos = 0 if node['cpe_screensaver']['styleKey'].empty?
       screensaver_profile['PayloadContent'].push({
         'PayloadType' => 'com.apple.ManagedClient.preferences',
         'PayloadVersion' => 1,
