@@ -15,7 +15,6 @@
 # Enforce screen saver settings
 ruby_block 'ss_prefs' do
   block do
-    # module_name = ''
     prefix = node['cpe_profiles']['prefix']
     organization = node['organization'] ? node['organization'] : 'Facebook'
     screensaver_profile = {
