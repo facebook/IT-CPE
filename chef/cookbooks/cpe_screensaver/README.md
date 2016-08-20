@@ -24,8 +24,8 @@ whichever prefix is set in node['cpe_profiles']['prefix'], which defaults to
 `com.facebook.chef`
 
 The profile delivers a payload for the above keys in `node['cpe_screensaver']`.
-The provided "security" keys have a sane default, which can be overridden in
-another recipe if desired.
+The provided keys have a sane default, which can be overridden in another recipe
+if desired.
 
 For example, you could tweak the above values
 
@@ -33,14 +33,14 @@ For example, you could tweak the above values
     node.default['cpe_screensaver']['askForPasswordDelay'] = 2
     node.default['cpe_screensaver']['MESSAGE'] = 'Authorised access only!'
 
+    # Acceptable values: 1-National Geographic, 2-Aerial, 3-Cosmos,
+    # 4-Nature Patterns or a custom path: '/Users/YOURUSERNAME/Pictures'
+    node.default['cpe_screensaver']['SelectedFolderPath'] = 4-Nature Patterns
+
     # Acceptable (defaults to KenBurns) values: Floating, Flipup, Reflections,
     # Origami, ShiftingTiles, SlidingPanels, PhotoMobile, HolidayMobile,
     # PhotoWall, VintagePrints, KenBurns, Classic
     node.default['cpe_screensaver']['styleKey']
-
-    # Acceptable values: 1-National Geographic, 2-Aerial, 3-Cosmos,
-    # 4-Nature Patterns or a custom path: '/Users/YOURUSERNAME/Pictures'
-    node.default['cpe_screensaver']['SelectedFolderPath'] = 4-Nature Patterns
 
     # Acceptable (defaults to 0) values: 0 or 1
     node.default['cpe_screensaver']['ShufflesPhotos'] = 0
