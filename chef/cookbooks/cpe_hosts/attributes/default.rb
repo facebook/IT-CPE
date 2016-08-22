@@ -12,4 +12,9 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 #
 
-default['cpe_hosts']['extra_entries'] = {}
+default['cpe_hosts'] = {
+  'extra_entries' => {
+    '::1' => [],
+    '127.0.0.1' => [],
+  },
+}
