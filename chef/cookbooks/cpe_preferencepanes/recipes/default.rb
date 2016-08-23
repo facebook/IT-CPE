@@ -11,10 +11,12 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 #
+pp_prefs = {}
 
 ruby_block 'pp_prefs' do
   block do
-    if node['cpe_preferencepanes']
+    pp_prefs = node['cpe_preferencepanes'].reject { |v| v.nil? }
+    unless pp_prefs.empty?
       organization = node['organization'] ? node['organization'] : 'Facebook'
       prefix = node['cpe_profiles']['prefix']
       node.default['cpe_profiles']["#{prefix}.prefpanes"] = {
@@ -34,7 +36,7 @@ ruby_block 'pp_prefs' do
             'PayloadUUID' => '77537A7B-76E2-4ED8-B559-A581002CFD3C',
             'PayloadEnabled' => true,
             'PayloadDisplayName' => 'Preference Panes',
-            'DisabledPreferencePanes' => node['cpe_preferencepanes']
+            'DisabledPreferencePanes' => pp_prefs
           }
         ]
       }
