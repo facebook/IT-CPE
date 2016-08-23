@@ -25,6 +25,4 @@ will create an entry in /etc/hosts like:
 
   # /etc/hosts
   ...
-  #Start-CPE-Managed-Hosts
-  127.0.0.1 home
-  #End-CPE-Managed-Hosts
+  123.4.5.6 myaddress.com # Chef Managed

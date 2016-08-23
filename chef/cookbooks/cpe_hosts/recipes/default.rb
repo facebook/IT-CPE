@@ -12,23 +12,4 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 #
 
-require 'English'
-
-LINE_MARKER = ' # Chef Managed' + $RS
-
-HOSTS_FILE = '/etc/hosts'
-
-lines = File.readlines(HOSTS_FILE).
-        select { |line| !line.end_with?(LINE_MARKER) }
-
-node['cpe_hosts']['extra_entries'].each do |ip, names|
-  entry = ip + ' ' + names.join(' ')
-  lines.push(entry + LINE_MARKER)
-end
-
-# Write out the new `/etc/hosts` file using the normal chef machinery.
-# The defaults for `file` will only write the file if the contents has
-# changed, and will do so atomically.
-file HOSTS_FILE do
-  content lines.join
-end
+cpe_hosts 'Managing hosts file'
