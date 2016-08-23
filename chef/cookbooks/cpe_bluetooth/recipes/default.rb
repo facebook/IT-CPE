@@ -12,4 +12,4 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 #
 
-cpe_bluetooth 'Apply blueooth profile'
+cpe_bluetooth 'Apply bluetooth profile'
