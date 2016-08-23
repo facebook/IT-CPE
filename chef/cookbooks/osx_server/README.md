@@ -2,6 +2,10 @@ Description
 ==================
 Configures a machine to be a an imaging server
 
+Depedencies
+==================
+This cookbook requires [mac_os_x](https://supermarket.chef.io/cookbooks/mac_os_x)
+
 Usage
 -----
 Ensure the machine has the /Library/CPE/tags/is_imaging_server
