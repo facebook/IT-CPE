@@ -44,5 +44,5 @@ action :run do
       node['cpe_nightly_reboot']['script'],
     ],
     'start_calendar_interval' => logout,
-  } unless logout.empty? && File.exist?(node['cpe_nightly_reboot']['script'])
+  } unless logout.empty?
 end
