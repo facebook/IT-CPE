@@ -15,7 +15,7 @@ pp_prefs = {}
 
 ruby_block 'pp_prefs' do
   block do
-    pp_prefs = node['cpe_preferencepanes'].reject { |v| v.nil? }
+    pp_prefs = node['cpe_preferencepanes'].reject { nil? }
     unless pp_prefs.empty?
       organization = node['organization'] ? node['organization'] : 'Facebook'
       prefix = node['cpe_profiles']['prefix']
