@@ -22,7 +22,8 @@ default['cpe']['imaging_servers']['netboot'] = {
   'netboot:logging_level' => '"MEDIUM"',
   'netboot:filterEnabled' => 'no',
   'netboot:netBootPortsRecordsArray:_array_index:0:deviceAtIndex' => '"en0"',
-  # 'netboot:netBootPortsRecordsArray:_array_index:0:nameAtIndex' => '"Ethernet"',
+  # 'netboot:netBootPortsRecordsArray:_array_index:0:nameAtIndex' =>
+  # '"Ethernet"',
   'netboot:netBootPortsRecordsArray:_array_index:0:isEnabledAtIndex' => 'yes',
   'netboot:netBootStorageRecordsArray:_array_index:0:sharepoint' => 'yes',
   'netboot:netBootStorageRecordsArray:_array_index:0:clients' => 'no',
@@ -40,7 +41,7 @@ default['cpe']['imaging_servers']['netboot'] = {
   'netboot:netBootImagesRecordsArray:_array_index:0:Kind' => '"2"',
   # Change the name that shows up during boot selection time here
   'netboot:netBootImagesRecordsArray:_array_index:0:Description' =>
-    "#{node['hostname']}",
+    node['hostname'],
   'netboot:netBootImagesRecordsArray:_array_index:0:Name' =>
     hostname_suffix,
   'netboot:netBootImagesRecordsArray:_array_index:0:Index' => index,
@@ -53,7 +54,7 @@ default['cpe']['imaging_servers']['netboot'] = {
   'netboot:netBootImagesRecordsArray:_array_index:0:Architectures' => '"4"',
   'netboot:netBootImagesRecordsArray:_array_index:0:IsEnabled' => 'yes',
   'netboot:netBootImagesRecordsArray:_array_index:0:RootPath' =>
-    '"NetInstall.dmg"'
+    '"NetInstall.dmg"',
 }
 
 default['cpe']['imaging_servers']['caching'] = {
@@ -65,7 +66,7 @@ default['cpe']['imaging_servers']['caching'] = {
   # local subnets only
   'caching:LocalSubnetsOnly' => 'yes',
   'caching:DataPath' => '"/Library/Server/Caching/Data"',
-  'caching:ServerRoot' => '"/Library/Server"'
+  'caching:ServerRoot' => '"/Library/Server"',
 }
 
 # See 'man sharing' for details
@@ -76,25 +77,25 @@ default['cpe']['imaging_servers']['sharing'] = {
   'enable' => '101',
   'guest' => '101',
   # Disable inheriting privileges for AFP
-  'inherit' => '00'
+  'inherit' => '00',
 }
 
 default['cpe']['imaging_servers']['sharing_correct'] =
-"name:   DeployStudio
-path:   #{node['cpe']['imaging_servers']['ds_repo']}
-  afp:  {
-        name: DeployStudio
-        shared: 1
-        guest access: 1
-        inherit perms:  0
-  }
-  ftp:  {
-        name: DeployStudio
-        shared: 0
-        guest access: 0
-  }
-  smb:  {
-        name: DeployStudio
-        shared: 1
-        guest access: 1
-  }"
+  "name:   DeployStudio
+  path:   #{node['cpe']['imaging_servers']['ds_repo']}
+    afp:  {
+          name: DeployStudio
+          shared: 1
+          guest access: 1
+          inherit perms:  0
+    }
+    ftp:  {
+          name: DeployStudio
+          shared: 0
+          guest access: 0
+    }
+    smb:  {
+          name: DeployStudio
+          shared: 1
+          guest access: 1
+    }"
