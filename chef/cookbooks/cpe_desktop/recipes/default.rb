@@ -12,35 +12,4 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 #
 
-# Enforce desktop wallpaper settings
-ruby_block 'desktop_profile' do
-  block do
-    prefix = node['cpe_profiles']['prefix']
-    organization = node['organization'] ? node['organization'] : 'Facebook'
-    override_picture_path = node['cpe_desktop']['override-picture-path']
-    if override_picture_path
-      node.default['cpe_profiles']["#{prefix}.desktop"] = {
-        'PayloadIdentifier' => "#{prefix}.desktop",
-        'PayloadRemovalDisallowed' => true,
-        'PayloadScope' => 'System',
-        'PayloadType' => 'Configuration',
-        'PayloadUUID' => '5450b6cb-83ef-56e5-65df-f3ba1af1ff6a',
-        'PayloadOrganization' => organization,
-        'PayloadVersion' => 1,
-        'PayloadDisplayName' => 'Desktop',
-        'PayloadContent' => [
-          {
-            'PayloadType' => 'com.apple.desktop',
-            'PayloadVersion' => 1,
-            'PayloadIdentifier' => "#{prefix}.desktop",
-            'PayloadUUID' => '4c390cb0-4832-0134-efbb-2c87a324f377',
-            'PayloadEnabled' => true,
-            'PayloadDisplayName' => 'Desktop',
-            'locked' => true,
-            'override-picture-path' => override_picture_path
-          }
-        ]
-      }
-    end
-  end
-end
+cpe_desktop 'Apply Preference Desktop Wallpaper'

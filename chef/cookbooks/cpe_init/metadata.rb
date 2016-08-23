@@ -15,6 +15,7 @@ depends 'cpe_utils'
 
 
 ### API Cookbooks
+depends 'cpe_desktop'
 depends 'cpe_bluetooth'
 depends 'cpe_hosts'
 depends 'cpe_launchd'

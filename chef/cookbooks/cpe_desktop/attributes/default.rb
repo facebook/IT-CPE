@@ -13,3 +13,4 @@
 #
 
 default['cpe_desktop']['override-picture-path'] = nil
+node.default['cpe_desktop']['override-picture-path'] = '/Library/Desktop Pictures/Abstract.jpg'

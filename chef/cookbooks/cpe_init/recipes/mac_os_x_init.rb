@@ -24,6 +24,7 @@ run_list += [
 # API Cookbooks go last
 if node.macos?
   run_list += [
+    'cpe_desktop',
     'cpe_bluetooth',
     'cpe_hosts',
     'cpe_pathsd',
