@@ -15,8 +15,10 @@
 resource_name :cpe_desktop
 default_action :run
 
+dw_prefs = {}
+
 action :run do
-  dw_prefs = node['cpe_desktop'].reject { nil? }
+  dw_prefs = node['cpe_desktop'].reject { |_k, v| v.nil? }
   unless dw_prefs.empty?
     prefix = node['cpe_profiles']['prefix']
     organization = node['organization'] ? node['organization'] : 'Facebook'
