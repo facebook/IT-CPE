@@ -29,7 +29,7 @@ action :run do
     'PayloadUUID' => '5450b6cb-83ef-56e5-65df-f3ba1af1ff6a',
     'PayloadOrganization' => organization,
     'PayloadVersion' => 1,
-    'PayloadDisplayName' => 'Desktop',
+    'PayloadDisplayName' => override_picture_path,
     'PayloadContent' => [
       {
         'PayloadType' => 'com.apple.desktop',
