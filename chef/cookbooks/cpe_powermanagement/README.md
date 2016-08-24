@@ -7,7 +7,8 @@ If any of the values of the attributes are non-nil, a profile is created and app
 
 Requirements
 ------------
-* Mac OS X
+This can be run on any OS X machine, but this is really intended to only apply to dashboards, lobbies, imaging servers, and wayfinders, which need special power configurations.
+
 
 Attributes
 ----------
