@@ -17,7 +17,7 @@ default_action :run
 
 action :run do
   node['cpe_profiles'].to_hash.values.each do |profile|
-    next if profile.is_a?(String) && 
+    next if profile.is_a?(String) &&
       profile.match(node['cpe_profiles']['prefix'])
     identifier = process_identifier(profile)
     osx_profiles_resource(identifier, 'install', profile)
@@ -35,9 +35,9 @@ end
 def process_identifier(profile)
   identifier = profile['PayloadIdentifier']
   unless identifier.start_with?(node['cpe_profiles']['prefix'])
-    error_string = "#{identifier} is an invalid profile identifier. The" +
-                   "identifier must start with #{node['cpe_profiles']['prefix']}!"
-    fail Chef::Exceptions::ConfigurationError, error_string
+    err_string = "#{identifier} is an invalid profile identifier. The" +
+                 "identifier must start with #{node['cpe_profiles']['prefix']}!"
+    fail Chef::Exceptions::ConfigurationError, err_string
   end
   identifier
 end
@@ -61,11 +61,13 @@ def find_managed_profile_identifiers
     end
   end
   current_identifiers = []
-  profiles_string = `profiles -P -o stdout-xml`
+  profiles_string = `profiles -P -o stdout-xml` # ~FC048 BAD! To be fixed.
   profiles = Plist.parse_xml(profiles_string)
   if profiles['_computerlevel']
     profiles['_computerlevel'].each do |profile|
-      if profile['ProfileIdentifier'].start_with?(node['cpe_profiles']['prefix'])
+      if profile['ProfileIdentifier'].start_with?(
+        node['cpe_profiles']['prefix'],
+      )
         current_identifiers << profile['ProfileIdentifier']
       end
     end
