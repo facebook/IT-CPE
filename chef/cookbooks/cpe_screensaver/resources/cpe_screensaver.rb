@@ -20,24 +20,24 @@ action :config do
   warn = node['cpe_screensaver']['__nowarn'] ? false : true
   if node['cpe_screensaver']['idleTime'] >= 600
     Chef::Log.warn(
-      'Screensaver idle time is too long!',
+      'Screensaver idle time is too long!'
     ) if warn
   end
   if node['cpe_screensaver']['askForPasswordDelay'] >= 5
     Chef::Log.warn(
-      'Screensaver password delay is too long!',
+      'Screensaver password delay is too long!'
     ) if warn
   end
   if node['cpe_screensaver']['MESSAGE'] &&
      node['cpe_screensaver']['SelectedFolderPath']
     Chef::Log.warn(
       'Screensaver module management has conflicting keys! \
-      MESSAGE && SelectedFolderPath',
+      MESSAGE && SelectedFolderPath, sticking with MESSAGE'
     ) if warn
   end
   prefix = node['cpe_profiles']['prefix']
   organization = node['organization'] ? node['organization'] : 'Facebook'
-  screensaver_profile ={
+  screensaver_profile = {
     'PayloadIdentifier' => "#{prefix}.screensaver",
     'PayloadRemovalDisallowed' => true,
     'PayloadScope' => 'System',
@@ -102,6 +102,13 @@ action :config do
     resources = '/System/Library/Frameworks/ScreenSaver.framework/Resources/'
     module_name = module_name ? module_name : 'iLifeSlideshows'
     path = resources + module_name + '.saver'
+
+    if node['cpe_screensaver']['SelectedFolderPath'].include? '.saver'
+      resources = '/Library/Screen Savers/'
+      module_name = node['cpe_screensaver']['SelectedFolderPath']
+      path = resources + module_name
+    end
+
     screensaver_profile['PayloadContent'].push(
       'PayloadType' => 'com.apple.ManagedClient.preferences',
       'PayloadVersion' => 1,

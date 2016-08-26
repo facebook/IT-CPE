@@ -34,7 +34,8 @@ For example, you could tweak the above values
     node.default['cpe_screensaver']['MESSAGE'] = 'Authorised access only!'
 
     # Acceptable values: 1-National Geographic, 2-Aerial, 3-Cosmos,
-    # 4-Nature Patterns or a custom path: '/Users/YOURUSERNAME/Pictures'
+    # 4-Nature Patterns, a custom path: '/Users/YOURUSERNAME/Pictures'
+    # or a saver 'FILENAME.saver' (path /Library/Screen Savers/FILENAME.saver)
     node.default['cpe_screensaver']['SelectedFolderPath'] = 4-Nature Patterns
 
     # Acceptable (defaults to KenBurns) values: Floating, Flipup, Reflections,
@@ -50,4 +51,3 @@ get locked down. This could be misleading to the end user, they may think they
 can change it via the UI and will find out their settings keep getting mashed
 by the profile. Consider a lockdown profile "DisabledPreferencePanes" to
 work in conjuntion with this cookbook.
-
