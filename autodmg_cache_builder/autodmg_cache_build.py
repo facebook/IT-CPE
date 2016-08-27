@@ -258,7 +258,7 @@ def handle_extras(extras_file, exceptions_path, additions_path,
       item_name = getURLitemBasename(addition)
       if "http" in addition:
         print "Considering %s" % addition
-        if item_name.endswith('.mobileconfig'):
+        if item_name.endswith('.mobileconfig') and MUNKI_PROFILES is True:
           # profiles must be downloaded into the 'exceptions' directory
           if handle_dl(item_name, addition, exceptions_path,
                        force):
@@ -392,6 +392,9 @@ def main():
     '--noicons', help="Don't cache icons.",
     action='store_true', default=False)
   parser.add_argument(
+    '--installmobileconfig', help="Don't move .mobileconfigs to exceptions.",
+    action='store_true', default=True)
+  parser.add_argument(
     '-u', '--update', help='Update the profiles plist.',
     action='store_true', default=False)
   parser.add_argument(
@@ -403,6 +406,10 @@ def main():
     '--extras', help='Path to JSON file containing additions '
                      ' and exceptions lists.')
   args = parser.parse_args()
+
+  if args.installmobileconfig:
+    global MUNKI_PROFILES
+    MUNKI_PROFILES = False
 
   print "Using Munki repo: %s" % MUNKI_URL
   global CACHE

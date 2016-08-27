@@ -16,7 +16,7 @@
 directory '/usr/local/libexec' do
   owner 'root'
   group 'wheel'
-  mode 0755
+  mode '0755'
   action :create
 end
 
@@ -51,7 +51,7 @@ unless File.exist?(server_done)
     only_if { File.exist?(serverd) }
     owner 'root'
     group 'wheel'
-    mode 0755
+    mode '0755'
     content lazy { ::File.open(serverd).read }
     action :create
   end
@@ -95,7 +95,7 @@ return unless File.exist?(server_admin)
 # Set all the NetBoot/NetInstall settings
 node['cpe']['imaging_servers']['netboot'].each do |setting, value|
   current_setting = Mixlib::ShellOut.new(
-    "#{server_admin} settings #{setting}"
+    "#{server_admin} settings #{setting}",
   ).run_command.stdout
   result = "#{setting} = #{value}"
   execute 'Apply NetBoot settings' do
@@ -109,9 +109,9 @@ end
 # Set all the Caching Server settings
 node['cpe']['imaging_servers']['caching'].each do |setting, value|
   current = Mixlib::ShellOut.new(
-    "#{server_admin} settings #{setting}"
+    "#{server_admin} settings #{setting}",
   ).run_command.stdout
-  execute 'Apply Caching settings' do
+  execute 'Apply Caching settings' do # ~FC022
     only_if { File.exist?(server_done) }
     not_if { current.include?(value) }
     command "#{server_admin} settings #{setting}=#{value}"
@@ -124,7 +124,7 @@ plist_name = 'com.apple.PowerManagement.plist'
 plist_location = "/Library/Preferences/SystemConfiguration/#{plist_name}"
 cookbook_file plist_location do
   source plist_name
-  mode 0644
+  mode '0644'
   owner 'root'
   group 'wheel'
 end
@@ -133,7 +133,7 @@ end
 # Compile list of existing shares
 sharing = '/usr/sbin/sharing'
 share_list = Mixlib::ShellOut.new(
-  "#{sharing} -l | grep name:"
+  "#{sharing} -l | grep name:",
 ).run_command.stdout
 sharenames = []
 share_list.split("\t\t").each do |share|
@@ -143,7 +143,7 @@ correct_name = 'DeployStudio'
 # Removing existing shares that aren't the one we care about
 unless sharenames.sort == [correct_name, 'NetBootSP0'].sort
   sharenames.each do |share|
-    execute 'Remove share' do
+    execute 'Remove share' do # ~FC022
       only_if { File.exist?(server_done) }
       not_if { share == 'NetBootSP0' || share == correct_name }
       command "#{sharing} -r \"#{share}\""
@@ -154,7 +154,7 @@ end
 # Create the DeployStudio share for AFP and SMB
 correct = node['cpe']['imaging_servers']['sharing_correct']
 share_list_full = Mixlib::ShellOut.new(
-  "#{sharing} -l"
+  "#{sharing} -l",
 ).run_command.stdout
 settings_correct =
   share_list_full.gsub(/\s*/, '').include?(correct.gsub(/\s*/, ''))
@@ -183,7 +183,7 @@ end
 service 'osx_server_caching' do
   # Only do this if the server is fully set up
   only_if { File.exist?(server_done) }
-  supports status: true
+  supports :status => true
   status_command "#{server_admin} status caching | grep -q RUNNING"
   provider Chef::Provider::Service::Simple
   start_command "#{server_admin} start caching"
@@ -195,7 +195,7 @@ end
 # We must use a .done file because the .nbi can exist before it's ready for use
 service 'osx_server_netboot' do
   only_if { File.exist?(server_done) }
-  supports status: true
+  supports :status => true
   status_command "#{server_admin} status netboot | grep -q RUNNING"
   provider Chef::Provider::Service::Simple
   start_command "#{server_admin} start netboot"
@@ -206,7 +206,7 @@ end
 # Sharing as a service
 service 'osx_server_sharing' do
   only_if { File.exist?(server_done) }
-  supports status: true
+  supports :status => true
   status_command "#{server_admin} status sharing | grep -q RUNNING"
   provider Chef::Provider::Service::Simple
   start_command "#{server_admin} start sharing"

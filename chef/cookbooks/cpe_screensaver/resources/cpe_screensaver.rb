@@ -46,6 +46,7 @@ action :config do
     'PayloadOrganization' => organization,
     'PayloadVersion' => 1,
     'PayloadDisplayName' => 'Screensaver',
+<<<<<<< HEAD
     'PayloadContent' => []
   }
 

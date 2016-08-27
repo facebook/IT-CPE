@@ -29,7 +29,7 @@ whyrun_safe_ruby_block 'blacklisted_items' do
   action :run
 end
 
-template config_path do
+template config_path do # ~FC033
   source 'chocolatey.config.erb'
   rights :full_control, ['Administrators', 'SYSTEM']
   rights :read_execute, 'USERS'

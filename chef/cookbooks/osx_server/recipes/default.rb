@@ -15,7 +15,7 @@
 return unless node.macosx?
 
 # Configure service directories, account
-include_recipe 'cpe_imaging_servers::setup'
+include_recipe 'osx_server::setup'
 
 # Configure and enable OS X Server.app services
-include_recipe 'cpe_imaging_servers::osx_server'
+include_recipe 'osx_server::osx_server'

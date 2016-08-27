@@ -40,6 +40,6 @@ choco_managed_installs['GoogleChrome'] = {
 }
 
 # Send package list data to cache file
-file "#{node['cpe_choco']['app_cache']}" do
+file node['cpe_choco']['app_cache'] do
   content choco_managed_installs.to_json
 end
