@@ -39,8 +39,8 @@ action :run do
         'PayloadEnabled' => true,
         'PayloadDisplayName' => 'Desktop',
         'locked' => true,
-        'override-picture-path' => override_picture_path
-      }
-    ]
+        'override-picture-path' => override_picture_path,
+      },
+    ],
   }
 end

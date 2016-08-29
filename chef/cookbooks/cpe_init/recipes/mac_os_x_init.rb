@@ -12,13 +12,12 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 #
 
-
 run_list = []
 
 # HERE: This is your recipe to place settings and additional cookbooks you
 # would like to include
 run_list += [
-  'cpe_init::company_init'
+  'cpe_init::company_init',
 ]
 
 # API Cookbooks go last
@@ -43,7 +42,6 @@ if node.macos?
     'cpe_profiles',
   ]
 end
-
 
 # Log run_list
 runlist_log_cmd = "logger -t CPE-init 'Run_list: #{run_list.uniq}'"
