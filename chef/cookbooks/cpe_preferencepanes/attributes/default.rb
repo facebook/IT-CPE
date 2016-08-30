@@ -12,4 +12,5 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 #
 
-default['cpe_preferencepanes'] = []
+# Disable System PreferencePanes
+default['cpe_preferencepanes']['DisabledPreferencePanes'] = nil

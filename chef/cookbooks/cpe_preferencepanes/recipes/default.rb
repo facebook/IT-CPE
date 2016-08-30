@@ -11,36 +11,5 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 #
-pp_prefs = {}
 
-ruby_block 'pp_prefs' do
-  block do
-    pp_prefs = node['cpe_preferencepanes'].reject { nil? }
-    unless pp_prefs.empty?
-      organization = node['organization'] ? node['organization'] : 'Facebook'
-      prefix = node['cpe_profiles']['prefix']
-      node.default['cpe_profiles']["#{prefix}.prefpanes"] = {
-        'PayloadIdentifier' => "#{prefix}.prefpanes",
-        'PayloadRemovalDisallowed' => true,
-        'PayloadScope' => 'System',
-        'PayloadType' => 'Configuration',
-        'PayloadUUID' => 'E2R9I0K4-1C7F-4662-9921-GCO3MBE7Z4BD',
-        'PayloadOrganization' => organization,
-        'PayloadVersion' => 1,
-        'PayloadDisplayName' => 'Preference Panes',
-        'PayloadContent' => [
-          {
-            'PayloadType' => 'com.apple.systempreferences',
-            'PayloadVersion' => 1,
-            'PayloadIdentifier' => "#{prefix}.prefpanes",
-            'PayloadUUID' => '77537A7B-76E2-4ED8-B559-A581002CFD3C',
-            'PayloadEnabled' => true,
-            'PayloadDisplayName' => 'Preference Panes',
-            'DisabledPreferencePanes' => pp_prefs
-          }
-        ]
-      }
-    end
-  end
-  action :run
-end
+cpe_preferencepanes 'Configure PreferencePanes Profile'

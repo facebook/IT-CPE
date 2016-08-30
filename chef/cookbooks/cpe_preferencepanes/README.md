@@ -6,7 +6,7 @@ panes without macos built-in authorization hooks.
 
 Attributes
 ----------
-* node['cpe_preferencepanes']
+* node['cpe_preferencepanes']['DisabledPreferencePanes']
 
 Usage
 -----
@@ -18,7 +18,7 @@ whichever prefix is set in node['cpe_profiles']['prefix'], which defaults
 to `com.facebook.chef`
 
 The profile delivers a payload for the above key in the
-`node['com.apple.systempreferences']`.
+`node['cpe_preferencepanes']['DisabledPreferencePanes']`.
 
 For example;
 
