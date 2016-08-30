@@ -49,9 +49,6 @@ action :config do
     'PayloadContent' => [],
   }
 
-  # idleTime can be any arbitrary value in this PayloadContent as this hash key
-  # simply locks the UI element, the real value is set in the ByHost hash, i'm
-  # setting it here to match node['cpe_screensaver']['idleTime'] for consistency
   screensaver_profile['PayloadContent'].push(
     'PayloadType' => 'com.apple.ManagedClient.preferences',
     'PayloadVersion' => 1,
@@ -88,7 +85,7 @@ action :config do
       'PayloadDisplayName' => message,
       'PayloadContent' => {
         'com.apple.screensaver.Basic.ByHost' => {
-          'Forced' => [
+          'Set-Once' => [
             {
               'mcx_preference_settings' => {
                 'MESSAGE' => message,
@@ -121,7 +118,7 @@ action :config do
       'PayloadDisplayName' => module_name,
       'PayloadContent' => {
         'com.apple.screensaver.ByHost' => {
-          'Forced' => [
+          'Set-Once' => [
             {
               'mcx_preference_settings' => {
                 'moduleDict' => {
@@ -146,7 +143,7 @@ action :config do
       'PayloadDisplayName' => 'idleTime',
       'PayloadContent' => {
         'com.apple.screensaver.ByHost' => {
-          'Forced' => [
+          'Set-Once' => [
             {
               'mcx_preference_settings' => {
                 'moduleDict' => {
@@ -172,7 +169,7 @@ action :config do
       'PayloadDisplayName' => style_key,
       'PayloadContent' => {
         'com.apple.ScreenSaver.iLifeSlideShows.ByHost' => {
-          'Forced' => [
+          'Set-Once' => [
             {
               'mcx_preference_settings' => {
                 'styleKey' => style_key,
@@ -204,7 +201,7 @@ action :config do
       'PayloadDisplayName' => source,
       'PayloadContent' => {
         'com.apple.ScreenSaverPhotoChooser.ByHost' => {
-          'Forced' => [
+          'Set-Once' => [
             {
               'mcx_preference_settings' => {
                 'CustomFolderDict' => {

@@ -48,9 +48,12 @@ Although you can manage the screensaver "module" via a profile, the UI doesn't g
 to end users, they may think they can change it via the UI and will find out their settings keep getting mashed by the
 profile. Consider a lockdown profile "DisabledPreferencePanes" to work in conjunction with this cookbook.
 
+Some ScreenSaver preferences are stored in ByHost preferences. For consistent management, the hashes need to be Set-Once,
+style MCX so this another reason to use a lockdown profile as mentioned above.
+
 Also note the "Start after:" UI element is wildly inconsistent as it has fixed values (0,1,2,5,10,20,30,1 Hour) in the
 drop down menu. If you set a value that is not listed in the UI, the os will honor your value, but the UI element will
-not show it instead, defaulting to 20 Minutes. Another reason to consider a lockdown profile "DisabledPreferencePanes"
+not show it instead, defaulting to 20 Minutes. Yet another reason to consider a lockdown profile "DisabledPreferencePanes"
 to work in conjunction with this cookbook.
 
-Example using defaults command `defaults -currentHost write com.apple.screensaver idleTime 240`
+Example using defaults command `defaults -currentHost write com.apple.screensaver idleTime 240` wont show 4 minutes in the UI.
