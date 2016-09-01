@@ -61,11 +61,11 @@ action :config do
         'Forced' => [
           {
             'mcx_preference_settings' => {
-              'idleTime' => node['cpe_screensaver']['idleTime'],
               'askForPassword' =>
                 node['cpe_screensaver']['askForPassword'],
               'askForPasswordDelay' =>
                 node['cpe_screensaver']['askForPasswordDelay'],
+              'idleTime' => node['cpe_screensaver']['idleTime'],
             },
           },
         ],
@@ -74,8 +74,8 @@ action :config do
   )
 
   if node['cpe_screensaver']['MESSAGE']
-    module_name = 'Computer Name'
-    message = node['cpe_screensaver']['MESSAGE']
+    ss_module = 'Computer Name'
+    ss_message = node['cpe_screensaver']['MESSAGE']
     screensaver_profile['PayloadContent'].push(
       'PayloadType' => 'com.apple.ManagedClient.preferences',
       'PayloadVersion' => 1,
@@ -88,7 +88,7 @@ action :config do
           'Set-Once' => [
             {
               'mcx_preference_settings' => {
-                'MESSAGE' => message,
+                'MESSAGE' => ss_message,
               },
             },
           ],
@@ -99,55 +99,30 @@ action :config do
 
   if node['cpe_screensaver']['MESSAGE'] ||
      node['cpe_screensaver']['SelectedFolderPath']
-    resources = '/System/Library/Frameworks/ScreenSaver.framework/Resources/'
-    module_name = module_name ? module_name : 'iLifeSlideshows'
-    path = resources + module_name + '.saver'
-
+    ss_type = '/System/Library/Frameworks/ScreenSaver.framework/Resources/'
+    ss_module = ss_module ? ss_module : 'iLifeSlideshows'
+    ss_path = ss_type + ss_module + '.saver'
     if node['cpe_screensaver']['SelectedFolderPath'].to_s.include? '.saver'
-      resources = '/Library/Screen Savers/'
-      module_name = node['cpe_screensaver']['SelectedFolderPath']
-      path = resources + module_name
+      ss_type = '/Library/Screen Savers/'
+      ss_module = node['cpe_screensaver']['SelectedFolderPath']
+      ss_path = ss_type + ss_module
     end
-
     screensaver_profile['PayloadContent'].push(
       'PayloadType' => 'com.apple.ManagedClient.preferences',
       'PayloadVersion' => 1,
       'PayloadIdentifier' => "#{prefix}.screensaver.ByHost",
       'PayloadUUID' => '01cb34f8-36f8-4fb6-babc-5ae3aa6c165b',
       'PayloadEnabled' => true,
-      'PayloadDisplayName' => module_name,
+      'PayloadDisplayName' => ss_module,
       'PayloadContent' => {
         'com.apple.screensaver.ByHost' => {
           'Set-Once' => [
             {
               'mcx_preference_settings' => {
                 'moduleDict' => {
-                  'idleTime' => node['cpe_screensaver']['idleTime'],
-                  'moduleName' => module_name,
-                  'path' => path,
+                  'moduleName' => ss_module,
+                  'path' => ss_path,
                   'type' => 0,
-                },
-              },
-            },
-          ],
-        },
-      },
-    )
-  else
-    screensaver_profile['PayloadContent'].push(
-      'PayloadType' => 'com.apple.ManagedClient.preferences',
-      'PayloadVersion' => 1,
-      'PayloadIdentifier' => "#{prefix}.screensaver.ByHost",
-      'PayloadUUID' => '01cb34f8-36f8-4fb6-babc-5ae3aa6c165c',
-      'PayloadEnabled' => true,
-      'PayloadDisplayName' => 'idleTime',
-      'PayloadContent' => {
-        'com.apple.screensaver.ByHost' => {
-          'Set-Once' => [
-            {
-              'mcx_preference_settings' => {
-                'moduleDict' => {
-                  'idleTime' => node['cpe_screensaver']['idleTime'],
                 },
               },
             },
@@ -157,7 +132,45 @@ action :config do
     )
   end
 
-  if module_name == 'iLifeSlideshows'
+  if ss_module == 'iLifeSlideshows'
+    ss_type = '/Library/Screen Savers/Default Collections'
+    ss_module = node['cpe_screensaver']['SelectedFolderPath']
+    selected_folder = ss_type + '/' + ss_module
+    selected_source = 3
+    if ss_module.include? '/'
+      ss_type = ss_module
+      selected_folder = ss_module
+      selected_source = 4
+    end
+    ss_name = ss_type.split('/').last
+    shuffle_photos = node['cpe_screensaver']['ShufflesPhotos']
+    shuffle_photos ||= 0
+    screensaver_profile['PayloadContent'].push(
+      'PayloadType' => 'com.apple.ManagedClient.preferences',
+      'PayloadVersion' => 1,
+      'PayloadIdentifier' => "#{prefix}.screensaver.ScreenSaverPhotoChooser",
+      'PayloadUUID' => '67775986-eab2-4723-a16c-3719397745fb',
+      'PayloadEnabled' => true,
+      'PayloadDisplayName' => ss_module,
+      'PayloadContent' => {
+        'com.apple.ScreenSaverPhotoChooser.ByHost' => {
+          'Set-Once' => [
+            {
+              'mcx_preference_settings' => {
+                'CustomFolderDict' => {
+                  'identifier' => ss_type,
+                  'name' => ss_name,
+                },
+                'SelectedFolderPath' => selected_folder,
+                'SelectedSource' => selected_source,
+                'ShufflesPhotos' => shuffle_photos,
+              },
+            },
+          ],
+        },
+      },
+    )
+
     style_key = node['cpe_screensaver']['styleKey']
     style_key ||= 'KenBurns'
     screensaver_profile['PayloadContent'].push(
@@ -173,44 +186,6 @@ action :config do
             {
               'mcx_preference_settings' => {
                 'styleKey' => style_key,
-              },
-            },
-          ],
-        },
-      },
-    )
-
-    identifier = '/Library/Screen Savers/Default Collections'
-    source = node['cpe_screensaver']['SelectedFolderPath']
-    selected_folder = identifier + '/' + source
-    selected_source = 3
-    if source.include? '/'
-      identifier = source
-      selected_folder = source
-      selected_source = 4
-    end
-    name = identifier.split('/').last
-    shuffle_photos = node['cpe_screensaver']['ShufflesPhotos']
-    shuffle_photos ||= 0
-    screensaver_profile['PayloadContent'].push(
-      'PayloadType' => 'com.apple.ManagedClient.preferences',
-      'PayloadVersion' => 1,
-      'PayloadIdentifier' => "#{prefix}.screensaver.ScreenSaverPhotoChooser",
-      'PayloadUUID' => '67775986-eab2-4723-a16c-3719397745fb',
-      'PayloadEnabled' => true,
-      'PayloadDisplayName' => source,
-      'PayloadContent' => {
-        'com.apple.ScreenSaverPhotoChooser.ByHost' => {
-          'Set-Once' => [
-            {
-              'mcx_preference_settings' => {
-                'CustomFolderDict' => {
-                  'identifier' => identifier,
-                  'name' => name,
-                },
-                'SelectedFolderPath' => selected_folder,
-                'SelectedSource' => selected_source,
-                'ShufflesPhotos' => shuffle_photos,
               },
             },
           ],
