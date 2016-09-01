@@ -144,7 +144,7 @@ action :config do
     end
     ss_name = ss_type.split('/').last
     shuffle_photos = node['cpe_screensaver']['ShufflesPhotos']
-    shuffle_photos ||= 0
+    shuffle_photos = shuffle_photos ? shuffle_photos : 0
     screensaver_profile['PayloadContent'].push(
       'PayloadType' => 'com.apple.ManagedClient.preferences',
       'PayloadVersion' => 1,
@@ -172,7 +172,7 @@ action :config do
     )
 
     style_key = node['cpe_screensaver']['styleKey']
-    style_key ||= 'KenBurns'
+    style_key = style_key ? style_key : 'KenBurns'
     screensaver_profile['PayloadContent'].push(
       'PayloadType' => 'com.apple.ManagedClient.preferences',
       'PayloadVersion' => 1,
