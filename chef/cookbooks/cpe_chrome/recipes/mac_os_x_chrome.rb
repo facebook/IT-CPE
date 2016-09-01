@@ -16,48 +16,4 @@ node.default['cpe_munki']['local']['managed_installs'] << 'GoogleChrome'
 
 return unless node.installed?('com.google.Chrome')
 
-chrome_prefs = {}
-
-ruby_block 'chrome_prefs' do
-  block do
-    chrome_prefs = node['cpe_chrome'].reject { |_k, v| v.nil? }
-    unless chrome_prefs.empty?
-      organization = node['organization'] ? node['organization'] : 'Facebook'
-      prefix = node['cpe_profiles']['prefix']
-      node.default['cpe_profiles']["#{prefix}.browsers.chrome"] = {
-        'PayloadIdentifier'        => "#{prefix}.browsers.chrome",
-        'PayloadRemovalDisallowed' => true,
-        'PayloadScope'             => 'System',
-        'PayloadType'              => 'Configuration',
-        'PayloadUUID'              => 'bf900530-2306-0131-32e2-000c2944c108',
-        'PayloadOrganization'      => organization,
-        'PayloadVersion'           => 1,
-        'PayloadDisplayName'       => 'Chrome',
-        'PayloadContent'           => [
-          {
-            'PayloadType'        => 'com.apple.ManagedClient.preferences',
-            'PayloadVersion'     => 1,
-            'PayloadIdentifier'  => "#{prefix}.browsers.chrome",
-            'PayloadUUID'        => '3377ead0-2310-0131-32ec-000c2944c108',
-            'PayloadEnabled'     => true,
-            'PayloadDisplayName' => 'Chrome',
-            'PayloadContent'     => {
-              'com.google.Chrome' => {
-                'Forced' => [
-                  {
-                    'mcx_preference_settings' => chrome_prefs,
-                  },
-                ],
-              },
-            },
-          },
-        ],
-      }
-    end
-  end
-  action :run
-end
-
-if node.installed?('com.google.Chrome.canary')
-  include_recipe 'cpe_chrome::mac_os_x_chrome_canary'
-end
+cpe_chrome 'Configure Google Chrome'

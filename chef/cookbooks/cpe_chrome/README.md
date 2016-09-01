@@ -4,7 +4,7 @@ Configures any custom settings for Google Chrome, or Chrome Canary.
 
 Requirements
 ------------
-* Mac OS X or Windows
+* Mac OS X
 * Mac OS X version depends on cpe_profiles
 
 Attributes
