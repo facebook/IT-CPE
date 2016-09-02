@@ -1,6 +1,6 @@
 # vim: syntax=ruby:expandtab:shiftwidth=2:softtabstop=2:tabstop=2
 # Encoding: utf-8
-# 
+#
 # Cookbook Name:: cpe_spotlight
 # Resource:: cpe_spotlight
 #
