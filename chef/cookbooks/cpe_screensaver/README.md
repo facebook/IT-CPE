@@ -32,10 +32,28 @@ For example, you could tweak the above values
     node.default['cpe_screensaver']['askForPasswordDelay'] = 2
     node.default['cpe_screensaver']['MESSAGE'] = 'Authorised access only!'
 
-    # Acceptable values: 1-National Geographic, 2-Aerial, 3-Cosmos,4-Nature Patterns
+    # Acceptable values;
+    # iLifeSlideshows modules
+    node.default['cpe_screensaver']['SelectedFolderPath'] = '1-National Geographic'
+    node.default['cpe_screensaver']['SelectedFolderPath'] = '2-Aerial'
+    node.default['cpe_screensaver']['SelectedFolderPath'] = '3-Cosmos'
+    node.default['cpe_screensaver']['SelectedFolderPath'] = '4-Nature Patterns'
+    # A built in saver module
+    node.default['cpe_screensaver']['SelectedFolderPath'] = 'Flurry
+    node.default['cpe_screensaver']['SelectedFolderPath'] = 'Arabesque'
+    node.default['cpe_screensaver']['SelectedFolderPath'] = 'Shell'
+    node.default['cpe_screensaver']['SelectedFolderPath'] = 'iTunes Artwork'
+    node.default['cpe_screensaver']['SelectedFolderPath'] = 'Word of the Day'
+    node.default['cpe_screensaver']['SelectedFolderPath'] = 'Random'
+    # A custom path
+    node.default['cpe_screensaver']['SelectedFolderPath'] = '/Users/YOURUSERNAME/Pictures'
+    # A custom .saver (path assumes standard path /Library/Screen Savers/ and appends .saver extension FILENAME.saver)
+    node.default['cpe_screensaver']['SelectedFolderPath'] = 'FILENAME'
+
+    # Standard savers : Flurry, Arabesque, Shell, iTunes Artwork, Word of the Day, Random
     # a custom path: '/Users/YOURUSERNAME/Pictures'
     # or a 3rd party saver 'FILENAME.saver' (path assumed /Library/Screen Savers/FILENAME.saver)
-    node.default['cpe_screensaver']['SelectedFolderPath'] = 4-Nature Patterns
+    node.default['cpe_screensaver']['SelectedFolderPath'] = '4-Nature Patterns'
 
     # Acceptable (defaults to KenBurns) values: Floating, Flipup, Reflections, Origami, ShiftingTiles, SlidingPanels,
     # PhotoMobile, HolidayMobile, PhotoWall, VintagePrints, KenBurns, Classic
