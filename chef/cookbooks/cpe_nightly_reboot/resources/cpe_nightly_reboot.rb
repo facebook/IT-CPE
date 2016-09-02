@@ -1,4 +1,5 @@
 # vim: syntax=ruby:expandtab:shiftwidth=2:softtabstop=2:tabstop=2
+# Encoding: utf-8
 # Cookbook Name:: cpe_nightly_reboot
 # Resource:: cpe_nightly_reboot
 #
@@ -17,9 +18,14 @@ default_action :run
 
 action :run do
   # Set up the logout script
-  directory Pathname.new(node['cpe_nightly_reboot']['script']).dirname.to_s do
-    recursive true
-    action :create
+  # Convert this to the node_utils function: t13016462
+  path = Pathname.new(node['cpe_nightly_reboot']['script'])
+  dirlist = []
+  path.parent.ascend { |v| dirlist << v.to_s unless v.to_s == '/' }
+  dirlist.reverse_each do |dir|
+    directory dir do
+      action :create
+    end
   end
 
   cookbook_file node['cpe_nightly_reboot']['script'] do
@@ -30,19 +36,33 @@ action :run do
     action :create
   end
 
-  restart = node['cpe_nightly_reboot']['restart'].reject { |_k, v| v.nil? }
-  node.default['cpe_launchd']['com.CPE.reboot'] = {
+  # Set up the launchds
+  restart_launchd = {
     'program_arguments' => [
       '/sbin/reboot',
     ],
-    'start_calendar_interval' => restart,
-  } unless restart.empty?
+    'start_calendar_interval' => {},
+  }
 
-  logout = node['cpe_nightly_reboot']['logout'].reject { |_k, v| v.nil? }
-  node.default['cpe_launchd']['com.CPE.logout'] = {
+  logout_launchd = {
     'program_arguments' => [
       node['cpe_nightly_reboot']['script'],
     ],
-    'start_calendar_interval' => logout,
-  } unless logout.empty?
+    'start_calendar_interval' => {},
+  }
+
+  interval =
+    node['cpe_nightly_reboot']['restart'].reject { |_k, v| v.nil? }
+  unless interval.empty?
+    restart_launchd['start_calendar_interval'] = interval
+    node.default['cpe_launchd']['com.CPE.reboot'] =
+      restart_launchd
+  end
+  logout = node['cpe_nightly_reboot']['logout'].reject { |_k, v| v.nil? }
+  unless logout.empty? ||
+         !::File.exist?(node['cpe_nightly_reboot']['script'])
+    logout_launchd['start_calendar_interval'] = logout
+    node.default['cpe_launchd']['com.CPE.logout'] =
+      logout_launchd
+  end
 end

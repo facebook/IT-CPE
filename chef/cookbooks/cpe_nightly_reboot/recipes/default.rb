@@ -10,4 +10,4 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 #
 
-cpe_nightly_reboot 'Apply nightly launchdaemons'
+cpe_nightly_reboot 'Create nightly reboot'
