@@ -1,8 +1,7 @@
+# vim: syntax=ruby:expandtab:shiftwidth=2:softtabstop=2:tabstop=2
 #
 # Cookbook Name:: cpe_munki
-# Recipe:: munki_config
-#
-# vim: syntax=ruby:expandtab:shiftwidth=2:softtabstop=2:tabstop=2
+# Recipe:: config
 #
 # Copyright (c) 2016-present, Facebook, Inc.
 # All rights reserved.
@@ -15,10 +14,6 @@
 # Set Munki Preferences
 ruby_block 'munki_prefs' do
   block do
-    local = node['cpe_munki']['local']
-    unless local['managed_installs'].empty? && local['managed_uninstalls'].empty?
-      node.default['cpe_munki']['preferences']['LocalOnlyManifest'] = 'extra_packages'
-    end
     organization = node['organization'] ? node['organization'] : 'Facebook'
     prefix = node['cpe_profiles']['prefix']
     node.default['cpe_profiles']["#{prefix}.munki"] = {
@@ -42,13 +37,13 @@ ruby_block 'munki_prefs' do
             'ManagedInstalls' => {
               'Forced' => [
                 {
-                  'mcx_preference_settings' => node['cpe_munki']['preferences']
-                }
-              ]
-            }
-          }
-        }
-      ]
+                  'mcx_preference_settings' => node['cpe_munki']['preferences'],
+                },
+              ],
+            },
+          },
+        },
+      ],
     }
   end
   action :run

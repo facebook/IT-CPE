@@ -1,8 +1,7 @@
-#
-# Cookbook Name:: cpe_munki
-# Recipe::2.7.0.2753
-#
 # vim: syntax=ruby:expandtab:shiftwidth=2:softtabstop=2:tabstop=2
+#
+# Cookbook Name:: cpe_munki_deprecated
+# Recipe::2.8.0.2807
 #
 # Copyright (c) 2016-present, Facebook, Inc.
 # All rights reserved.
@@ -14,10 +13,10 @@
 
 return unless node.macosx?
 munki = {}
-munki['2.7.0.2753'] = {}
+munki['2.8.0.2807'] = {}
 
-munki['2.7.0.2753']['munki_core_version'] = '2.7.0.2753'
-munki['2.7.0.2753']['munki_core_folders'] = [
+munki['2.8.0.2807']['munki_core_version'] = '2.8.0.2807'
+munki['2.8.0.2807']['munki_core_folders'] = [
   'Library/Managed Installs',
   'Library/Managed Installs/Cache',
   'Library/Managed Installs/catalogs',
@@ -26,7 +25,7 @@ munki['2.7.0.2753']['munki_core_folders'] = [
   'usr/local/munki',
   'usr/local/munki/munkilib'
 ]
-munki['2.7.0.2753']['munki_core_files'] = [
+munki['2.8.0.2807']['munki_core_files'] = [
   'private/etc/paths.d/munki',
   'usr/local/munki/launchapp',
   'usr/local/munki/logouthelper',
@@ -52,12 +51,12 @@ munki['2.7.0.2753']['munki_core_files'] = [
   'usr/local/munki/munkilib/utils.py',
   'usr/local/munki/munkilib/version.plist'
 ]
-munki['2.7.0.2753']['munki_admin_version'] = '2.7.0.2753'
-munki['2.7.0.2753']['munki_admin_folders'] = [
+munki['2.8.0.2807']['munki_admin_version'] = '2.8.0.2807'
+munki['2.8.0.2807']['munki_admin_folders'] = [
   'private/etc/paths.d',
   'usr/local/munki'
 ]
-munki['2.7.0.2753']['munki_admin_files'] = [
+munki['2.8.0.2807']['munki_admin_files'] = [
   'private/etc/paths.d/munki',
   'usr/local/munki/iconimporter',
   'usr/local/munki/makecatalogs',
@@ -65,23 +64,23 @@ munki['2.7.0.2753']['munki_admin_files'] = [
   'usr/local/munki/manifestutil',
   'usr/local/munki/munkiimport'
 ]
-munki['2.7.0.2753']['munki_launchd_version'] = '2.0.0.1969'
-munki['2.7.0.2753']['munki_launchd_folders'] = [
+munki['2.8.0.2807']['munki_launchd_version'] = '2.0.0.1969'
+munki['2.8.0.2807']['munki_launchd_folders'] = [
   'Library/LaunchAgents',
   'Library/LaunchDaemons'
 ]
-munki['2.7.0.2753']['munki_launcha_files'] = [
+munki['2.8.0.2807']['munki_launcha_files'] = [
   'com.googlecode.munki.ManagedSoftwareCenter.plist',
   'com.googlecode.munki.managedsoftwareupdate-loginwindow.plist',
   'com.googlecode.munki.MunkiStatus.plist'
 ]
-munki['2.7.0.2753']['munki_ld_files'] = [
+munki['2.8.0.2807']['munki_ld_files'] = [
   'com.googlecode.munki.logouthelper.plist',
   'com.googlecode.munki.managedsoftwareupdate-check.plist',
   'com.googlecode.munki.managedsoftwareupdate-install.plist',
   'com.googlecode.munki.managedsoftwareupdate-manualcheck.plist'
 ]
-munki['2.7.0.2753']['munki_app_version'] = '4.2.2751'
-munki['2.7.0.2753']['munki_app_checksum'] =
-  'd7709238e711ab7a4d0c22bcbd2435e3febd3bfb71977f69d0ab383fe24c1cbf'
-default['cpe_munki']['2.7.0.2753'] = munki['2.7.0.2753']
+munki['2.8.0.2807']['munki_app_version'] = '4.2.2759'
+munki['2.8.0.2807']['munki_app_checksum'] =
+  'a4ecb4c27f864aeea3d5a4612c56eebf251b1a5fa10976c13f99ffcfb3663b41'
+default['cpe_munki']['2.8.0.2807'] = munki['2.8.0.2807']

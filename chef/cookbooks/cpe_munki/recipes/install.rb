@@ -1,8 +1,7 @@
+# vim: syntax=ruby:expandtab:shiftwidth=2:softtabstop=2:tabstop=2
 #
 # Cookbook Name:: cpe_munki
-# Recipe::2.7.0.2753
-#
-# vim: syntax=ruby:expandtab:shiftwidth=2:softtabstop=2:tabstop=2
+# Recipe:: install
 #
 # Copyright (c) 2016-present, Facebook, Inc.
 # All rights reserved.
@@ -23,7 +22,7 @@ munki['munki_core_folders'].each do |item|
   directory item do
     action :create
     group 'wheel'
-    mode '0755'
+    mode 0755
     owner 'root'
   end
 end
@@ -33,7 +32,7 @@ munki['munki_core_files'].each do |item|
     not_if { ::File.exist?('/Library/CPE/tags/munki_test') }
     action :create
     group 'wheel'
-    mode '0755'
+    mode 0755
     owner 'root'
     source "munki/core/#{munki_core_version}/#{item}"
   end
@@ -44,7 +43,7 @@ munki['munki_admin_folders'].each do |item|
   directory item do
     action :create
     group 'wheel'
-    mode '0755'
+    mode 0755
     owner 'root'
   end
 end
@@ -54,7 +53,7 @@ munki['munki_admin_files'].each do |item|
     not_if { ::File.exist?('/Library/CPE/tags/munki_test') }
     action :create
     group 'wheel'
-    mode '0755'
+    mode 0755
     owner 'root'
     source "munki/admin/#{munki_admin_version}/#{item}"
   end
@@ -66,7 +65,7 @@ munki['munki_launchd_folders'].each do |item|
   directory item do
     action :create
     group 'wheel'
-    mode '0755'
+    mode 0755
     owner 'root'
   end
 end
@@ -77,18 +76,17 @@ munki['munki_launcha_files'].each do |item|
     not_if { ::File.exist?('/Library/CPE/tags/munki_test') }
     action :create
     group 'wheel'
-    mode '0755'
+    mode 0755
     owner 'root'
     source "munki/launchd/#{munki_ld_version}/Library/LaunchAgents/#{item}"
   end
 
   launcha = item.sub('.plist', '')
-  service launcha do # ~FC009 ~FC022
+  launchd launcha do
     not_if { node.console_user.include?('root') }
     only_if { item.include?('ManagedSoftwareCenter') }
     action :enable
-    plist launcha_path
-    supports :status => true, :restart => true, :reload => true
+    path launcha_path
   end
 end
 
@@ -98,24 +96,21 @@ munki['munki_ld_files'].each do |item|
     not_if { ::File.exist?('/Library/CPE/tags/munki_test') }
     action :create
     group 'wheel'
-    mode '0755'
+    mode 0755
     owner 'root'
     source "munki/launchd/#{munki_ld_version}/Library/LaunchDaemons/#{item}"
   end
 
-  launchd = item.sub('.plist', '')
-  service launchd do
+  munki_launchd = item.sub('.plist', '')
+  launchd munki_launchd do
     action :enable
-    plist launchd_path
-    supports :status => true, :restart => true, :reload => true
+    path launchd_path
   end
 end
 
-# Will open source soon. In the meantime, have munki install the msc.app from
-# the main munki installer.
-# cpe_remote_pkg 'Managed Software Center' do
-#   app 'munkitools_app'
-#   checksum munki['munki_app_checksum']
-#   receipt 'com.googlecode.munki.app'
-#   version munki['munki_app_version']
-# end
+cpe_remote_pkg 'Managed Software Center' do
+  app 'munkitools_app'
+  checksum munki['munki_app_checksum']
+  receipt 'com.googlecode.munki.app'
+  version munki['munki_app_version']
+end

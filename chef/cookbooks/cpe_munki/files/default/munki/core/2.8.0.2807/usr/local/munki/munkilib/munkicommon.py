@@ -60,6 +60,7 @@ from Foundation import CFPreferencesCopyKeyList
 from Foundation import CFPreferencesSetValue
 from Foundation import kCFPreferencesAnyUser
 from Foundation import kCFPreferencesCurrentUser
+from Foundation import kCFPreferencesAnyHost
 from Foundation import kCFPreferencesCurrentHost
 
 from SystemConfiguration import SCDynamicStoreCopyConsoleUser
@@ -1116,7 +1117,8 @@ def isApplication(pathname):
 class Preferences(object):
     """Class which directly reads/writes Apple CF preferences."""
 
-    def __init__(self, bundle_id, user=kCFPreferencesAnyUser):
+    def __init__(self, bundle_id,
+                 user=kCFPreferencesAnyUser, host=kCFPreferencesCurrentHost):
         """Init.
 
         Args:
@@ -1126,10 +1128,10 @@ class Preferences(object):
             bundle_id = bundle_id[:-6]
         self.bundle_id = bundle_id
         self.user = user
+        self.host = host
 
     def __iter__(self):
-        keys = CFPreferencesCopyKeyList(
-            self.bundle_id, self.user, kCFPreferencesCurrentHost)
+        keys = CFPreferencesCopyKeyList(self.bundle_id, self.user, self.host)
         if keys is not None:
             for i in keys:
                 yield i
@@ -1143,8 +1145,7 @@ class Preferences(object):
 
     def __setitem__(self, pref_name, pref_value):
         CFPreferencesSetValue(
-            pref_name, pref_value, self.bundle_id, self.user,
-            kCFPreferencesCurrentHost)
+            pref_name, pref_value, self.bundle_id, self.user, self.host)
         CFPreferencesAppSynchronize(self.bundle_id)
 
     def __delitem__(self, pref_name):
@@ -1164,13 +1165,17 @@ class Preferences(object):
 class ManagedInstallsPreferences(Preferences):
     """Preferences which read from /L/P/ManagedInstalls."""
     def __init__(self):
-        Preferences.__init__(self, 'ManagedInstalls', kCFPreferencesAnyUser)
+        Preferences.__init__(self, 'ManagedInstalls',
+                             user=kCFPreferencesAnyUser,
+                             host=kCFPreferencesCurrentHost)
 
 
 class SecureManagedInstallsPreferences(Preferences):
     """Preferences which read from /private/var/root/L/P/ManagedInstalls."""
     def __init__(self):
-        Preferences.__init__(self, 'ManagedInstalls', kCFPreferencesCurrentUser)
+        Preferences.__init__(self, 'ManagedInstalls',
+                             user=kCFPreferencesCurrentUser,
+                             host=kCFPreferencesAnyHost)
 
 
 def reload_prefs():
@@ -1240,48 +1245,21 @@ def pref(pref_name):
 # Apple package utilities
 #####################################################
 
-def getInstallerPkgInfo(filename):
-    """Uses Apple's installer tool to get basic info
-    about an installer item."""
+def getPkgRestartInfo(filename):
+    """Uses Apple's installer tool to get RestartAction
+    from an installer item."""
     installerinfo = {}
-    proc = subprocess.Popen(['/usr/sbin/installer', '-pkginfo', '-verbose',
-                             '-plist', '-pkg', filename],
-                            bufsize=1, stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE)
-    (out, dummy_err) = proc.communicate()
-
-    if out:
-        # discard any lines at the beginning that aren't part of the plist
-        lines = str(out).splitlines()
-        plist = ''
-        for index in range(len(lines)):
-            try:
-                plist = FoundationPlist.readPlistFromString(
-                    '\n'.join(lines[index:]))
-            except FoundationPlist.NSPropertyListSerializationException:
-                pass
-            if plist:
-                break
-        if plist:
-            if 'Size' in plist:
-                installerinfo['installed_size'] = int(plist['Size'])
-            installerinfo['description'] = plist.get('Description', '')
-            if plist.get('Will Restart') == 'YES':
-                installerinfo['RestartAction'] = 'RequireRestart'
-            if 'Title' in plist:
-                installerinfo['display_name'] = plist['Title']
-
     proc = subprocess.Popen(['/usr/sbin/installer',
                              '-query', 'RestartAction',
                              '-pkg', filename],
-                            bufsize=1,
+                            bufsize=-1,
                             stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE)
     (out, err) = proc.communicate()
     if proc.returncode:
         display_error("installer -query failed: %s %s" %
                       (out.decode('UTF-8'), err.decode('UTF-8')))
-        return None
+        return {}
 
     if out:
         restartAction = str(out).rstrip('\n')
@@ -1647,7 +1625,7 @@ def getOnePackageInfo(pkgpath):
                 pkginfo['name'] = plist['CFBundleName']
 
             if 'IFPkgFlagInstalledSize' in plist:
-                pkginfo['installed_size'] = plist['IFPkgFlagInstalledSize']
+                pkginfo['installed_size'] = int(plist['IFPkgFlagInstalledSize'])
 
             pkginfo['version'] = getBundleVersion(pkgpath)
         except (AttributeError,
@@ -1927,8 +1905,8 @@ def getPackageMetaData(pkgitem):
     if not hasValidInstallerItemExt(pkgitem):
         return {}
 
-    # first get the data /usr/sbin/installer will give us
-    installerinfo = getInstallerPkgInfo(pkgitem)
+    # first query /usr/sbin/installer for restartAction
+    installerinfo = getPkgRestartInfo(pkgitem)
     # now look for receipt/subpkg info
     receiptinfo = getReceiptInfo(pkgitem)
 
@@ -2355,8 +2333,8 @@ def get_hardware_info():
         return {}
 
 
-def get_ipv4_addresses():
-    '''Uses system profiler to get active IPv4 addresses for this machine'''
+def get_ip_addresses(version):
+    '''Uses system profiler to get active IP addresses for this machine'''
     ip_addresses = []
     cmd = ['/usr/sbin/system_profiler', 'SPNetworkDataType', '-xml']
     proc = subprocess.Popen(cmd, shell=False, bufsize=-1,
@@ -2375,9 +2353,9 @@ def get_ipv4_addresses():
 
     for item in items:
         try:
-            ip_addresses.extend(item['IPv4']['Addresses'])
+            ip_addresses.extend(item[version]['Addresses'])
         except KeyError:
-            # 'IPv4" or 'Addresses' is empty, so we ignore
+            # 'IPv4", 'IPv6' or 'Addresses' is empty, so we ignore
             # this item
             pass
     return ip_addresses
@@ -2409,7 +2387,8 @@ def getMachineFacts():
         hardware_info = get_hardware_info()
         MACHINE['machine_model'] = hardware_info.get('machine_model', 'UNKNOWN')
         MACHINE['munki_version'] = get_version()
-        MACHINE['ipv4_address'] = get_ipv4_addresses()
+        MACHINE['ipv4_address'] = get_ip_addresses('IPv4')
+        MACHINE['ipv6_address'] = get_ip_addresses('IPv6')
         MACHINE['serial_number'] = hardware_info.get('serial_number', 'UNKNOWN')
 
         if MACHINE['arch'] == 'x86_64':

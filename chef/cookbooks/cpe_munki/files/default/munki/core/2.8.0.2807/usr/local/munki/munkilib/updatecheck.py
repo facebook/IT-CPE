@@ -225,12 +225,16 @@ def bestVersionMatch(vers_num, item_dict):
     return None
 
 
-# global pkgdata
-PKGDATA = {}
+# global pkgdata cache
+PKGDATA = None
 def analyzeInstalledPkgs():
     """Analyzed installed packages in an attempt to determine what is
        installed."""
-    #global PKGDATA
+    global PKGDATA
+    # if we've populated the cache, just return it
+    if PKGDATA is not None:
+        return PKGDATA
+    PKGDATA = {}
     itemname_to_pkgid = {}
     pkgid_to_itemname = {}
     for catalogname in CATALOG.keys():
@@ -350,6 +354,7 @@ def analyzeInstalledPkgs():
     #    FoundationPlist.writePlist(CATALOG, catalogdbpath)
     #except FoundationPlist.NSPropertyListWriteException:
     #    pass
+    return PKGDATA
 
 
 def getAppBundleID(path):
@@ -880,7 +885,7 @@ def isItemInInstallInfo(manifestitem_pl, thelist, vers=''):
 def nameAndVersion(aString):
     """Splits a string into the name and version number.
 
-    Name and version must be seperated with a hyphen ('-')
+    Name and version must be separated with a hyphen ('-')
     or double hyphen ('--').
     'TextWrangler-2.3b1' becomes ('TextWrangler', '2.3b1')
     'AdobePhotoshopCS3--11.2.1' becomes ('AdobePhotoshopCS3', '11.2.1')
@@ -1418,10 +1423,8 @@ def evidenceThisIsInstalled(item_pl):
             return True
     if item_pl.get('receipts'):
         munkicommon.display_debug2("Checking receipts...")
-        if PKGDATA == {}:
-            # build our database of installed packages
-            analyzeInstalledPkgs()
-        if item_pl['name'] in PKGDATA['installed_names']:
+        pkgdata = analyzeInstalledPkgs()
+        if item_pl['name'] in pkgdata['installed_names']:
             return True
         else:
             munkicommon.display_debug2("Installed receipts don't match.")
@@ -1836,6 +1839,7 @@ def processInstall(manifestitem, cataloglist, installinfo,
         iteminfo['installed'] = False
         iteminfo['note'] = ('Can\'t install %s because could not resolve all '
                             'dependencies.' % iteminfo['display_name'])
+        iteminfo['version_to_install'] = item_pl.get('version', 'UNKNOWN')
         installinfo['managed_installs'].append(iteminfo)
         return False
 
@@ -1977,6 +1981,7 @@ def processInstall(manifestitem, cataloglist, installinfo,
                 manifestitem)
             iteminfo['installed'] = False
             iteminfo['note'] = 'Integrity check failed'
+            iteminfo['version_to_install'] = item_pl.get('version', 'UNKNOWN')
             installinfo['managed_installs'].append(iteminfo)
             if manifestitemname in installinfo['processed_installs']:
                 installinfo['processed_installs'].remove(manifestitemname)
@@ -1986,6 +1991,7 @@ def processInstall(manifestitem, cataloglist, installinfo,
                 'Download of %s failed: %s', manifestitem, errmsg)
             iteminfo['installed'] = False
             iteminfo['note'] = 'Download failed (%s)' % errmsg
+            iteminfo['version_to_install'] = item_pl.get('version', 'UNKNOWN')
             installinfo['managed_installs'].append(iteminfo)
             if manifestitemname in installinfo['processed_installs']:
                 installinfo['processed_installs'].remove(manifestitemname)
@@ -1995,6 +2001,7 @@ def processInstall(manifestitem, cataloglist, installinfo,
                 'Can\'t install %s because: %s', manifestitemname, errmsg)
             iteminfo['installed'] = False
             iteminfo['note'] = '%s' % errmsg
+            iteminfo['version_to_install'] = item_pl.get('version', 'UNKNOWN')
             installinfo['managed_installs'].append(iteminfo)
             if manifestitemname in installinfo['processed_installs']:
                 installinfo['processed_installs'].remove(manifestitemname)
@@ -2175,8 +2182,9 @@ def processManifestForKey(manifest, manifest_key, installinfo,
 def getReceiptsToRemove(item):
     """Returns a list of receipts to remove for item"""
     name = item['name']
-    if name in PKGDATA['receipts_for_name']:
-        return PKGDATA['receipts_for_name'][name]
+    pkgdata = analyzeInstalledPkgs()
+    if name in pkgdata['receipts_for_name']:
+        return pkgdata['receipts_for_name'][name]
     return []
 
 
@@ -2398,12 +2406,13 @@ def processRemoval(manifestitem, cataloglist, installinfo):
             munkicommon.display_debug1('Considering %s for removal...', pkg)
             # find pkg in PKGDATA['pkg_references'] and remove the reference
             # so we only remove packages if we're the last reference to it
-            if pkg in PKGDATA['pkg_references']:
+            pkgdata = analyzeInstalledPkgs()
+            if pkg in pkgdata['pkg_references']:
                 munkicommon.display_debug1('%s references are: %s', pkg,
-                                           PKGDATA['pkg_references'][pkg])
-                if iteminfo['name'] in PKGDATA['pkg_references'][pkg]:
-                    PKGDATA['pkg_references'][pkg].remove(iteminfo['name'])
-                    if len(PKGDATA['pkg_references'][pkg]) == 0:
+                                           pkgdata['pkg_references'][pkg])
+                if iteminfo['name'] in pkgdata['pkg_references'][pkg]:
+                    pkgdata['pkg_references'][pkg].remove(iteminfo['name'])
+                    if len(pkgdata['pkg_references'][pkg]) == 0:
                         munkicommon.display_debug1(
                             'Adding %s to removal list.', pkg)
                         packagesToReallyRemove.append(pkg)
@@ -2587,7 +2596,7 @@ def getmanifest(partialurl, suppress_errors=False):
             partialurl.startswith('https://') or
             partialurl.startswith('file:/')):
         # then it's really a request for the client's primary manifest
-        manifestdisplayname = os.path.basename(partialurl)
+        manifestdisplayname = os.path.basename(partialurl.encode('UTF-8'))
         manifesturl = partialurl
         partialurl = 'client_manifest'
         manifestname = 'client_manifest.plist'
@@ -2595,7 +2604,8 @@ def getmanifest(partialurl, suppress_errors=False):
         # request for nested manifest
         manifestdisplayname = partialurl
         manifestname = partialurl
-        manifesturl = manifestbaseurl + urllib2.quote(partialurl)
+        manifesturl = (
+            manifestbaseurl + urllib2.quote(partialurl.encode('UTF-8')))
 
     if manifestname in MANIFESTS:
         return MANIFESTS[manifestname]

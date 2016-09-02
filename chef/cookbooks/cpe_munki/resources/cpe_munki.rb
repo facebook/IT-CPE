@@ -1,8 +1,7 @@
-#
+# vim: syntax=ruby:expandtab:shiftwidth=2:softtabstop=2:tabstop=2
+# Encoding: utf-8
 # Cookbook Name:: cpe_munki
 # Resource:: cpe_munki
-#
-# vim: syntax=ruby:expandtab:shiftwidth=2:softtabstop=2:tabstop=2
 #
 # Copyright (c) 2016-present, Facebook, Inc.
 # All rights reserved.
@@ -12,7 +11,7 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 #
 
-require "plist"
+require 'plist'
 require 'json'
 
 resource_name :cpe_munki
@@ -22,13 +21,14 @@ action :run do
   return if node['cpe_munki']['local'].empty?
   @catalog_items = parse_items_in_catalogs
 
-  file '/Library/Managed Installs/manifests/extra_packages'  do
+  local_manifest = node['cpe_munki']['preferences']['LocalOnlyManifest']
+  file "/Library/Managed Installs/manifests/#{local_manifest}" do
     content gen_plist
   end
 
   # This file is for context for users to know whats avalible for their machine
   pretty_json = JSON.pretty_generate(@catalog_items)
-  file '/Library/Managed Installs/munki_catalog_items.json'  do
+  file '/opt/facebook/munki_catalog_items.json' do
     content pretty_json.to_s
   end
 end
@@ -64,7 +64,7 @@ def parse_items_in_catalogs
   catalogs = []
   catlogs_dir = '/Library/Managed Installs/catalogs/'
   Dir.foreach(catlogs_dir) do |catalog|
-    next if catalog == '.' or catalog == '..'
+    next if catalog == '.' || catalog == '..'
     begin
       p = read_plist(catlogs_dir + catalog)
       p.each do |d|
@@ -74,5 +74,5 @@ def parse_items_in_catalogs
       next
     end
   end
-  return catalogs.uniq
+  catalogs.uniq
 end
