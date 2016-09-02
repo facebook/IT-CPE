@@ -132,7 +132,6 @@ action :config do
       '2-Aerial',
       '3-Cosmos',
       '4-Nature Patterns',
-      '/Users/cgerke/Pictures',
     ].include? ss_module
       ss_type = '/System/Library/Frameworks/ScreenSaver.framework/Resources/'
       ss_module = 'iLifeSlideshows'
