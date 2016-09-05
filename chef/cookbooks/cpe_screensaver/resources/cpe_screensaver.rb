@@ -35,7 +35,8 @@ action :config do
       MESSAGE && SelectedFolderPath! Sticking with MESSAGE',
     ) if warn
   end
-  if ([
+  if node['cpe_screensaver']['SelectedFolderPath'] &&
+  ([
     'Shell',
     'iTunes Artwork',
     'Arabesque',
@@ -103,7 +104,7 @@ action :config do
     # Default values
     ss_type = '/Library/Screen Savers/'
     ss_num = 0
-    ss_module = node['cpe_screensaver']['SelectedFolderPath']
+    ss_module = node['cpe_screensaver']['SelectedFolderPath'].to_s
     ss_ext = '.saver'
 
     # Values for traditional built-in screensavers (.saver)
@@ -156,7 +157,7 @@ action :config do
         'PayloadIdentifier' => "#{prefix}.screensaver.Basic",
         'PayloadUUID' => '8dd9a983-f59b-47c3-a408-ac55d287cbd4',
         'PayloadEnabled' => true,
-        'PayloadDisplayName' => message,
+        'PayloadDisplayName' => ss_message,
         'PayloadContent' => {
           'com.apple.screensaver.Basic.ByHost' => {
             'Set-Once' => [
@@ -191,7 +192,7 @@ action :config do
                 'idleTime' => node['cpe_screensaver']['idleTime'],
                 'moduleDict' => {
                   'moduleName' => ss_module,
-                  'path' => ss_type + ss_module + ss_ext,
+                  'path' => ::File.join(ss_type, ss_module + ss_ext),
                   'type' => ss_num,
                 },
               },
@@ -212,7 +213,7 @@ action :config do
     ss_module = node['cpe_screensaver']['SelectedFolderPath']
     # Using directory marker / to test if the end user has added a custom
     # folder to the SelectedFolderPath attribute
-    selected_folder = ss_type + '/' + ss_module
+    selected_folder = ::File.join(ss_type, ss_module)
     selected_source = 3
     if ss_module.include? '/'
       ss_type = ss_module
