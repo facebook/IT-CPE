@@ -1,8 +1,7 @@
+# vim: syntax=ruby:expandtab:shiftwidth=2:softtabstop=2:tabstop=2
 #
 # Cookbook Name:: cpe_safari
 # Recipe:: default
-#
-# vim: syntax=ruby:expandtab:shiftwidth=2:softtabstop=2:tabstop=2
 #
 # Copyright (c) 2016-present, Facebook, Inc.
 # All rights reserved.
@@ -12,44 +11,4 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 #
 
-safari_prefs = {}
-
-ruby_block 'safari_prefs' do
-  block do
-    safari_prefs = node['cpe_safari'].reject { |_k, v| v.nil? }
-    unless safari_prefs.empty?
-      prefix = node['cpe_profiles']['prefix']
-      organization = node['organization'] ? node['organization'] : 'Facebook'
-      node.default['cpe_profiles']["#{prefix}.browsers.safari"] = {
-        'PayloadIdentifier'        => "#{prefix}.browsers.safari",
-        'PayloadRemovalDisallowed' => true,
-        'PayloadScope'             => 'System',
-        'PayloadType'              => 'Configuration',
-        'PayloadUUID'              => 'bf900530-2306-0131-32e2-000c2944c108',
-        'PayloadOrganization'      => organization,
-        'PayloadVersion'           => 1,
-        'PayloadDisplayName'       => 'Safari',
-        'PayloadContent'           => [
-          {
-            'PayloadType'        => 'com.apple.ManagedClient.preferences',
-            'PayloadVersion'     => 1,
-            'PayloadIdentifier'  => "#{prefix}.browsers.safari",
-            'PayloadUUID'        => '3377ead0-2310-0131-32ec-000c2944c108',
-            'PayloadEnabled'     => true,
-            'PayloadDisplayName' => 'Safari',
-            'PayloadContent'     => {
-              'com.apple.Safari' => {
-                'Forced' => [
-                  {
-                    'mcx_preference_settings' => safari_prefs
-                  }
-                ]
-              }
-            }
-          }
-        ]
-      }
-    end
-  end
-  action :run
-end
+cpe_safari 'Configure Safari'
