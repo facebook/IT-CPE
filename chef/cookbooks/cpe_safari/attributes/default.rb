@@ -12,10 +12,4 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 #
 
-# Safari attributes
-default['cpe_safari']['ManagedPlugInPolicies'] = {
-  # For example:
-  # 'com.macromedia.Flash Player.plugin' => {
-    # 'PlugInFirstVisitPolicy' => 'PlugInPolicyAsk'
-  # }
-}
+default['cpe_safari'] = {}
