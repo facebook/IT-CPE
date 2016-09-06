@@ -21,6 +21,7 @@ action :config do
   prefix = node['cpe_profiles']['prefix']
   organization = node['organization'] ? node['organization'] : 'Facebook'
   DisabledPrefPanes = node['cpe_preferencepanes']['DisabledPreferencePanes']
+  HiddenPreferencePanes = node['cpe_preferencepanes']['HiddenPreferencePanes']
   node.default['cpe_profiles']["#{prefix}.prefpanes"] = {
     'PayloadIdentifier' => "#{prefix}.prefpanes",
     'PayloadRemovalDisallowed' => true,
@@ -39,6 +40,7 @@ action :config do
         'PayloadEnabled' => true,
         'PayloadDisplayName' => 'Preference Panes',
         'DisabledPreferencePanes' => DisabledPrefPanes,
+        'HiddenPreferencePanes' => HiddenPreferencePanes,
       },
     ],
   }

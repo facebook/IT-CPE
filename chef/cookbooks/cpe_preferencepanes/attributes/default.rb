@@ -14,3 +14,4 @@
 
 # Disable System PreferencePanes
 default['cpe_preferencepanes']['DisabledPreferencePanes'] = nil
+default['cpe_preferencepanes']['HiddenPreferencePanes'] = nil

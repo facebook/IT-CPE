@@ -7,6 +7,7 @@ panes without macos built-in authorization hooks.
 Attributes
 ----------
 * node['cpe_preferencepanes']['DisabledPreferencePanes']
+* node['cpe_preferencepanes']['HiddenPreferencePanes']
 
 Usage
 -----
@@ -17,16 +18,18 @@ configured in your company's custom init recipe. The profile will also use
 whichever prefix is set in node['cpe_profiles']['prefix'], which defaults
 to `com.facebook.chef`
 
-The profile delivers a payload for the above key in the
-`node['cpe_preferencepanes']['DisabledPreferencePanes']`.
-
-For example;
+Example usage;
 
 	# Disable Desktop & Screen Saver, Disable iCloud and Profiles panes.
 	node.default['cpe_preferencepanes'] = [
 		'com.apple.preference.desktopscreeneffect',
 		'com.apple.preferences.icloud',
-		'com.apple.preferences.configurationprofiles'
+		'com.apple.preferences.configurationprofiles',
+		]
+
+	# Hide Startup Disk pane.
+	node.default['cpe_preferencepanes'] = [
+		'com.apple.preference.startupdisk',
 		]
 
 CFBundleIdentifers currently present in El-Capitan;
