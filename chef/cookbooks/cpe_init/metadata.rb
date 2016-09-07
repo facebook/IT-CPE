@@ -14,6 +14,7 @@ depends 'cpe_node_customizations'
 depends 'cpe_utils'
 
 ### API Cookbooks
+depends 'cpe_appaccess'
 depends 'cpe_desktop'
 depends 'cpe_bluetooth'
 depends 'cpe_hosts'
