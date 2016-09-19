@@ -111,10 +111,12 @@ action :install do
     end
   end
 
-  cpe_remote_pkg 'Managed Software Center' do
-    app 'munkitools_app'
-    checksum munki['munki_app_checksum']
-    receipt 'com.googlecode.munki.app'
-    version munki['munki_app_version']
-  end
+# Will open source soon. In the meantime, have munki install the msc.app from
+# the main munki installer.
+  # cpe_remote_pkg 'Managed Software Center' do
+  #   app 'munkitools_app'
+  #   checksum munki['munki_app_checksum']
+  #   receipt 'com.googlecode.munki.app'
+  #   version munki['munki_app_version']
+  # end
 end
