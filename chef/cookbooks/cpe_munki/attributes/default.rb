@@ -16,7 +16,7 @@ default['cpe_munki']['configure'] = false
 default['cpe_munki']['local']['managed_installs'] = []
 default['cpe_munki']['local']['managed_uninstalls'] = []
 
-default['cpe_munki']['munki_version_to_install'] = '2.8.0.2807'
+default['cpe_munki']['munki_version_to_install'] = '2.8.0.2810'
 
 default['cpe_munki']['preferences'] = {
   'AppleSoftwareUpdatesOnly'       => false,

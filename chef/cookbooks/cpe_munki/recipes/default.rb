@@ -11,8 +11,8 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 #
 
-return unless node.macosx?
+return unless node.macos?
 
-include_recipe 'cpe_munki::install' if node['cpe_munki']['install']
-include_recipe 'cpe_munki::config' if node['cpe_munki']['configure']
-include_recipe 'cpe_munki::local'
+cpe_munki_install 'Install Munki'
+cpe_munki_config 'Manage Munki Settings'
+cpe_munki_local 'Manage Local Munki Manifest'

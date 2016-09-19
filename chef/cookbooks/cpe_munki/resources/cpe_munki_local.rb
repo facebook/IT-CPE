@@ -14,11 +14,22 @@
 require 'plist'
 require 'json'
 
-resource_name :cpe_munki
+resource_name :cpe_munki_local
 default_action :run
 
 action :run do
-  return if node['cpe_munki']['local'].empty?
+  locals_exist = node['cpe_munki']['local']['managed_installs'].any? ||
+                node['cpe_munki']['local']['managed_uninstalls'].any?
+
+  return unless locals_exist
+
+  # If local only manifest preference is not set,
+  # set it to the default 'extra_packages'
+  unless node['cpe_munki']['preferences'].key?('LocalOnlyManifest')
+    node.default['cpe_munki']['preferences']['LocalOnlyManifest'] =
+      'extra_packages'
+  end
+
   @catalog_items = parse_items_in_catalogs
 
   local_manifest = node['cpe_munki']['preferences']['LocalOnlyManifest']
@@ -44,20 +55,20 @@ end
 
 def gen_plist
   installs = vaildate_install_array(
-    node['cpe_munki']['local']['managed_installs']
+    node['cpe_munki']['local']['managed_installs'],
   )
   uninstalls = vaildate_install_array(
-    node['cpe_munki']['local']['managed_uninstalls']
+    node['cpe_munki']['local']['managed_uninstalls'],
   )
   plist_hash = {
     'managed_installs' => installs,
-    'managed_uninstalls' => uninstalls
+    'managed_uninstalls' => uninstalls,
   }
   Plist::Emit.dump(plist_hash) unless plist_hash.nil?
 end
 
 def read_plist(xml_file)
-  Plist::parse_xml(xml_file)
+  Plist.parse_xml(xml_file)
 end
 
 def parse_items_in_catalogs
