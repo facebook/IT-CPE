@@ -29,11 +29,11 @@ if node.macos?
     'cpe_macos_server',
     'cpe_pathsd',
     'cpe_safari',
+    'cpe_chrome',
     'cpe_screensaver',
     'cpe_powermanagement',
     'cpe_preferencepanes',
     # HERE: Coming soon! Will be opensourced at a later date
-    # 'cpe_chrome',
     # 'cpe_firefox',
     # 'cpe_firewall_config',
     # 'cpe_splunk',

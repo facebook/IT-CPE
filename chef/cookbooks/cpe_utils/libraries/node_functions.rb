@@ -14,20 +14,19 @@
 class Chef
   # Custom Extensions of the node object.
   class Node
-
     # Allows you to dig through the node's attributes but still get back an
     # arbitrary value in the event the key does not exist.
     # Adapted for Chef from discussion found here: https://fburl.com/229058197
-    # 
+    #
     # @param path [required] [String] A string representing the path to search
     # for the key.
     # @param delim [opt] [String] A character that you will split the path on.
     # @param default [opt] [Object] An object to return if the key is not found.
     # @return [Object] Returns an arbitrary object in the event the key isn't
-    # there. 
+    # there.
     # @note Returns nil by default
     # @note Returns the default value in the event of an exception
-    # @example 
+    # @example
     #  irb> node.default.awesome = 'yup'
     #  => "yup"
     #  irb> node.dig('awesome/not_there')
@@ -57,46 +56,46 @@ class Chef
     end
 
     def console_user
-      unless self.macos?
+      unless macos?
         Chef::Log.warn('node.console_user called on non-OS X!')
         return
       end
       usercmd = Mixlib::ShellOut.new(
-        '/usr/bin/stat -f%Su /dev/console'
+        '/usr/bin/stat -f%Su /dev/console',
       ).run_command.stdout
       username = usercmd.chomp
       username
     end
 
     def serial
-      unless self.macos?
+      unless macos?
         Chef::Log.warn('node.serial called on non-OS X!')
         return
       end
       return node['serial'] if node['serial']
       serial = Mixlib::ShellOut.new(
         '/usr/sbin/ioreg -c IOPlatformExpertDevice |head -30' +
-        '|grep IOPlatformSerialNumber | awk \'{print $4}\' | sed -e s/\"//g'
+        '|grep IOPlatformSerialNumber | awk \'{print $4}\' | sed -e s/\"//g',
       ).run_command.stdout.chomp
       node.default['serial'] = serial
       return serial
     end
 
-    def uuid 
-      unless macosx?
+    def uuid
+      unless macos?
         Chef::Log.warn('node.serial called on non-OS X!')
         return
       end
       return node['uuid'] if node['uuid']
       uuid = Mixlib::ShellOut.new(
         '/usr/sbin/system_profiler SPHardwareDataType' +
-        '| awk \'/UUID/ { print $3; }\''
+        '| awk \'/UUID/ { print $3; }\'',
       ).run_command.stdout.chomp
       node.default['uuid'] = uuid
       return uuid
     end
 
-   def get_shard(serial: nil, salt: nil, chunks: 100)
+    def get_shard(serial: nil, salt: nil, chunks: 100)
       # grab the serial by platform if possible
       # return nil if not possible
       serial = serial ? serial : node.serial
@@ -125,18 +124,18 @@ class Chef
     #     end
     #   end
     def shard_block(threshold, &block)
-      yield block if block_given? && in_shard?(threshold) 
+      yield block if block_given? && in_shard?(threshold)
     end
 
     def warn_to_remove(stack_depth)
-        stack = caller(stack_depth)[0]
-        parts = %r{^.*/cookbooks/([^/]*)/([^/]*)/(.*)\.rb:(\d+)}.match(stack)
-        if parts
-          where = "(#{parts[1]}::#{parts[3]} line #{parts[4]})"
-        else
-          where = stack
-        end
-        Chef::Log.warn("Past time shard duration! Please cleanup! #{where}")
+      stack = caller(stack_depth)[0]
+      parts = %r{^.*/cookbooks/([^/]*)/([^/]*)/(.*)\.rb:(\d+)}.match(stack)
+      if parts
+        where = "(#{parts[1]}::#{parts[3]} line #{parts[4]})"
+      else
+        where = stack
+      end
+      Chef::Log.warn("Past time shard duration! Please cleanup! #{where}")
     end
 
     def in_timeshard?(start_time, duration)
@@ -148,14 +147,14 @@ class Chef
         duration = duration.to_i * 1440 * 60
       # Multiply the number of hours by 3600 s to convert hours into seconds.
       elsif duration.match('^[0-9]+[hH]$')
-        duration =  duration.to_i * 3600
+        duration = duration.to_i * 3600
       else
         errmsg = "Invalid duration arg, '#{duration}', to in_timeshard?()."
         fail errmsg
       end
       curtime = Time.now.tv_sec
       # The timeshard will be the number of seconds into the duration.
-      time_shard = get_shard(chunks: duration)
+      time_shard = get_shard(:chunks => duration)
       # The time threshold is the sum of the start time and time shard.
       time_threshold = st + time_shard
       # If the current time is greater than the threshold then the node will be
@@ -163,26 +162,26 @@ class Chef
       # and will return true.
       if curtime > st + duration
         warn_to_remove(3)
-     end
+      end
       return curtime >= time_threshold
     end
 
-     def shard_over_a_week_starting(start_date)
-       in_shard?(rollout_shard(start_date))
-     end
+    def shard_over_a_week_starting(start_date)
+      in_shard?(rollout_shard(start_date))
+    end
 
-     def shard_over_a_week_ending(end_date)
-       start_date = Date.parse(end_date) - 7
-       in_shard?(rollout_shard(start_date.to_s))
-     end
+    def shard_over_a_week_ending(end_date)
+      start_date = Date.parse(end_date) - 7
+      in_shard?(rollout_shard(start_date.to_s))
+    end
 
-     def rollout_shard(start_date)
+    def rollout_shard(start_date)
       rollout_map = [
         1,
         10,
         25,
         50,
-        100
+        100,
       ]
       rd = Date.parse(start_date)
 
@@ -285,13 +284,13 @@ class Chef
       if File.exist?('/Library/Managed Installs/ManagedInstallReport.plist')
         # Parse plist and lowercase all values
         begin
-          installed_apps  = Plist.parse_xml(
-            '/Library/Managed Installs/ManagedInstallReport.plist'
+          installed_apps = Plist.parse_xml(
+            '/Library/Managed Installs/ManagedInstallReport.plist',
           )['managed_installs_list'].map(&:downcase)
         rescue
           Chef::Log.warn(
             'cpe_utils/node.munki_installed:' +
-            ' Failed to retrieve applications installed by Munki'
+            ' Failed to retrieve applications installed by Munki',
           )
         end
       end
@@ -299,6 +298,34 @@ class Chef
       node.override['munki']['installed_apps'] = installed_apps
       # Return true or false if applicaion is installed by munki
       installed_apps.include?(application)
+    end
+
+    def loginwindow?
+      unless macos?
+        Chef::Log.warn('node.loginwindow? called on non-OS X!')
+        return
+      end
+      console_user == 'root'
+    end
+
+    def app_paths(bundle_identifier)
+      unless macos?
+        Chef::Log.warn('node.app_paths called on non-OS X!')
+        return []
+      end
+      # Search Spotlight for matching identifier, strip newlines
+      Mixlib::ShellOut.new(
+        "/usr/bin/mdfind \"kMDItemCFBundleIdentifier==#{bundle_identifier}\"",
+      ).run_command.stdout.split('\n').map!(&:chomp)
+    end
+
+    def installed?(bundle_identifier)
+      unless macos?
+        Chef::Log.warn('node.installed? called on non-OS X!')
+        return false
+      end
+      paths = app_paths(bundle_identifier)
+      !paths.empty?
     end
   end
 end
