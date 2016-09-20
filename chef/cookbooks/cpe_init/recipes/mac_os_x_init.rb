@@ -26,6 +26,7 @@ if node.macos?
     'cpe_desktop',
     'cpe_bluetooth',
     'cpe_hosts',
+    'cpe_macos_server',
     'cpe_pathsd',
     'cpe_safari',
     'cpe_screensaver',
