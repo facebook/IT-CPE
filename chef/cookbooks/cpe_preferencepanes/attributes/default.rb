@@ -1,7 +1,8 @@
-# vim: syntax=ruby:expandtab:shiftwidth=2:softtabstop=2:tabstop=2
 #
-# Cookbook Name:: cpe_safari
-# Recipe:: default
+# Cookbook Name:: cpe_preferencepanes
+# Attributes:: default
+#
+# vim: syntax=ruby:expandtab:shiftwidth=2:softtabstop=2:tabstop=2
 #
 # Copyright (c) 2016-present, Facebook, Inc.
 # All rights reserved.
@@ -11,4 +12,6 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 #
 
-cpe_safari 'Configure Safari'
+# Disable System PreferencePanes
+default['cpe_preferencepanes']['DisabledPreferencePanes'] = nil
+default['cpe_preferencepanes']['HiddenPreferencePanes'] = nil

@@ -1,7 +1,8 @@
-# vim: syntax=ruby:expandtab:shiftwidth=2:softtabstop=2:tabstop=2
 #
-# Cookbook Name:: cpe_safari
-# Recipe:: default
+# Cookbook Name:: cpe_chrome
+# Recipe:: mac_os_x_chrome
+#
+# vim: syntax=ruby:expandtab:shiftwidth=2:softtabstop=2:tabstop=2
 #
 # Copyright (c) 2016-present, Facebook, Inc.
 # All rights reserved.
@@ -11,4 +12,8 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 #
 
-cpe_safari 'Configure Safari'
+node.default['cpe_munki']['local']['managed_installs'] << 'GoogleChrome'
+
+return unless node.installed?('com.google.Chrome')
+
+cpe_chrome 'Configure Google Chrome'

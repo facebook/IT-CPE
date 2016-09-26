@@ -47,13 +47,13 @@ These are to check if a node is a specific OS type
 node.linux?
 node.ubuntu?
 node.centos?
-node.macosx?
+node.macos?
 node.windows?
 ```
 
 These are generally used to scope os-specific features. For instance:
 ```
-if node.macosx?
+if node.macos?
   osx_profile 'com.company.screensaver.mobileconfig' 
 end
 ```
@@ -61,7 +61,7 @@ end
 These can also be used within a resource block via only_if
 ```
 osx_profile 'Install screensaver profile' do
-  only_if { node.macosx? }
+  only_if { node.macos? }
   profile 'com.company.screensaver.mobileconfig'
 end
 ```

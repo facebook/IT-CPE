@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: cpe_safari
+# Cookbook Name:: cpe_chrome
 # Attributes:: default
 #
 # vim: syntax=ruby:expandtab:shiftwidth=2:softtabstop=2:tabstop=2
@@ -11,5 +11,17 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 #
+# Google Chrome & Chrome Canary attributes
+# See https://www.chromium.org/administrators/policy-list-3
 
-default['cpe_safari'] = {}
+default['cpe_chrome'] = {
+  'ExtensionInstallForcelist' => [
+  ],
+  'ExtensionInstallBlacklist' => [
+  ],
+  'EnabledPlugins' => [],
+  'DisabledPlugins' => [],
+  'DefaultPluginsSetting' => 1,
+  'ExtensionInstallSources' => [],
+  'PluginsAllowedForUrls' => [],
+}

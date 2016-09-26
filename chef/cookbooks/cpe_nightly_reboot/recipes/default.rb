@@ -1,6 +1,5 @@
 # vim: syntax=ruby:expandtab:shiftwidth=2:softtabstop=2:tabstop=2
-#
-# Cookbook Name:: cpe_safari
+# Cookbook Name:: cpe_nightly_reboot
 # Recipe:: default
 #
 # Copyright (c) 2016-present, Facebook, Inc.
@@ -11,4 +10,4 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 #
 
-cpe_safari 'Configure Safari'
+cpe_nightly_reboot 'Create nightly reboot'
