@@ -23,14 +23,17 @@ run_list += [
 # API Cookbooks go last
 if node.macos?
   run_list += [
-    'cpe_desktop',
+    # 'cpe_autopkg', # requires 'mac_os_x' community cookbook
     'cpe_bluetooth',
+    'cpe_chrome',
+    'cpe_desktop',
     'cpe_hosts',
     'cpe_macos_server',
+    'cpe_nightly_reboot',
     'cpe_pathsd',
     'cpe_safari',
-    'cpe_chrome',
     'cpe_screensaver',
+    'cpe_spotlight',
     'cpe_powermanagement',
     'cpe_preferencepanes',
     # HERE: Coming soon! Will be opensourced at a later date
