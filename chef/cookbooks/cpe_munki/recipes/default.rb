@@ -1,8 +1,7 @@
+# vim: syntax=ruby:expandtab:shiftwidth=2:softtabstop=2:tabstop=2
 #
 # Cookbook Name:: cpe_munki
 # Recipe:: default
-#
-# vim: syntax=ruby:expandtab:shiftwidth=2:softtabstop=2:tabstop=2
 #
 # Copyright (c) 2016-present, Facebook, Inc.
 # All rights reserved.
@@ -12,12 +11,8 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 #
 
-return unless node.macosx? 
+return unless node.macos?
 
-include_recipe 'cpe_munki::install' if node['cpe_munki']['install']
-include_recipe 'cpe_munki::local'
-include_recipe 'cpe_munki::config' if node['cpe_munki']['configure']
-
-if node['cpe_munki']['munkireports']['install']
-  include_recipe 'cpe_munki::munkireports'
-end
+cpe_munki_install 'Install Munki'
+cpe_munki_config 'Manage Munki Settings'
+cpe_munki_local 'Manage Local Munki Manifest'
