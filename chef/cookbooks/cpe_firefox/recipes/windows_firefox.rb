@@ -31,7 +31,7 @@ path64 =
 resources_path = []
 [
   path32,
-  path64
+  path64,
 ].each do |exe_path|
   resources_path << exe_path if Dir.exist?(exe_path)
 end
@@ -66,7 +66,7 @@ fb_prefs = []
 resources_path.each do |path|
   fb_prefs << File.join(
     path,
-    pref_file
+    pref_file,
   )
 end
 
@@ -83,7 +83,7 @@ resources_path.each do |path|
     path,
     'defaults',
     'pref',
-    local_settings
+    local_settings,
   )
 end
 

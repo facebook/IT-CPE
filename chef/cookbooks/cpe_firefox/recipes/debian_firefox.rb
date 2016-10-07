@@ -25,12 +25,12 @@ pref_path = resources_dir + 'defaults' + 'pref'
 [
   resources_dir.to_s,
   (resources_dir + 'defaults').to_s,
-  (resources_dir + 'defaults' + 'pref').to_s
+  (resources_dir + 'defaults' + 'pref').to_s,
 ].each do |req_pref_path|
   directory req_pref_path do
     owner 'root'
     group 'root'
-    mode 0775
+    mode '0775'
     action :create
   end
 end
@@ -56,7 +56,7 @@ template cck2.to_s do
   source 'cck2.erb'
   owner 'root'
   group 'root'
-  mode 0644
+  mode '0644'
 end
 
 cck2dir = resources_dir + 'cck2'
@@ -64,7 +64,7 @@ remote_directory cck2dir.to_s do
   source 'firefox/cck2'
   owner 'root'
   group 'root'
-  mode 0755
+  mode '0755'
 end
 
 acjs = pref_path + 'autoconfig.js'
@@ -72,5 +72,5 @@ cookbook_file acjs.to_s do
   source 'firefox/defaults/pref/autoconfig.js'
   owner 'root'
   group 'root'
-  mode 0644
+  mode '0644'
 end

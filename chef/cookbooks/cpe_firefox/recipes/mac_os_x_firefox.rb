@@ -13,7 +13,7 @@
 #
 
 node.default['cpe_munki']['local']['managed_installs'] <<
-  'Firefox' if node.macosx?
+  'Firefox'
 
 return unless node.installed?('org.mozilla.firefox')
 
@@ -37,7 +37,7 @@ node.app_paths('org.mozilla.firefox').each do |app_path|
     directory req_pref_path do
       owner 'root'
       group 'admin'
-      mode 0775
+      mode '0775'
       action :create
     end
   end
@@ -64,22 +64,23 @@ node.app_paths('org.mozilla.firefox').each do |app_path|
     source 'firefox'
     owner 'root'
     group 'wheel'
-    mode 0775
+    mode '0775'
     recursive true
   end
 
   # Apply the new config template
-  cck2_file = ff_central_store + 'cck2.cfg'
-  template cck2_file.to_s do
+  cck2_file = (ff_central_store + 'cck2.cfg').to_s
+  template cck2_file do
     source 'cck2.erb'
     owner 'root'
     group 'wheel'
-    mode 0644
+    mode '0644'
   end
 
   # Delete the old autoconfig.js in the resources directory
-  autoconfig_old = resources_dir + 'autoconfig.js'
-  link autoconfig_old.to_s do
+  autoconfig_old = (resources_dir + 'autoconfig.js').to_s
+  link 'old_autoconfig_link' do
+    target_file autoconfig_old
     action :delete
   end
 
