@@ -20,6 +20,7 @@ class Chef
   class Resource
     class Launchd
       property :keep_alive, [ TrueClass, FalseClass, Hash ]
+      property :limit_load_to_session_type, Array
     end
   end
 end
