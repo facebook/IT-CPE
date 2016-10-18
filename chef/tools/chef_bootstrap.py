@@ -43,7 +43,7 @@ validation pem goes here
 -----END RSA PRIVATE KEY-----
 """
 
-FACEBOOK_CRT = """
+ORG_CRT = """
 -----BEGIN CERTIFICATE-----
 your certificate goes here
 -----END CERTIFICATE-----
@@ -312,8 +312,8 @@ def install_chef():
   if chef_vers != '0.0.0.0' and os.path.exists('/opt/chef/bin/chef-client'):
     print "Chef %s installed" % chef_vers
     return True
-  # Is Chef locally available in /Library/CPE/Source?
-  localchef = glob.glob('/Library/CPE/Source/chef-*.pkg')
+  # Is Chef locally available in /Library/Chef/Source?
+  localchef = glob.glob('/Library/Chef/Source/chef-*.pkg')
   if localchef and os.path.isfile(localchef[-1]):
     print "Using %s" % localchef
     install_path = localchef[-1]
@@ -341,7 +341,7 @@ def client(logpath, prams=[], chef_path='/usr/local/bin/chef-client'):
   return run_log(cmd, logpath)
 
 
-def run_chef(logpath='/Library/CPE/Logs/first_chef_run.log'):
+def run_chef(logpath='/Library/Chef/Logs/first_chef_run.log'):
   """Run Chef."""
   # Try a live Chef run, to a log file.
   result = client(logpath)
@@ -361,7 +361,7 @@ def bootstrap(force=False):
   Appends the nodename and ohai to the client.rb.
   Installs the Chef package (will download first if necessary).
   Run chef-client for the first time while logging to
-  /Library/CPE/Logs/first_chef_run.log
+  /Library/Chef/Logs/first_chef_run.log
 
   If local=True, it will do a chef-zero with local files only.
 
@@ -417,8 +417,8 @@ def bootstrap(force=False):
     f.write(CLIENT_RB)
   with open('/etc/chef/run-list.json', 'wb') as f:
     json.dump(RUN_LIST_JSON, f)
-  with open('/etc/chef/thefacebook.crt', 'wb') as f:
-    f.write(FACEBOOK_CRT)
+  with open('/etc/chef/org.crt', 'wb') as f:
+    f.write(ORG_CRT)
   with open('/etc/chef/validation.pem', 'wb') as f:
     f.write(VALIDATION_PEM)
 
@@ -432,9 +432,9 @@ def bootstrap(force=False):
   # Set the firstboot tag to ensure the firstboot runlist is used.
   open('/etc/chef/firstboot', 'wb').close()
 
-  # Set up the basic CPE directory
-  if not os.path.isdir('/Library/CPE/Logs'):
-    os.makedirs('/Library/CPE/Logs')
+  # Set up the basic Chef directory
+  if not os.path.isdir('/Library/Chef/Logs'):
+    os.makedirs('/Library/Chef/Logs')
 
   sys.stdout.flush()
   # Run Chef at least twice, but retry a certain number of times
@@ -452,8 +452,8 @@ def bootstrap(force=False):
 
   if successes < 2:
     print (
-      "Chef failed to run, please send CPE the logfile at"
-      " /Library/CPE/Logs/first_chef_run.log!"
+      "Chef failed to run, please send the logfile at"
+      " /Library/Chef/Logs/first_chef_run.log!"
     )
     return False
 
