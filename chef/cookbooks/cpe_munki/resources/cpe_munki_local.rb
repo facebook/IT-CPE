@@ -44,26 +44,28 @@ action :run do
   end
 end
 
-def vaildate_install_array(install_array)
+def validate_install_array(install_array)
+  @catalog_items = parse_items_in_catalogs
   return install_array if @catalog_items.nil?
   ret = []
   install_array.uniq.each do |item|
     ret << item if @catalog_items.include?(item)
   end
-  ret
+  ret.uniq.sort
 end
 
 def gen_plist
-  installs = vaildate_install_array(
+  installs = validate_install_array(
     node['cpe_munki']['local']['managed_installs'],
   )
-  uninstalls = vaildate_install_array(
+  uninstalls = validate_install_array(
     node['cpe_munki']['local']['managed_uninstalls'],
   )
   plist_hash = {
     'managed_installs' => installs,
     'managed_uninstalls' => uninstalls,
   }
+  ::Chef::Log.info("cpe_munki_local: Managed installs: #{installs}")
   Plist::Emit.dump(plist_hash) unless plist_hash.nil?
 end
 
