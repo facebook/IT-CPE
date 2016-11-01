@@ -29,21 +29,21 @@ class Chef
     # @example
     #  irb> node.default.awesome = 'yup'
     #  => "yup"
-    #  irb> node.dig('awesome/not_there')
+    #  irb> node.attr_lookup('awesome/not_there')
     #  => nil
-    #  irb> node.dig('awesome')
+    #  irb> node.attr_lookup('awesome')
     #  => "yup"
     #  irb> node.override.not_cool = 'but still functional'
     #  => "but still functional"
-    #  irb> node.dig('not_cool')
+    #  irb> node.attr_lookup('not_cool')
     #  => "but still functional"
-    #  irb> node.dig('default_val', default: 'I get this back anyway')
+    #  irb> node.attr_lookup('default_val', default: 'I get this back anyway')
     #  => "I get this back anyway"
     #  irb> node.automatic.a.very.deeply.nested.value = ':)'
     #  => ":)"
-    #  irb> node.dig('a/very/deeply/nested/value')
+    #  irb> node.attr_lookup('a/very/deeply/nested/value')
     #  => ":)"
-    def dig(path, delim: '/', default: nil)
+    def attr_lookup(path, delim: '/', default: nil)
       return default if path.nil?
       node_path = path.split(delim)
       node_path.inject(self) do |location, key|
