@@ -18,8 +18,9 @@ default_action :config
 # rubocop:disable Metrics/BlockLength
 action :config do
   # Does the node have a battery?
-  machine_type =
-    node.attr_lookup('hardware/battery').empty? ? 'desktop' : 'portable'
+  machine_type = node.attr_lookup(
+    'hardware/battery', :default => []
+  ).empty? ? 'desktop' : 'portable'
   pm_prefs = {
     'ACPower' => {},
     'Battery' => {},
