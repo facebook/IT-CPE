@@ -487,6 +487,7 @@ def main():
                            args.download)
 
   # Icon handling
+  icon_pkg_file = False
   if not args.noicons:
     # Get icons for Managed Updates, Optional Installs and removals
     updatecheck.processManifestForKey(manifestpath, 'managed_updates',

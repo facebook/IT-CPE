@@ -15,10 +15,12 @@
 resource_name :cpe_powermanagement
 default_action :config
 
+# rubocop:disable Metrics/BlockLength
 action :config do
   # Does the node have a battery?
-  machine_type =
-    node['hardware'].attribute?('battery') ? 'portable' : 'desktop'
+  machine_type = node.attr_lookup(
+    'hardware/battery', :default => []
+  ).empty? ? 'desktop' : 'portable'
   pm_prefs = {
     'ACPower' => {},
     'Battery' => {},
@@ -64,3 +66,4 @@ action :config do
     node.default['cpe_profiles']["#{prefix}.powermanagement"] = energy_profile
   end
 end
+# rubocop: enable Metrics/BlockLength
