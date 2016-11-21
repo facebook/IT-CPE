@@ -242,10 +242,10 @@ def install_cli_tools():
   # Install command line tools if necessary:
   # 10.12 receipt name
   receipt = 'com.apple.pkg.DevSDK_OSX1012'
-  if '10.10' in os_ver:
-    receipt = 'com.apple.pkg.DevSDK_OSX1010'
-  elif '10.11' in os_ver:
+  desired_platform = 'macOS Sierra'
+  if '10.11' in os_ver:
     receipt = 'com.apple.pkg.DevSDK_OSX1011'
+    desired_platform = 'OS X 10.11'
   if (
     is_pkg_installed('com.apple.pkg.CLTools_Executables') != '0.0.0.0' and
     is_pkg_installed(receipt) != '0.0.0.0'
@@ -264,7 +264,7 @@ def install_cli_tools():
       print >> sys.stderr, ('Software update failed!')
       sys.exit(1)
     for line in results['stdout'].split('\n'):
-      if 'Command Line Tools' in line:
+      if 'Command Line Tools' in line and desired_platform in line:
         cmd_line_tools = line.split('* ')[1]
         cmd = ['/usr/sbin/softwareupdate', '-i', cmd_line_tools, '--verbose']
         results = run_live(cmd)
