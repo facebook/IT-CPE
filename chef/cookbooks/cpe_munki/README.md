@@ -104,7 +104,7 @@ This is done in `cpe_munki::config`.
 ### Local Manifests
 Local Munki is where items from the `node['cpe_munki']['local']['managed_installs']` and `node['cpe_munki']['local']['managed_uninstalls']` node attributes are added to a local manifest in the respective `managed_installs` and `managed_uninstalls` keys.  This allows any individual (or group, or node, etc.) to specify an existing optional install as either an install or uninstall.  Adding an item to either of these two attributes will combine with the existing client manifest.
 
-If an item is removed from `managed_installs` or `managed_uninstalls` in this manner, Munki will no longer forcefully manage its installation or removal. The item in question will resume its place as an optional install, and will not apply further updates or attempts to remove unless the user chooses to do so via Managed Software Center (or by re-adding it to these attributes).
+If an item is removed from `managed_installs` or `managed_uninstalls` in this manner, Munki will no longer forcefully manage its installation or removal. If an item is added to `managed_uninstalls`, it is also removed from the 'managed_installs' array of the SelfServeManifest if the item exists there.
 
 The default list of items to be installed on clients is in cpe_munki::managed_installs. Anyone can override this value to add or remove things that they want (or don't want).
 

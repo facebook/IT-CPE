@@ -22,6 +22,7 @@ action :run do
                 node['cpe_munki']['local']['managed_uninstalls'].any?
 
   return unless locals_exist
+  return unless ::File.exist?('/usr/local/munki/managedsoftwareupdate')
 
   # If local only manifest preference is not set,
   # set it to the default 'extra_packages'
@@ -37,6 +38,14 @@ action :run do
     content gen_plist
   end
 
+  file '/Library/Managed Installs/manifests/SelfServeManifest' do
+    not_if { node['cpe_munki']['local']['managed_uninstalls'].empty? }
+    only_if do
+      ::File.exist?('/Library/Managed Installs/manifests/SelfServeManifest')
+    end
+    content gen_selfservice_plist
+  end
+
   # This file is for context for users to know whats avalible for their machine
   pretty_json = JSON.pretty_generate(@catalog_items)
   file '/opt/facebook/munki_catalog_items.json' do
@@ -45,11 +54,11 @@ action :run do
 end
 
 def validate_install_array(install_array)
-  @catalog_items = parse_items_in_catalogs
-  return install_array if @catalog_items.nil?
+  catalog_items = parse_items_in_catalogs
+  return install_array if catalog_items.empty?
   ret = []
   install_array.uniq.each do |item|
-    ret << item if @catalog_items.include?(item)
+    ret << item if catalog_items.include?(item)
   end
   ret.uniq.sort
 end
@@ -67,6 +76,23 @@ def gen_plist
   }
   ::Chef::Log.info("cpe_munki_local: Managed installs: #{installs}")
   Plist::Emit.dump(plist_hash) unless plist_hash.nil?
+end
+
+def gen_selfservice_plist
+  self_serve_file = '/Library/Managed Installs/manifests/SelfServeManifest'
+  return nil unless ::File.exist?(self_serve_file)
+  ss_manifest = read_plist(self_serve_file)
+  uninstalls = validate_install_array(
+    node['cpe_munki']['local']['managed_uninstalls'],
+  )
+  # remove uninstalls from ss_manifest array
+  ss_manifest['managed_installs'] =
+    ss_manifest['managed_installs'] - uninstalls
+
+  ::Chef::Log.info(
+    "cpe_munki_local: Cleanup Self Service: #{uninstalls}",
+  )
+  Plist::Emit.dump(ss_manifest)
 end
 
 def read_plist(xml_file)
