@@ -2,8 +2,8 @@
 
 The two pieces involved here are a module, and a script. You will need to place these on the client machines in some space where they will be within the Python path. 
 
-For more information about this, please see the blog post:
-[https://osxdominion.wordpress.com/2016/10/19/self-service-adobe-cc-in-munki/]()
+For more information about this, please see the blog post:  
+https://osxdominion.wordpress.com/2016/10/19/self-service-adobe-cc-in-munki/
 
 ## The adobe_tools Module
 
