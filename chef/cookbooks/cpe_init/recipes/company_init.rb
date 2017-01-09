@@ -19,11 +19,10 @@ node.default['organization'] = 'MYCOMPANY'
 node.default['cpe_launchd']['prefix'] = 'com.MYCOMPANY.chef'
 node.default['cpe_profiles']['prefix'] = 'com.MYCOMPANY.chef'
 
-
 # Install munki
-node.default['cpe_munki']['install'] = true
+node.default['cpe_munki']['install'] = false
 # Configure munki
-node.default['cpe_munki']['configure'] = true
+node.default['cpe_munki']['configure'] = false
 # Override default munki settings
 node.default['cpe_munki']['preferences']['SoftwareRepoURL'] =
   'https://munki.MYCOMPANY.com/repo'
