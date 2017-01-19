@@ -34,7 +34,7 @@ action :run do
   @catalog_items = parse_items_in_catalogs
 
   local_manifest = node['cpe_munki']['preferences']['LocalOnlyManifest']
-  file "/Library/Managed Installs/manifests/#{local_manifest}" do
+  file "/Library/Managed Installs/manifests/#{local_manifest}" do # ~FC005
     content gen_plist
   end
 
