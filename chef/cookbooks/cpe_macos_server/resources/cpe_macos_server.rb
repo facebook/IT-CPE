@@ -57,13 +57,13 @@ action :setup do
     action :create
   end
 
+  easy_install_package 'pexpect'
+
   python 'Server.app' do
     only_if { ::File.exist?(servercmd) }
     creates '/var/db/.ServerSetupDone'
-    cwd '/Library/CPE/lib/flib/modules/'
     code <<-EOH
 import sys
-sys.path.append('/Library/CPE/lib/flib/modules')
 import pexpect
 server_eula = pexpect.spawn('#{servercmd} setup', timeout=300)
 server_eula.logfile = sys.stdout
