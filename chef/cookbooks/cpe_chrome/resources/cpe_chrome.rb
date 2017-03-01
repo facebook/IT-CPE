@@ -27,7 +27,8 @@ action_class do
   end
 
   def manage_chrome_osx
-    prefs = node['cpe_chrome'].reject { |_k, v| v.nil? }
+    prefs = node['cpe_chrome']['profile'].reject \
+      { |_k, v| v.nil? || v.class == Chef::Node::ImmutableArray && v.empty? }
     return if prefs.empty?
     prefix = node['cpe_profiles']['prefix']
     organization = node['organization'] ? node['organization'] : 'Facebook'
@@ -60,6 +61,7 @@ action_class do
         },
       ],
     }
+
     # Check for Chrome Canary
     if node.installed?('com.google.Chrome.canary')
       prefix = node['cpe_profiles']['prefix']
@@ -93,6 +95,32 @@ action_class do
           },
         ],
       }
+    end
+
+    unless node['cpe_chrome']['mp']['UseMasterPreferences'] == false
+      mprefs = node['cpe_chrome']['mp']['FileContents'].reject { |v| v.nil? }
+      if mprefs.empty?
+        file '/Library/Google/Google Chrome Master Preferences' do
+          action :delete
+        end
+        return
+      end
+
+      directory '/Library/Google' do
+        owner 'root'
+        group 'wheel'
+        mode '0755'
+        recursive true
+        action :create
+      end
+
+      file '/Library/Google/Google Chrome Master Preferences' do
+        owner 'root'
+        group 'wheel'
+        mode '0755'
+        action :create
+        content "#{mprefs}"
+      end
     end
   end
 end
