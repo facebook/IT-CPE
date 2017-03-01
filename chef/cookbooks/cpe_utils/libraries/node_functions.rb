@@ -67,6 +67,10 @@ class Chef
       username
     end
 
+    def ts
+      return ::Time.new.strftime("%Y%m%d%H%M%S")
+    end
+
     def serial
       unless macos?
         Chef::Log.warn('node.serial called on non-OS X!')
