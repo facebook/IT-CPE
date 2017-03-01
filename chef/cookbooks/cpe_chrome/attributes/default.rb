@@ -21,10 +21,10 @@ default['cpe_chrome']['profile'] = {
   'DisabledPlugins' => [],
   'DefaultPluginsSetting' => nil,
   'ExtensionInstallSources' => [],
-  'PluginsAllowedForUrls' => []
+  'PluginsAllowedForUrls' => [],
 }
 
 default['cpe_chrome']['mp'] = {
   'UseMasterPreferencesFile' => false,
-  'FileContents' => []
+  'FileContents' => [],
 }
