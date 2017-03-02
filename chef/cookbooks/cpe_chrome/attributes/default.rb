@@ -14,14 +14,17 @@
 # Google Chrome & Chrome Canary attributes
 # See https://www.chromium.org/administrators/policy-list-3
 
-default['cpe_chrome'] = {
-  'ExtensionInstallForcelist' => [
-  ],
-  'ExtensionInstallBlacklist' => [
-  ],
+default['cpe_chrome']['profile'] = {
+  'ExtensionInstallForcelist' => [],
+  'ExtensionInstallBlacklist' => [],
   'EnabledPlugins' => [],
   'DisabledPlugins' => [],
-  'DefaultPluginsSetting' => 1,
+  'DefaultPluginsSetting' => nil,
   'ExtensionInstallSources' => [],
   'PluginsAllowedForUrls' => [],
+}
+
+default['cpe_chrome']['mp'] = {
+  'UseMasterPreferencesFile' => false,
+  'FileContents' => [],
 }
