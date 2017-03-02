@@ -119,7 +119,7 @@ action_class do
         group 'wheel'
         mode '0755'
         action :create
-        content "#{mprefs}"
+        content Chef::JSONCompat.to_json_pretty(mprefs)
       end
     end
   end
