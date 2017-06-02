@@ -1,13 +1,5 @@
 #!/usr/bin/python
 """Add Adobe products to user on-demand."""
-#
-# Copyright (c) 2015-present, Facebook, Inc.
-# All rights reserved.
-#
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
-#
 
 import sys
 
@@ -15,31 +7,25 @@ import adobe_tools
 
 target_product = sys.argv[1]
 
-# You should replace this code with your own way to determine
-# who the current user is - such as an LDAP query
-# or database lookup.
-def getconsoleuser():
-  """Get the current console user."""
-  from SystemConfiguration import SCDynamicStoreCopyConsoleUser
-  cfuser = SCDynamicStoreCopyConsoleUser(None, None, None)
-  return cfuser[0]
-
-me = getconsoleuser()
-email = me + "@domain.com"
-firstname = me
-lastname = me
+me = ldap_lookup()  # Replace this with your own user lookup method
+email = me.email
+firstname = me.first_name
+lastname = me.last_name
 country = 'US'
 
 
 def log(message):
   """Log with tag."""
-  print 'CPE-add_adobe: ' + str(message)
+  tag = 'CPE-add_adobe'
+  print (tag + ': %s' % str(message))
+
 
 # Do I exist as a user?
 if not adobe_tools.user_exists(email):
   log("Creating account for %s" % email)
   # Add the user
-  success = adobe_tools.add_user(email, firstname, lastname, country)
+  success = adobe_tools.add_federated_user(email, email, firstname,
+                                           lastname, country)
   if not success:
     log("Failed to create account for %s" % email)
     sys.exit(1)
