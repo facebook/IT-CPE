@@ -8,10 +8,23 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 #
 
-ChefSpec.define_matcher :whyrun_safe_ruby_block
+ChefSpec.define_matcher :cpe_choco_bootstrap
+ChefSpec.define_matcher :cpe_choco_configure
+ChefSpec.define_matcher :cpe_choco_apps
 
 if defined?(ChefSpec)
-  def run_whyrun_safe_ruby_block(name)
-    ChefSpec::Matchers::ResourceMatcher.new(:whyrun_safe_ruby_block, :run, name)
+  def bootstrap_cpe_choco(name)
+    ChefSpec::Matchers::ResourceMatcher.
+      new(:cpe_choco_bootstrap, :install, name)
+  end
+
+  def configure_cpe_choco(name)
+    ChefSpec::Matchers::ResourceMatcher.
+      new(:cpe_choco_configure, :change, name)
+  end
+
+  def manage_cpe_choco_apps(name)
+    ChefSpec::Matchers::ResourceMatcher.
+      new(:cpe_choco_apps, :change, name)
   end
 end

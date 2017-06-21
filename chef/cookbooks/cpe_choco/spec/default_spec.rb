@@ -7,15 +7,20 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 #
-
 require_relative 'spec_helper'
 
 describe 'cpe_choco::default' do
   context 'when the default cookbook runs' do
     let(:chef_run) { ChefSpec::SoloRunner.new.converge(described_recipe) }
     subject { chef_run }
-    it { should include_recipe('cpe_choco::install') }
-    it { should include_recipe('cpe_choco::configure') }
-    it { should include_recipe('cpe_choco::required_apps') }
+    it 'should bootstrap chocolatey onto the machine' do
+      should bootstrap_cpe_choco('bootstrap if needed')
+    end
+    it 'should manage the chocolatey configuration on the machine' do
+      should configure_cpe_choco('configuring chocolatey client')
+    end
+    it 'should manage the chocolatey applications on the machine' do
+      should manage_cpe_choco_apps('managing system applications')
+    end
   end
 end

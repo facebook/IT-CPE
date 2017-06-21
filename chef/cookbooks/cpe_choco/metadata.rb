@@ -8,6 +8,3 @@ long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
 version '0.1.2'
 
 supports 'windows'
-# This is breaking the example run on macOS, commented out for now
-#depends 'windows'
-depends 'cpe_utils'
