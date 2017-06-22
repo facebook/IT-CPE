@@ -16,4 +16,12 @@ RSpec.configure do |config|
   config.version  = '2012R2'
 end
 
+def default_cookbook_checks
+  it 'should run our custom resources' do
+    should bootstrap_cpe_choco('bootstrap if needed')
+    should configure_cpe_choco('configuring chocolatey client')
+    should manage_cpe_choco_apps('managing system applications')
+  end
+end
+
 ChefSpec::Coverage.start!
