@@ -8,13 +8,13 @@ https://osxdominion.wordpress.com/2016/10/19/self-service-adobe-cc-in-munki/
 
 ## The adobe_api Module
 
-This is the primary module for interacting with the [Adobe User Management API](https://www.adobe.io/products/usermanagement/docs/gettingstarted). It has a class named "AdobeAPIObject", which allows interaction with the API. Information queried from the API, such as the product list, user list, and individual user data is stored in this object.
+This is the primary module for interacting with the [Adobe User Management API](https://www.adobe.io/products/usermanagement/docs/gettingstarted). It has a class named `AdobeAPIObject`, which allows interaction with the API. Information queried from the API, such as the product list, user list, and individual user data is stored in this object.
 
 This object also stores a cache on disk (which lasts 6 hours before being automatically invalidated) for faster lookups after the initial queries, unless intentionally instantiated with `cache=False`.
 
-You'll need to have the "usermanagement.config" and "private.key" files in place somewhere, as [documented on the API website](https://www.adobe.io/products/usermanagement/docs/samples#setup). The code as is written assumes they're located in `/Library/Adobe`, but you can move those files anywhere.
+You'll need to have the `usermanagement.config` and `private.key` files in place somewhere, as [documented on the API website](https://www.adobe.io/products/usermanagement/docs/samples#setup). The code as is written assumes they're located in `/Library/Adobe`, but you can move those files anywhere.
 
-The arguments to the AdobeAPIObject:
+The arguments to the `AdobeAPIObject`:
 * `username` - defaults to the current logged in GUI user
 * `private_key_filename` - path to the private key
 * `userconfig` - path to the user management configuration (in JSON)
@@ -45,7 +45,7 @@ print result
 
 You must make sure that the `adobe_tools` module is in the Python path for these scripts.
 
-Please note that these scripts, as written, require you to fill in some details about how the user's email and federated ID is generated. If you have an LDAP / AD to query, you'll want to do that. If the usernames also match their email (i.e. "username@domain.com" is their valid email), that's also an easy way to add accounts. Best not to rely on the assumptions that were made to generalize it.
+Please note that these scripts, as written, require you to fill in some details about how the user's email and federated ID is generated. If you have an LDAP/AD to query, you'll want to do that. If the usernames also match their email (i.e. "username@domain.com" is their valid email), that's also an easy way to add accounts. Best not to rely on the assumptions that were made to generalize it.
 
 The entitlements are the names of the product configurations listed in your Adobe enterprise dashboard. You can also get the list of products from the module:
 ```
