@@ -7,28 +7,87 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 #
-
 require_relative 'spec_helper'
 
 def setup_cookbook_vars
-  let(:choco_dir) { "#{ENV['PROGRAMDATA']}\\chocolatey" }
-  let(:script) { format('%s\CPE\Chef\config\choco-run.ps1', ENV['WINDIR']) }
-  let(:config_path) { "#{choco_dir}\\config\\chocolatey.config" }
-  let(:blacklist_block_name) { 'blacklisted_items' }
-  let(:blacklist_block) { chef_run.ruby_block(blacklist_block_name) }
+  let(:choco_dir) { 'C:\ProgramData\chocolatey' }
+  let(:config_dir) { format('%s\config', choco_dir) }
+  let(:config_path) { format('%s\chocolatey.config', config_dir) }
   let(:template_resource) { chef_run.template(config_path) }
-  let(:updater_task_opts) { { :action => [:create, :enable] } }
 end
 
-describe 'cpe_choco::configure' do
+describe 'CPE Managed Chocolatey Configuration' do
   context 'configures the chocolatey client with chef' do
-    subject(:chef_run) { ChefSpec::SoloRunner.new.converge(described_recipe) }
+    subject(:chef_run) do
+      ChefSpec::SoloRunner.new(:step_into => ['cpe_choco_configure']).
+        converge('cpe_choco::default')
+    end
     setup_cookbook_vars
-    it { should run_whyrun_safe_ruby_block(blacklist_block_name) }
+    default_cookbook_checks
+    it { should create_directory(choco_dir) }
+    it { should create_directory(config_dir) }
     it { should create_template(config_path) }
-    it { should create_cookbook_file(script) }
-    it 'should create and enable the chocolatey updater task' do
-      should create_windows_task('Chocolatey Updater').with(updater_task_opts)
+  end
+  context 'when given a blacklisted source the source is not present in' +
+          'the configuration file' do
+    subject(:chef_run) do
+      ChefSpec::SoloRunner.new(:step_into => ['cpe_choco_configure']) do |node|
+        node.normal['cpe_choco']['source_blacklist'] = [
+          'https://terrible.org/malicious/feed',
+        ]
+        node.normal['cpe_choco']['sources'] = {
+          'bad_place' => {
+            'source' => 'https://terrible.org/malicious/feed',
+          },
+          'good_place' => {
+            'source' => 'https://awesome.org/coolandgood/feed',
+          },
+        }
+      end.converge('cpe_choco::default')
+    end
+    setup_cookbook_vars
+    it 'should not write bad_place to the config file' do
+      should render_file(config_path).with_content(/good_place/)
+      should_not render_file(config_path).with_content(/bad_place/)
+    end
+  end
+  context 'when given multiple blacklisted sources there should only be one ' +
+          'source rendered to the configuration file' do
+    subject(:chef_run) do
+      ChefSpec::SoloRunner.new(:step_into => ['cpe_choco_configure']) do |node|
+        node.normal['cpe_choco']['source_blacklist'] = [
+          'https://terrible.org/malicious/feed',
+          'https://tatooine.com/cantina/feed',
+          'https://not.sure.io/maybe/feed',
+          'https://you.have.bad.taste.in/feeds',
+        ]
+        node.normal['cpe_choco']['sources'] = {
+          'bad_place' => {
+            'source' => 'https://terrible.org/malicious/feed',
+          },
+          'a_place_of_scum_and_villany' => {
+            'source' => 'https://tatooine.com/cantina/feed',
+          },
+          'maybe_a_good_place' => {
+            'source' => 'https://not.sure.io/maybe/feed',
+          },
+          'chocolatey' => {
+            'source' => 'https://chocolatey.org/api/v2',
+          },
+          'nope' => {
+            'source' => 'https://you.have.bad.taste.in/feeds',
+          },
+        }
+      end.converge('cpe_choco::default')
+    end
+    setup_cookbook_vars
+    it 'should not write bad places to the config file' do
+      should render_file(config_path).with_content(/chocolatey/)
+      should_not render_file(config_path).with_content(/bad_place/)
+      should_not render_file(config_path).with_content(/maybe_a_good_place/)
+      should_not render_file(config_path).with_content(/nope/)
+      should_not render_file(config_path).
+        with_content(/a_place_of_scum_and_villany/)
     end
   end
 end

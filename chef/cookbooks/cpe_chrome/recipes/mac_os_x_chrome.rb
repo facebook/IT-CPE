@@ -12,8 +12,6 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 #
 
-node.default['cpe_munki']['local']['managed_installs'] << 'GoogleChrome'
-
 return unless node.installed?('com.google.Chrome')
 
 cpe_chrome 'Configure Google Chrome'

@@ -30,7 +30,7 @@ Tweak a few things
 ------------------
 Lets customize a few things and see what happens.
 
-Open /Users/Shared/IT-CPE/chef/cookbooks/cpe_init/recipes/company_init.rb in your favorite text editor.
+Open `/Users/Shared/IT-CPE/chef/cookbooks/cpe_init/recipes/company_init.rb` in your favorite text editor.
 
 Add the following line to the bottom of the file:
 
@@ -42,14 +42,16 @@ Add the following line to the bottom of the file:
       }
     }
     # Add a launchd that echos nothing
-    node.default['cpe_launchd']['com.MYCOMPANY.chef.CPE.doesnothing'] = {
+    node.default['cpe_launchd']['doesnothing'] = {
       'program_arguments' => ['echo', 'nothing'],
       'run_at_load' => true,
     }
 
-In terminal, cd to /Users/Shared/IT-CPE/chef/cookbooks, do a local chef run:
+Because cpe_launchd uses the prefix set in company_init.rb, we do not need to specify a full reverse domain name. cpe_launchd is smart enought to build the correct reverse domain name for the LaunchDaemon.
+
+In terminal, cd to `/Users/Shared/IT-CPE/chef/cookbooks`, do a local chef run:
 
     cd /Users/Shared/IT-CPE/chef
     sudo chef-client -z -j quickstart.json
 
-Check Profiles again in system preferences. You will have 2 more profiles with the settings specified above. Also check /Library/LaunchDaemons, you should see a new one called `com.MYCOMPANY.chef.CPE.doesnothing`.
+Check Profiles again in system preferences. You will have 2 more profiles with the settings specified above. Also check `/Library/LaunchDaemons`, you should see a new one called `com.MYCOMPANY.chef.doesnothing.plist`. (Or whatever you changed `MYCOMPANY` to.)

@@ -15,14 +15,13 @@
 resource_name :cpe_preferencepanes
 default_action :config
 
+# rubocop:disable Metrics/BlockLength
 action :config do
   prefs = node['cpe_preferencepanes'].reject { |_k, v| v.nil? }
   return if prefs.empty?
   prefix = node['cpe_profiles']['prefix']
   organization = node['organization'] ? node['organization'] : 'Facebook'
-  DisabledPrefPanes = node['cpe_preferencepanes']['DisabledPreferencePanes']
-  HiddenPreferencePanes = node['cpe_preferencepanes']['HiddenPreferencePanes']
-  node.default['cpe_profiles']["#{prefix}.prefpanes"] = {
+  pane_profile = {
     'PayloadIdentifier' => "#{prefix}.prefpanes",
     'PayloadRemovalDisallowed' => true,
     'PayloadScope' => 'System',
@@ -39,9 +38,12 @@ action :config do
         'PayloadUUID' => '77537A7B-76E2-4ED8-B559-A581002CFD3C',
         'PayloadEnabled' => true,
         'PayloadDisplayName' => 'Preference Panes',
-        'DisabledPreferencePanes' => DisabledPrefPanes,
-        'HiddenPreferencePanes' => HiddenPreferencePanes,
       },
     ],
   }
+  prefs.each do |k, v|
+    pane_profile['PayloadContent'][0][k] = v
+  end
+  node.default['cpe_profiles']["#{prefix}.prefpanes"] = pane_profile
 end
+# rubocop: enable Metrics/BlockLength

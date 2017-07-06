@@ -10,11 +10,8 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 #
+return unless platform?('windows')
 
-%w{
-  cpe_choco::install
-  cpe_choco::configure
-  cpe_choco::required_apps
-}.each do |choco|
-  include_recipe choco
-end
+cpe_choco_bootstrap 'bootstrap if needed'
+cpe_choco_configure 'configuring chocolatey client'
+cpe_choco_apps 'managing system applications'

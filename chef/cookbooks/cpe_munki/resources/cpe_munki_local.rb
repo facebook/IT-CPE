@@ -34,7 +34,7 @@ action :run do
   @catalog_items = parse_items_in_catalogs
 
   local_manifest = node['cpe_munki']['preferences']['LocalOnlyManifest']
-  file "/Library/Managed Installs/manifests/#{local_manifest}" do
+  file "/Library/Managed Installs/manifests/#{local_manifest}" do # ~FC005
     content gen_plist
   end
 
@@ -48,7 +48,7 @@ action :run do
 
   # This file is for context for users to know whats avalible for their machine
   pretty_json = JSON.pretty_generate(@catalog_items)
-  file '/opt/facebook/munki_catalog_items.json' do
+  file '/Library/Managed Installs/munki_catalog_items.json' do
     content pretty_json.to_s
   end
 end

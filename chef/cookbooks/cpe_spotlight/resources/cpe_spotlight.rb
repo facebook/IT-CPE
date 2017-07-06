@@ -15,6 +15,7 @@
 resource_name :cpe_spotlight
 default_action :run
 
+# rubocop:disable Metrics/BlockLength
 action :run do
   # No exclusions, nothing to do
   return if node['cpe_spotlight']['exclusions'].empty?
@@ -27,7 +28,7 @@ action :run do
     # Path must exist on disk
     unless ::File.exist?(path)
       ::Chef::Log.warn("cpe_spotlight: #{path} not found, not excluding")
-      node['cpe_spotlight']['exclusions'].delete(path)
+      node.default['cpe_spotlight']['exclusions'].delete(path)
       next
     end
     disklist << path
@@ -56,6 +57,7 @@ action :run do
     action :create
   end
 end
+# rubocop:enable Metrics/BlockLength
 
 action :clean_up do
   spotlight_path = '/var/chef/.chef-spotlight.json'

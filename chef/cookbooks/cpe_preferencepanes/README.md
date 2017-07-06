@@ -21,14 +21,14 @@ to `com.facebook.chef`
 Example usage;
 
 	# Disable Desktop & Screen Saver, Disable iCloud and Profiles panes.
-	node.default['cpe_preferencepanes'] = [
+	node.default['cpe_preferencepanes']['DisabledPreferencePanes'] = [
 		'com.apple.preference.desktopscreeneffect',
 		'com.apple.preferences.icloud',
 		'com.apple.preferences.configurationprofiles',
 		]
 
 	# Hide Startup Disk pane.
-	node.default['cpe_preferencepanes'] = [
+	node.default['cpe_preferencepanes']['HiddenPreferencePanes'] = [
 		'com.apple.preference.startupdisk',
 		]
 

@@ -18,6 +18,7 @@ action :config do
   manage_chrome
 end
 
+# rubocop:disable Metrics/BlockLength
 action_class do
   def manage_chrome
     case node['platform_family']
@@ -27,7 +28,7 @@ action_class do
   end
 
   def manage_chrome_osx
-    prefs = node['cpe_chrome'].reject { |_k, v| v.nil? }
+    prefs = node['cpe_chrome']['profile'].reject { |_k, v| v.nil? }
     return if prefs.empty?
     prefix = node['cpe_profiles']['prefix']
     organization = node['organization'] ? node['organization'] : 'Facebook'
@@ -94,5 +95,36 @@ action_class do
         ],
       }
     end
+    # Apply the Master Preferences file
+    unless node['cpe_chrome']['mp']['UseMasterPreferencesFile'] == false
+      mprefs =
+        node['cpe_chrome']['mp']['FileContents'].reject { |_k, v| v.nil? }
+      master_path = value_for_platform_family(
+        'mac_os_x' => '/Library/Google/Google Chrome Master Preferences',
+        'windows' =>
+          'c:\Program Files (x86)\Google\Chrome\Application\master_preferences',
+      )
+      if mprefs.empty?
+        file master_path do
+          action :delete
+        end
+        return
+      end
+      directory '/Library/Google' do
+        mode '0755'
+        owner 'root'
+        group 'wheel'
+        action :create
+      end
+      # Create the Master Preferences file
+      file master_path do
+        mode '0644'
+        owner 'root'
+        group 'wheel'
+        action :create
+        content Chef::JSONCompat.to_json_pretty(mprefs)
+      end
+    end
   end
 end
+# rubocop:enable Metrics/BlockLength
