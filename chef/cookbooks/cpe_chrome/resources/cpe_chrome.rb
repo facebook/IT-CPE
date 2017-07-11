@@ -83,7 +83,7 @@ action_class do
             'PayloadEnabled'     => true,
             'PayloadDisplayName' => 'Chrome Canary',
             'PayloadContent'     => {
-              'com.apple.Safari' => {
+              'com.google.Chrome.canary' => {
                 'Forced' => [
                   {
                     'mcx_preference_settings' => prefs,
