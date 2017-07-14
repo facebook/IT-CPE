@@ -33,7 +33,16 @@ def pkgbuild(root_dir, identifier, version, pkg_output_file):
 
 
 def build_pkg(source, output, receipt, destination, cache_dir, comment=''):
-  """Construct package using pkgbuild."""
+  """
+  Construct package using pkgbuild.
+
+  source - the directory to build a package from
+  output - the name of the package file to build ('.pkg' is appended)
+  receipt - the receipt of the package
+  destination - the directory path to place the payload in
+  cache_dir - the directory to place the built package into
+  comment - A message to print out when building
+  """
   if os.path.isdir(source) and os.listdir(source):
     print comment
     pkg_name = '%s.pkg' % output
@@ -76,22 +85,6 @@ def populate_ds_repo(image_path, repo):
     os.rename(repo_target, newname)
   # now copy the newly built image over
   print "Copying new image to DS Repo."
-  print "Image path: %s" % image_path
-  print "Repo target: %s" % repo_target
-  shutil.copyfile(image_path, repo_target)
-
-
-def move_file(image_path, target):
-  """Move a built image into a target directory."""
-  image_name = os.path.basename(image_path)
-  repo_target = os.path.join(target, image_name)
-  if os.path.isfile(repo_target):
-    # If the target already exists, name it "-OLD"
-    newname = repo_target.split('.dmg')[0] + '-OLD.dmg'
-    print "Renaming old image to %s" % newname
-    os.rename(repo_target, newname)
-  # now copy the newly built image over
-  print "Copying new image to target."
   print "Image path: %s" % image_path
   print "Repo target: %s" % repo_target
   shutil.copyfile(image_path, repo_target)

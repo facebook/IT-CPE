@@ -14,9 +14,9 @@ The image will try to include:
 ## Requirements:
 ----
 * [AutoDMG](https://github.com/MagerValp/AutoDMG) must be installed.
-* [Munki](https://github.com/munki/munki) must be installed and configured to check in to a repo.  This script will read the machine's Munki preferences to fetch Munki items.
-* An OS X Installer from the App Store, present in `/Applications`. By default, it looks for `/Applications/Install OS X El Capitan.app`.
-* To be safe, at least 20 GB of free disk space.
+* We need a copy of the [Munki](https://github.com/munki/munki) libraries from version 2.8.2 specifically. You'll need to obtain them out of the Munki 2.8.2 release package. Munkilib should go in the same folder as the Python scripts.
+* A macOS Installer from the App Store, present in `/Applications`. By default, it looks for `/Applications/Install OS X El Capitan.app`.
+* To be safe, at least 40 GB of free disk space.
 * AutoDMG Cache Builder requires administrative privileges.
 
 ## Basic Usage:
