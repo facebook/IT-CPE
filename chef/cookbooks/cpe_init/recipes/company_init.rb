@@ -15,7 +15,7 @@
 # HERE: This is where you would set attributes that are consumed by the API
 # cookbooks.
 # Be sure to replace all instances of MYCOMPANY with your actual company name
-node.default['organization'] = 'YOURCOMPANY'
+node.default['organization'] = 'MYCOMPANY'
 prefix = "com.#{node['organization']}.chef"
 node.default['cpe_launchd']['prefix'] = prefix
 node.default['cpe_profiles']['prefix'] = prefix
