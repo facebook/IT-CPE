@@ -15,9 +15,10 @@
 # HERE: This is where you would set attributes that are consumed by the API
 # cookbooks.
 # Be sure to replace all instances of MYCOMPANY with your actual company name
-node.default['organization'] = 'MYCOMPANY'
-node.default['cpe_launchd']['prefix'] = 'com.MYCOMPANY.chef'
-node.default['cpe_profiles']['prefix'] = 'com.MYCOMPANY.chef'
+node.default['organization'] = 'YOURCOMPANY'
+prefix = "com.#{node['organization']}.chef"
+node.default['cpe_launchd']['prefix'] = prefix
+node.default['cpe_profiles']['prefix'] = prefix
 
 # Install munki
 node.default['cpe_munki']['install'] = false
