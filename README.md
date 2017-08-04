@@ -39,7 +39,7 @@ See the internal README for more information.
 ## Installing IT-CPE tools repo
 * Set the hostnames of your code sync and key server in the code_sync.sh file. These values will be used by all clients when they sync the code library
 
-* Generate a key scan of your code sync server to establish trust between clients and the code sync server via `ssh -t rsa yourcodesyncserver.com`. Place the resulting fingerprint into your /etc/ssh_known_hosts file on all your client machines. A sample file is placed at IT-CPE/code/lib/conf/ssh_known_hosts.
+* Generate a key scan of your code sync server to establish trust between clients and the code sync server via `ssh-keyscan -t rsa yourcodesyncserver.com`. Place the resulting fingerprint into your /etc/ssh_known_hosts file on all your client machines. A sample file is placed at IT-CPE/code/lib/conf/ssh_known_hosts.
 
 * The key server should run apache/nginx to servere the contents of the single-use SSH key. Clients will download the rsync key from this server using a curl. Clients will use this key to rsync code from the code sync server to the client.
 
