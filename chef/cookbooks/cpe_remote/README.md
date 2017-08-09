@@ -2,9 +2,6 @@ cpe_remote cookbook
 ============
 This cookbook has two different providers.  The first is the pkg provider (cpe_remote_pkg).  This provider is compatible with Mac and will install a package from a repo.  The second provider is a file provider (cpe_remote_file).  This provider is compatible with Mac and Windows and will download a file from a repo and place it on the client if the checksums dont match, or the file is missing on the client.
 
-Files or pkgs must first be uploaded to our cpespace servers using Pantri. See
-wiki for more details. http://fburl.com/pantri
-
 Requirements
 ------------
 ### Platform
@@ -46,7 +43,7 @@ end
 
 ### file
 
-This resource will download a file to the client from our geo load balanced cpespace servers. The file will be stored on the client at `path`.  The `folder_name` specifies the folder on the server where the file is located.  The `file_name` specifies the file within the `folder_name` to download.  The provider will only store the latest version of the file unless you set `cleanup` to false. 
+This resource will download a file to the client from the server. The file will be stored on the client at `path`.  The `folder_name` specifies the folder on the server where the file is located.  The `file_name` specifies the file within the `folder_name` to download.  The provider will only store the latest version of the file unless you set `cleanup` to false. 
 
 #### Actions
 - :create - downloads and places file on the client
@@ -60,8 +57,8 @@ This resource will download a file to the client from our geo load balanced cpes
 #### Examples
 
 ```ruby
-cpe_remote_file 'folder_name_on_cpespace_box_where_files_are_located' do
-  file_name file_to_download_from_cpespace_box
+cpe_remote_file 'folder_name_on_server_box_where_files_are_located' do
+  file_name file_to_download_from_server_box
   checksum the_checksum256_of_the_file
   path path_to_whitelist_on_client_system
 end
@@ -75,7 +72,7 @@ cpe_remote_file 'javaruleset' do
   path node['java_ruleset']['whitelist_path']
 end
 ```
-The above example will download the DeploymentRuleSet.jar file from the javaruleset folder from the chef sharepoint on our cpespace boxes. This will happen if the file is missing or the checksum on the client doesn't match Chef's checksum.
+The above example will download the DeploymentRuleSet.jar file from the javaruleset folder from the chef sharepoint on server boxes. This will happen if the file is missing or the checksum on the client doesn't match Chef's checksum.
 
 License & Authors
 -----------------
