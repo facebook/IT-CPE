@@ -33,8 +33,8 @@ See the internal README for more information.
 * (key server) server running apache/nginx to host the rsync key - can be on the code sync server 
 * A fleet of Mac machines to manage
 * _tools.py requirements, download the modules below and move them into the /modules directory:
-  * Envoy - github.com/kennethreitz/envoy
-  * Requests - github.com/kennethreitz/requests
+  * Envoy - https://github.com/kennethreitz/envoy
+  * Requests - https://github.com/requests/requests
 
 ## Installing IT-CPE tools repo
 * Set the hostnames of your code sync and key server in the code_sync.sh file. These values will be used by all clients when they sync the code library
