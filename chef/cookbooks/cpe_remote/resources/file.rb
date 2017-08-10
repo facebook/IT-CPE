@@ -43,12 +43,14 @@ load_current_value do |desired| # ~FC006
   path = desired.path
   if ::File.exists?(path)
     f_stat = ::File.stat(path)
-    owner Etc.getpwuid(f_stat.uid).name
-    group Etc.getgrgid(f_stat.gid).name
     checksum_ondisk = Chef::Digester.checksum_for_file(path)
     checksum checksum_ondisk
-    m = f_stat.mode
-    mode "0#{(m & 07777).to_s(8)}"
+    unless platform?('windows')
+      owner Etc.getpwuid(f_stat.uid).name
+      group Etc.getgrgid(f_stat.gid).name
+      m = f_stat.mode
+      mode "0#{(m & 07777).to_s(8)}"
+    end
   end
 end
 
