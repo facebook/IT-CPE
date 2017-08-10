@@ -59,20 +59,18 @@ action :install do
     download_file_path = "#{chef_cache}/#{download_file}"
     valid_url = true
 
-    if remote
-      server = node['cpe_remote']['base_url']
-      pkg_source = gen_url(server, app, download_file)
-      # someone can choose to override where there pkg is coming from
-      pkg_source = pkg_url if pkg_url
+    server = node['cpe_remote']['base_url']
+    pkg_source = gen_url(server, app, download_file)
+    # someone can choose to override where there pkg is coming from
+    pkg_source = pkg_url if pkg_url
 
-      valid_url = valid_url?(pkg_source)
-      remote_file download_file do
-        path download_file_path
-        source pkg_source
-        checksum checksum unless is_mpkg
-        backup !cleanup
-        only_if { valid_url }
-      end
+    valid_url = valid_url?(pkg_source)
+    remote_file download_file do
+      path download_file_path
+      source pkg_source
+      checksum checksum unless is_mpkg
+      backup !cleanup
+      only_if { valid_url }
     end
 
     # Unzip if is_mpkg
