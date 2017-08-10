@@ -8,6 +8,6 @@
 #
 
 default['cpe_remote'] = {
-  'base_url' => 'MY DRISTRO SERVER/chef',
+  'base_url' => 'MY DISTRO SERVER/chef',
   'server_accessible' => true,
 }
