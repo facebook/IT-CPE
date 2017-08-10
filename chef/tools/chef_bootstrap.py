@@ -191,12 +191,6 @@ def get_pkg_path_from_dmg(dmgpath):
 def install_package(package_path):
   """Install a package."""
   path = package_path
-  if package_path.endswith('.dmg'):
-    # Search the DMG for a valid .pkg
-    path = get_pkg_path_from_dmg(package_path)
-    if not path:
-      # Package failed to install, we can't proceed.
-      return False
   cmd = [
     '/usr/sbin/installer', '-pkg',
     path,
@@ -285,22 +279,60 @@ def install_cli_tools():
 
 
 # Chef-related functions
-def get_chef():
-  """Determine source of Chef."""
-  # Try downloading direct from Chef website
+def get_chef_web():
+  """Download a specific version of chef from Chef directly."""
+  # For safety, this no longer obtains the 'latest' version of Chef.
+  # Instead, it's much safer to pin a specific known version for your
+  # bootstrapping, and then upgrade it with Chef directly later on.
   os_ver = '.'.join(get_os_version().split('.')[:2])
   base_url = 'https://www.chef.io/chef/download'
-  url = ('%s?p=mac_os_x&pv=%s&m=x86_64&v=latest&prerelease=false' %
+  url = ('%s?p=mac_os_x&pv=%s&m=x86_64&v=12.15.19&prerelease=false' %
         (base_url, os_ver))
-  # Chef redirects to an AWS node
-  actual_url = urllib2.urlopen(url).geturl()
-  file_name = 'chef.dmg'
-  print 'Downloading from Chef directly...',
-  with open(os.path.join('/tmp', file_name), 'wb') as f:
-    f.write(urllib2.urlopen(actual_url).read())
-  if os.path.exists(os.path.join('/tmp', file_name)):
-    print 'downloaded from Chef.io.'
-    return os.path.join('/tmp', file_name)
+  path = download_chef(url, 'Chef.io')
+  return path
+
+
+def get_chef_locally():
+  """Look for Chef locally in /Library/Chef/Source."""
+  # This is also pinned to a specific version.
+  print 'Looking in /Library/Chef/Source...',
+  localchef = glob.glob('/Library/Chef/Source/chef*12.15.19*.pkg')
+  if localchef and os.path.isfile(localchef[-1]):
+    install_path = localchef[-1]
+    print 'found %s!' % install_path
+    return install_path
+
+
+def download_chef(url, source_msg):
+  """Download Chef directly from URL."""
+  print "Downloading from %s directly..." % source_msg,
+  sys.stdout.flush()
+  try:
+    # Chef redirects to an AWS node
+    actual_url = urllib2.urlopen(url).geturl()
+    file_name = 'chef.dmg'
+    with open(os.path.join('/tmp', file_name), 'wb') as f:
+      f.write(urllib2.urlopen(actual_url).read())
+    if os.path.exists(os.path.join('/tmp', file_name)):
+      print 'success.'
+      return os.path.join('/tmp', file_name)
+  except urllib2.URLError:
+    print "failed! Unable to download from %s!" % source_msg
+  # If we're here, we got nothing.
+  return None
+
+
+def get_chef():
+  """Determine source of Chef."""
+  # If not installed:
+  # 1. Try to use the local copy
+  install_path = get_chef_locally()
+  if install_path:
+    return install_path
+  # 2. Download from the internet
+  install_path = get_chef_web()
+  if install_path:
+    return install_path
   # If we're here, we got nothing.
   return None
 
@@ -308,27 +340,41 @@ def get_chef():
 def install_chef():
   """Install Chef client package."""
   # Is Chef installed?
-  chef_vers = is_pkg_installed('com.getchef.pkg.chef')
-  if chef_vers != '0.0.0.0' and os.path.exists('/opt/chef/bin/chef-client'):
-    print "Chef %s installed" % chef_vers
-    return True
-  # Is Chef locally available in /Library/Chef/Source?
-  localchef = glob.glob('/Library/Chef/Source/chef-*.pkg')
-  if localchef and os.path.isfile(localchef[-1]):
-    print "Using %s" % localchef
-    install_path = localchef[-1]
+  if os.path.exists('/opt/chef/bin/chef-client'):
+    chef_vers_stdout = run_subp(
+      ['/opt/chef/bin/chef-client', '-v']
+    )['stdout']
+    # Verify the output contains ':' so we can parse version
+    if ': ' in chef_vers_stdout:
+      chef_vers = chef_vers_stdout.split(': ')[1]
+      print "Chef %s installed" % chef_vers.strip()
+      return True
+    # Chef is installed, but we can't parse the version
+    else:
+      print "Chef installed, but could not get version"
+      return True
   else:
     print "Obtaining Chef..."
     install_path = get_chef()
-  # Install the package
-  if not install_path:
-    print >> sys.stderr, "Couldn't download Chef."
-    sys.exit(1)
-  print "Installing Chef."
-  result = install_package(install_path)
-  if not result:
-    print >> sys.stderr, "Could not install Chef."
-    return False
+    if not install_path:
+      print >> sys.stderr, "Couldn't download Chef."
+      exit(1)
+    print "Installing Chef..."
+    pkg_path = install_path
+    if install_path.endswith('.dmg'):
+      # Search the DMG for a valid .pkg
+      pkg_path = get_pkg_path_from_dmg(install_path)
+      if not pkg_path:
+        # Can't find a package inside the DMG.
+        return False
+      # Copy the Chef installer to /Library/Chef/Source while we're at it
+      if not os.path.isdir('/Library/Chef/Source'):
+        os.makedirs('/Library/Chef/Source', mode=0755)
+      shutil.copy2(pkg_path, '/Library/Chef/Source/')
+    result = install_package(pkg_path)
+    if not result:
+      print >> sys.stderr, "Could not install Chef."
+      return False
   print "Finished installing Chef."
   return True
 
@@ -352,7 +398,7 @@ def run_chef(logpath='/Library/Chef/Logs/first_chef_run.log'):
 
 
 # Primary bootstrap function
-def bootstrap(force=False):
+def bootstrap(force=False, type='', hostname=''):
   """
   Bootstrap a machine using Chef.
 
@@ -367,6 +413,9 @@ def bootstrap(force=False):
 
   Returns True/False if it succeeded or failed.
   """
+  # Set the appropriate type identifier
+  make_machine_type(type, hostname)
+
   # OS Version check:
   os_ver = get_os_version()
   if int(os_ver.split('.')[1]) < 10:
@@ -417,7 +466,7 @@ def bootstrap(force=False):
     f.write(CLIENT_RB)
   with open('/etc/chef/run-list.json', 'wb') as f:
     json.dump(RUN_LIST_JSON, f)
-  with open('/etc/chef/org.crt', 'wb') as f:
+  with open('/etc/chef/thefacebook.crt', 'wb') as f:
     f.write(ORG_CRT)
   with open('/etc/chef/validation.pem', 'wb') as f:
     f.write(VALIDATION_PEM)
@@ -432,7 +481,7 @@ def bootstrap(force=False):
   # Set the firstboot tag to ensure the firstboot runlist is used.
   open('/etc/chef/firstboot', 'wb').close()
 
-  # Set up the basic Chef directory
+  # Set up the basic CPE directory
   if not os.path.isdir('/Library/Chef/Logs'):
     os.makedirs('/Library/Chef/Logs')
 
@@ -452,7 +501,7 @@ def bootstrap(force=False):
 
   if successes < 2:
     print (
-      "Chef failed to run, please send the logfile at"
+      "Chef failed to run, please send CPE the logfile at"
       " /Library/Chef/Logs/first_chef_run.log!"
     )
     return False
@@ -462,7 +511,56 @@ def bootstrap(force=False):
   return True
 
 
+def make_machine_type(type, name):
+  """Configure a specific machine type according to definition."""
+  print 'Setting machine'
+  if type == 'client':
+    pass
+  # This is an opportunity to perform some actions on the machine for config
+  # prior to Chef running. You may wish to set hostnames, or apply any other
+  # specific indication of what 'type' or 'role' a machine will get when Chef
+  # runs for the first time.
+  # Example:
+  # elif type == 'lobby':
+  #   set_names(name)
+
+
+def set_names(name):
+  """Set the Computer, Host, LocalHost Names."""
+  scutil_cmd = ['/usr/sbin/scutil', '--set']
+  run_subp(scutil_cmd + ['ComputerName', name])
+  run_subp(scutil_cmd + ['HostName', name])
+  run_subp(scutil_cmd + ['LocalHostName', name])
+
+
 if __name__ == '__main__':
-  result = bootstrap(force=True)
+  parser = argparse.ArgumentParser(
+    description='Bootstrap a machine into a specific type.')
+  parser.add_argument(
+    '-t', '--type',
+    choices=[
+      'client',
+      # Place other 'types' of machines here
+      # You'll have to provide code to define what these do
+      # in make_machine_type(), above
+    ],
+    help='Create a specific type. Defaults to client.',
+    default='client'
+  )
+  parser.add_argument(
+    '-n', '--name',
+    help=('Enter in the name that will be assigned to the machine.'),
+  )
+  args = parser.parse_args()
+  # Here, you might want to set a requirement that certain kinds of machines
+  # require hostnames to be set ahead of time
+  # Types that require a hostname
+  # if args.type in ['lobby']:
+  #   if not args.name:
+  #     print >> sys.stderr, ('Specifying a lobby type requires a name.')
+  #     parser.print_help()
+  #     sys.exit(-1)
+
+  result = bootstrap(force=True, type=args.type, hostname=args.name)
   if not result:
     sys.exit(1)
