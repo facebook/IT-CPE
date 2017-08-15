@@ -1,8 +1,8 @@
-#
-# Cookbook Name:: cpe_munki_install
-# Resource:: cpe_munki_install
-#
 # vim: syntax=ruby:expandtab:shiftwidth=2:softtabstop=2:tabstop=2
+# Encoding: utf-8
+
+# Cookbook Name:: cpe_munki
+# Resource:: cpe_munki_install
 #
 # Copyright (c) 2016-present, Facebook, Inc.
 # All rights reserved.
@@ -15,108 +15,101 @@
 resource_name :cpe_munki_install
 default_action :install
 
+action_class do
+  def managed_installs
+    '/Library/Preferences/ManagedInstalls'
+  end
+
+  def read_munki_lastcheckdate
+    begin
+      defaults_cmd = Mixlib::ShellOut.new(
+        "/usr/bin/defaults read #{managed_installs} LastCheckDate",
+      ).run_command.stdout
+      last_check_date = Date.parse(defaults_cmd)
+    rescue ArgumentError
+      log("Unable to parse LastCheckDate: #{defaults_cmd}")
+      last_check_date = Date.today
+    end
+    last_check_date
+  end
+
+  def write_munki_lastcheckdate(time)
+    execute "defaults write #{managed_installs} LastCheckDate '#{time}'"
+  end
+
+  def remediate?
+    return unless node['cpe_munki']['auto_remediate']
+    # There is a chance that this is prior to the first run,
+    # file might not be present.
+    return unless ::File.exist?("#{managed_installs}.plist")
+    # getting value for the last munki check-in
+    last_check_date = read_munki_lastcheckdate
+    # if it's greater than the remediate_window since munki last ran.
+    today = Date.today
+    remediate_window = node['cpe_munki']['auto_remediate'].to_i
+    return unless (today - last_check_date).to_i > remediate_window
+
+    # and the pkg is installed
+    node['cpe_munki']['munki_version_to_install'].to_h.each do |pkg, _opts|
+      receipt = "com.googlecode.munki.#{pkg}"
+      next if Mixlib::ShellOut.new(
+        "/usr/sbin/pkgutil --pkg-info='#{receipt}'",
+      ).run_command.error?
+      # forget the pkg
+      execute "/usr/sbin/pkgutil --forget #{receipt}"
+    end
+    write_munki_lastcheckdate(Time.now)
+  end
+end
+
 action :install do
   return unless node['cpe_munki']['install']
-  version_to_install = node['cpe_munki']['munki_version_to_install']
-  munki = node['cpe_munki'][version_to_install]
-  munki_core_version = munki['munki_core_version']
-
-  munki['munki_core_folders'].each do |item|
-    directory item do
-      action :create
-      group 'wheel'
-      mode '755'
-      owner 'root'
+  m = 'com.googlecode.munki'
+  remediate?
+  node['cpe_munki']['munki_version_to_install'].to_h.each do |pkg, opts|
+    package_version = opts['version']
+    package_name = "munkitools_#{pkg}-#{package_version}"
+    cpe_remote_pkg "munkitools_#{pkg}" do # ~FC037
+      app 'munkitools'
+      pkg_name package_name
+      checksum opts['checksum']
+      receipt "com.googlecode.munki.#{pkg}"
+      version package_version
+      if pkg.include?('launchd')
+        notifies :restart, "launchd[#{m}.logouthelper]"
+        notifies :restart, "launchd[#{m}.managedsoftwareupdate-check]"
+        notifies :restart, "launchd[#{m}.managedsoftwareupdate-manualcheck]"
+        notifies :restart, "launchd[#{m}.authrestartd]"
+        notifies :restart, "launchd[#{m}.managedsoftwareupdate-install]"
+        notifies :restart, "launchd[#{m}.app_usage_monitor]"
+        notifies :restart, "launchd[#{m}.munki-notifier]"
+        notifies :restart, "launchd[#{m}.ManagedSoftwareCenter]"
+      end
     end
   end
 
-  munki['munki_core_files'].each do |item|
-    cookbook_file item do
-      not_if { ::File.exist?('/Library/CPE/tags/munki_test') }
-      action :create
-      group 'wheel'
-      mode '755'
-      owner 'root'
-      source "munki/core/#{munki_core_version}/#{item}"
-    end
-  end
-
-  munki_admin_version = munki['munki_admin_version']
-  munki['munki_admin_folders'].each do |item|
-    directory item do
-      action :create
-      group 'wheel'
-      mode '755'
-      owner 'root'
-    end
-  end
-
-  munki['munki_admin_files'].each do |item|
-    cookbook_file item do
-      not_if { ::File.exist?('/Library/CPE/tags/munki_test') }
-      action :create
-      group 'wheel'
-      mode '755'
-      owner 'root'
-      source "munki/admin/#{munki_admin_version}/#{item}"
-    end
-  end
-
-  munki_ld_version = munki['munki_launchd_version']
-
-  munki['munki_launchd_folders'].each do |item|
-    directory item do
-      action :create
-      group 'wheel'
-      mode 0o755
-      owner 'root'
-    end
-  end
-
-  munki['munki_launcha_files'].each do |item|
-    launcha_path = "/Library/LaunchAgents/#{item}"
-    cookbook_file launcha_path do
-      not_if { ::File.exist?('/Library/CPE/tags/munki_test') }
-      action :create
-      group 'wheel'
-      mode '755'
-      owner 'root'
-      source "munki/launchd/#{munki_ld_version}/Library/LaunchAgents/#{item}"
-    end
-
-    launcha = item.sub('.plist', '')
-    launchd launcha do # ~FC022
-      not_if { node.console_user.include?('root') }
-      only_if { item.include?('ManagedSoftwareCenter') }
+  [
+    'logouthelper',
+    'managedsoftwareupdate-check',
+    'managedsoftwareupdate-manualcheck',
+    'authrestartd',
+    'managedsoftwareupdate-install',
+    'app_usage_monitor',
+  ].each do |d|
+    launchd "#{m}.#{d}" do
+      only_if { ::File.exist?("/Library/LaunchDaemons/#{m}.#{d}.plist") }
       action :enable
-      path launcha_path
     end
   end
 
-  munki['munki_ld_files'].each do |item|
-    launchd_path = "/Library/LaunchDaemons/#{item}"
-    cookbook_file launchd_path do
-      not_if { ::File.exist?('/Library/CPE/tags/munki_test') }
-      action :create
-      group 'wheel'
-      mode '755'
-      owner 'root'
-      source "munki/launchd/#{munki_ld_version}/Library/LaunchDaemons/#{item}"
-    end
-
-    munki_launchd = item.sub('.plist', '')
-    launchd munki_launchd do
+  [
+    'munki-notifier',
+    'ManagedSoftwareCenter',
+  ].each do |a|
+    launchd "#{m}.#{a}" do
+      only_if { ::File.exist?("/Library/LaunchAgents/#{m}.#{a}.plist") }
+      type 'agent'
       action :enable
-      path launchd_path
     end
   end
-
-# Will open source soon. In the meantime, have munki install the msc.app from
-# the main munki installer.
-  # cpe_remote_pkg 'Managed Software Center' do
-  #   app 'munkitools_app'
-  #   checksum munki['munki_app_checksum']
-  #   receipt 'com.googlecode.munki.app'
-  #   version munki['munki_app_version']
-  # end
 end

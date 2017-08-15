@@ -13,6 +13,7 @@ Attributes
 * node['cpe_munki']['preferences']
 * node['cpe_munki']['local']['managed_installs']
 * node['cpe_munki']['local']['managed_uninstalls']
+* node['cpe_munki']['prompt']['time']
 
 Usage
 -----
@@ -102,10 +103,36 @@ By leveraging cpe_profiles, we can craft a profile that has the base settings we
 This is done in `cpe_munki::config`.
 
 ### Local Manifests
-Local Munki is where items from the `node['cpe_munki']['local']['managed_installs']` and `node['cpe_munki']['local']['managed_uninstalls']` node attributes are added to a local manifest in the respective `managed_installs` and `managed_uninstalls` keys.  This allows any individual (or group, or node, etc.) to specify an existing optional install as either an install or uninstall.  Adding an item to either of these two attributes will combine with the existing client manifest.
+Local Munki is where items from the `node['cpe_munki']['local']['managed_installs']` and `node['cpe_munki']['local']['managed_uninstalls']` node attributes are added to a local manifest in the respective `managed_installs` and `managed_uninstalls` keys.  This allows any individual (or group, or node, etc.) to specify an existing optional install as either an install or uninstall.  Adding an item to either of these two attributes will combine with the existing client manifest. 
 
-If an item is removed from `managed_installs` or `managed_uninstalls` in this manner, Munki will no longer forcefully manage its installation or removal. If an item is added to `managed_uninstalls`, it is also removed from the 'managed_installs' array of the SelfServeManifest if the item exists there.
+If an item is removed from `managed_installs` or `managed_uninstalls` in this manner, Munki will no longer forcefully manage its installation or removal. If an item is added to `managed_uninstalls`, it is also removed from the 'managed_installs' array of the SelfServeManifest if the item exists there. 
 
 The default list of items to be installed on clients is in cpe_munki::managed_installs. Anyone can override this value to add or remove things that they want (or don't want).
 
 This is done by `cpe_munki::local`.
+
+    # How to install one App:
+    node.default['cpe_munki']['local']['managed_installs'] << 'Firefox'
+
+    # How to install a list of Apps:
+    [
+      'Firefox',
+      'GoogleChrome',
+      'Atom',
+      'Dropbox',
+    ].each do |item|
+      node.default['cpe_munki']['local']['managed_installs'] << item
+    end
+
+### Creating custom time intervals for Munki to prompt for updates
+Allows a user to create their own user customization for
+Munki where they can specify the day, start and end times for Munki prompting.
+For example the user customization below will have Munki prompt for updates on Fridays between the hours of 9a and 11p at night.  Note that 'DayofWeek' starts on Monday with an index of 0.  StartHour and EndHour are 24 hour time values.  The resource checks to make sure that users are prompted for a time interval of at least 3 hours (absolute difference between EndHour and StartHour).  In addition, the resource ensures that prompting on Saturday and Sundays is not allowed.
+
+node.default['cpe_munki']['prompt']['time'] = {
+  'DayofWeek' => 4,
+  'StartHour' => 9,
+  'EndHour' => 23,
+} if node.macosx?
+
+This is done by `cpe_munki::prompt`.

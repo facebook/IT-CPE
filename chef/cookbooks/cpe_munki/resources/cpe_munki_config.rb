@@ -1,8 +1,8 @@
-#
-# Cookbook Name:: cpe_munki_config
-# Resource:: cpe_munki_config
-#
 # vim: syntax=ruby:expandtab:shiftwidth=2:softtabstop=2:tabstop=2
+# Encoding: utf-8
+
+# Cookbook Name:: cpe_munki
+# Resource:: cpe_munki_config
 #
 # Copyright (c) 2016-present, Facebook, Inc.
 # All rights reserved.
