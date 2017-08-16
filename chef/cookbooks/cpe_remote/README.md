@@ -21,7 +21,7 @@ Usage
 -------------------
 You must set `base_url`
 * node['cpe_remote']['base_url']
-where are your remote pkgs and files stored - "https://chang.me/chef"
+where are your remote pkgs and files stored - "chang.me/chef". NOTE: This resource will prefix https to the base_url.
 
 * node['cpe_remote']['server_accessible']
 is your server accessible? write your own check and set value to true or false. If false the resource wont fire.  
@@ -52,7 +52,7 @@ Install `osquery` from the primary download site.
 
 ```ruby
 # in base settings
-node.default['cpe_remote']['base_url'] = "https://fb.com/chef/"
+node.default['cpe_remote']['base_url'] = "fb.com/chef/"
 # in some recipe
 # File lives at fb.com/chef/osqueryd/osqueryd-1.1.0.pkg
 cpe_remote_pkg 'osqueryd' do
@@ -80,7 +80,7 @@ This resource will download a file to the client from the server at `base_url`. 
 
 ```ruby
 # in base settings
-node.default['cpe_remote']['base_url'] = "https://STUFF.co/chef/"
+node.default['cpe_remote']['base_url'] = "STUFF.co/chef/"
 # https://STUFF.co/chef/cool_things/omgfile
 # in some recipe
 cpe_remote_file 'cool_things' do
@@ -93,7 +93,7 @@ end
 
 ```ruby
 # in base settings
-node.default['cpe_remote']['base_url'] = "https://STUFF.co/chef/"
+node.default['cpe_remote']['base_url'] = "STUFF.co/chef/"
 # https://STUFF.co/chef/javaruleset/DeploymentRuleSet.jar
 cpe_remote_file 'javaruleset' do
   file_name 'DeploymentRuleSet.jar'
