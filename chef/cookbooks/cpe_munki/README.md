@@ -13,6 +13,7 @@ Attributes
 * node['cpe_munki']['preferences']
 * node['cpe_munki']['local']['managed_installs']
 * node['cpe_munki']['local']['managed_uninstalls']
+* node['cpe_munki']['auto_remediate']
 
 Usage
 -----
@@ -109,3 +110,21 @@ If an item is removed from `managed_installs` or `managed_uninstalls` in this ma
 The default list of items to be installed on clients is in cpe_munki::managed_installs. Anyone can override this value to add or remove things that they want (or don't want).
 
 This is done by `cpe_munki::local`.
+
+    # How to install one App:
+    node.default['cpe_munki']['local']['managed_installs'] << 'Firefox'
+
+    # How to install a list of Apps:
+    [
+      'Firefox',
+      'GoogleChrome',
+      'Atom',
+      'Dropbox',
+    ].each do |item|
+      node.default['cpe_munki']['local']['managed_installs'] << item
+    end
+
+### auto_remediate
+If you would like chef to look at the state of munki and reinstall if munki has not checked-in. Set node['cpe_munki']['auto_remediate'] the amount of days chef should allow munki to not run before chef reinstalls munki
+
+node.default['cpe_munki']['auto_remediate'] = 30
