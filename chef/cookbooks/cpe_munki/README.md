@@ -1,6 +1,6 @@
 cpe_munki Cookbook
 ==================
-cpe_munki is an umbrella cookbook to install & configure Munki and manage local-only manifests.  Munki can be installed, configured, and/or locally managed with this cookbook.
+cpe_munki can install and configure Munki, remediate broken installs, and manage local-only manifests.
 
 Requirements
 ------------
@@ -8,12 +8,13 @@ Mac OS X
 
 Attributes
 ----------
-* node['cpe_munki']['munki_version_to_install']
-* node['cpe_munki'][version]
-* node['cpe_munki']['preferences']
+* node['cpe_munki']['auto_remediate']
+* node['cpe_munki']['configure']
+* node['cpe_munki']['install']
 * node['cpe_munki']['local']['managed_installs']
 * node['cpe_munki']['local']['managed_uninstalls']
-* node['cpe_munki']['auto_remediate']
+* node['cpe_munki']['munki_version_to_install']
+* node['cpe_munki']['preferences']
 
 Usage
 -----
@@ -48,7 +49,7 @@ Examples:
 Advanced Example:
 
 **Note: You must have a Munki server setup and all packages you add to this attribute
-must be available in the node's Munki catalog**
+must be available in the node's catalogs**
 
 **Add `managed_installs` using a local manifest**
 
@@ -61,34 +62,56 @@ must be available in the node's Munki catalog**
     end
 
 ### Installing Munki
-The munkitools2.chef AutoPkg recipe will separate the Munki metapackage into the App package (which is left alone as a cpe_remote_pkg install, because it contains binaries), and all the admin, core, and launchd files.
+The 'cpe_munki_install' resource will install Munki. You must set the `install` attribute to be `true` in order to install the Munki packages:
 
-The `files` directory contains the 'admin', 'core', and 'launchd' folders, which each contain a folder with a version name. Within each version directory are the files from that version's package. So `admin` -> `2.7.0.2753` contains all the files installed by the "munkitools-admin" version 2.7.0.2753 package.
+  node.default['cpe_munki']['install'] = true
 
-THe `attributes` directory contains the generic default attributes used across the recipe, along with a file that matches the version name that you want to install. This versioned attributes file contains a list of all files that will be installed by 'admin', 'core', and 'launchd', along with the version of the app package and the SHA256 hash for the package.  Each included Munki version is added to an attribute:
-`node['cpe_munki'][2.7.0.273]`.
+By default, Munki releases from Github come as a single distribution package, which contain the separate subpackages inside. You can separate out the component packages with `pkgutil`:
 
-Both the files and attributes here are created by munkitools2.chef.
+    $ /usr/sbin/pkgutil --expand munkitools-3.0.3.3333.pkg munkitools3
 
-This allows different versions of Munki to be installed on different clients. `node['cpe_munki']['munki_version_to_install']` is what will be installed when `cpe_munki::install_munki` runs on a client.
+Munki will determine what packages to install by looping through all the keys in `node['cpe_munki']['munki_version_to_install']`. Each key should correspond to a hash that contains the version of the package, and its SHA256 checksum. To configure a client to install Munki 3 in its entirety:
 
-This is done by `cpe_munki::install`.
+    node.default['cpe_munki']['munki_version_to_install']['admin'] = {
+      'version' => '3.0.0.3333',
+      'checksum' =>
+        '42fb19dbaa1d24691a596a3d60e900f57d2b9d6e1a8018972fe4c52c2f988682',
+    }
+    node.default['cpe_munki']['munki_version_to_install']['app'] = {
+      'version' => '4.6.3330',
+      'checksum' =>
+      'f1354f99bececdabc0549531e50e1362a332a8e4802a07066e6bc0e74b72258d',
+    }
+    node.default['cpe_munki']['munki_version_to_install']['app_usage'] = {
+      'version' => '3.0.0.3333',
+      'checksum' =>
+      'bc3299823d024982122de3d98905d28d6bf36585b060f7a0526a591c45815ad4',
+    }
+    node.default['cpe_munki']['munki_version_to_install']['core'] = {
+      'version' => '3.0.0.3333',
+      'checksum' =>
+      'd82dd386d7aebe459314b7d62da993732e2b1e08813f305fab08ece10e2e330d',
+    }
+    node.default['cpe_munki']['munki_version_to_install']['launchd'] = {
+      'version' => '3.0.3265',
+      'checksum' =>
+      'b3871f6bb3522ce5e46520bcab06aed2644bf11265653f6114a0e34911f17914',
+    }
 
-#### Installing different versions of Munki
-The default attributes file contains the logic for assigning the version to be installed. By default, `node['cpe_munki']['munki_version_to_install']` will be installed.  You can split up versions according any logic you want.  Example:
+The `install` resource will loop through all the package names and use `cpe_remote` to download the package from `node['cpe_remote']['base_url']`, verify the checksum of the downloaded file matches, and then install it. You can override the URL on a per-package basis if you so wish:
 
-    default['cpe']['munki']['munki_version_to_install'] = '2.6.1.2684'
-    # define this to be whatever criteria you want
-    # this example uses a fictional username variable to see if it's in this list of users
-    testers = [name1, name2, name3].include?(username)
-    if testers
-      default['cpe']['munki']['munki_version_to_install'] = '2.7.0.2753'
-    end
+    node.default['cpe_munki']['munki_version_to_install']['admin'] = {
+      'version' => '3.0.0.3333',
+      'url' => 'foo.com/path/to/munkitools_admin.pkg'
+      'checksum' =>
+        '42fb19dbaa1d24691a596a3d60e900f57d2b9d6e1a8018972fe4c52c2f988682',
+}
 
-The above example shows how to install a newer version of Munki into a special group of testers based on some criteria (made up, in this case), whereas everyone else would get an older version.
 
 ### Munki Configuration
-By leveraging cpe_profiles, we can craft a profile that has the base settings we want to apply to all clients. The default settings are stored in `node['cpe_munki']['preferences']`.  Those values can be overridden in any recipe to be applied as you want:
+The 'cpe_munki_config' resource will install a profile that configures Munki settings. You must set `node['cpe_munki']['config']` to be `true` for this to run.
+
+By leveraging `cpe_profiles`, we can craft a profile that has the base settings we want to apply. The default settings are stored in `node['cpe_munki']['preferences']`. Those values can be overridden in any recipe to be applied as you want:
 
     # Munki attribute overrides
     {
@@ -100,16 +123,15 @@ By leveraging cpe_profiles, we can craft a profile that has the base settings we
       node.default['cpe_munki']['preferences'][k] = v
     end
 
-This is done in `cpe_munki::config`.
-
 ### Local Manifests
+The 'cpe_munki_local' resource will implement a local-only manifest.
+
 Local Munki is where items from the `node['cpe_munki']['local']['managed_installs']` and `node['cpe_munki']['local']['managed_uninstalls']` node attributes are added to a local manifest in the respective `managed_installs` and `managed_uninstalls` keys.  This allows any individual (or group, or node, etc.) to specify an existing optional install as either an install or uninstall.  Adding an item to either of these two attributes will combine with the existing client manifest.
 
 If an item is removed from `managed_installs` or `managed_uninstalls` in this manner, Munki will no longer forcefully manage its installation or removal. If an item is added to `managed_uninstalls`, it is also removed from the 'managed_installs' array of the SelfServeManifest if the item exists there.
 
 The default list of items to be installed on clients is in cpe_munki::managed_installs. Anyone can override this value to add or remove things that they want (or don't want).
 
-This is done by `cpe_munki::local`.
 
     # How to install one App:
     node.default['cpe_munki']['local']['managed_installs'] << 'Firefox'
@@ -124,7 +146,11 @@ This is done by `cpe_munki::local`.
       node.default['cpe_munki']['local']['managed_installs'] << item
     end
 
-### auto_remediate
-If you would like chef to look at the state of munki and reinstall if munki has not checked-in. Set node['cpe_munki']['auto_remediate'] the amount of days chef should allow munki to not run before chef reinstalls munki
 
-node.default['cpe_munki']['auto_remediate'] = 30
+### Auto Remediation
+This cookbook can also attempt to remediate broken Munki installs.
+
+Set `node['cpe_munki']['auto_remediate']` to the amount of days Chef should allow Munki to not run before reinstalling all packages. Chef will read the /Library/Preferences/ManagedInstalls preferences domain to parse the `LastCheckDate` key. If that key is older than the number of days specified, all package receipts are forgotten and Chef will reinstall the Munki packages.
+
+    node.default['cpe_munki']['auto_remediate'] = 30
+
