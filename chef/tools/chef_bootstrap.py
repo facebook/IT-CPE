@@ -1,14 +1,15 @@
 #!/usr/bin/python
 """Bootstrap Chef with no other dependencies."""
 
-import os
-import sys
-import platform
-import subprocess
-import json
-import plistlib
-import urllib2
 import glob
+import json
+import os
+import platform
+import plistlib
+import shutil
+import subprocess
+import sys
+import urllib2
 
 import objc
 from Foundation import NSBundle
@@ -191,12 +192,6 @@ def get_pkg_path_from_dmg(dmgpath):
 def install_package(package_path):
   """Install a package."""
   path = package_path
-  if package_path.endswith('.dmg'):
-    # Search the DMG for a valid .pkg
-    path = get_pkg_path_from_dmg(package_path)
-    if not path:
-      # Package failed to install, we can't proceed.
-      return False
   cmd = [
     '/usr/sbin/installer', '-pkg',
     path,
@@ -285,22 +280,56 @@ def install_cli_tools():
 
 
 # Chef-related functions
-def get_chef():
-  """Determine source of Chef."""
-  # Try downloading direct from Chef website
+def get_chef_web():
+  """Download a specific version of chef from Chef directly."""
   os_ver = '.'.join(get_os_version().split('.')[:2])
   base_url = 'https://www.chef.io/chef/download'
   url = ('%s?p=mac_os_x&pv=%s&m=x86_64&v=latest&prerelease=false' %
         (base_url, os_ver))
-  # Chef redirects to an AWS node
-  actual_url = urllib2.urlopen(url).geturl()
-  file_name = 'chef.dmg'
-  print 'Downloading from Chef directly...',
-  with open(os.path.join('/tmp', file_name), 'wb') as f:
-    f.write(urllib2.urlopen(actual_url).read())
-  if os.path.exists(os.path.join('/tmp', file_name)):
-    print 'downloaded from Chef.io.'
-    return os.path.join('/tmp', file_name)
+  path = download_chef(url, 'Chef.io')
+  return path
+
+
+def get_chef_locally():
+  """Look for Chef locally in /Library/Chef/Source."""
+  print 'Looking in /Library/Chef/Source...',
+  localchef = glob.glob('/Library/Chef/Source/chef*.pkg')
+  if localchef and os.path.isfile(localchef[-1]):
+    install_path = localchef[-1]
+    print 'found %s!' % install_path
+    return install_path
+
+
+def download_chef(url, source_msg):
+  """Download Chef directly from URL."""
+  print "Downloading from %s directly..." % source_msg,
+  sys.stdout.flush()
+  try:
+    # Chef redirects to an AWS node
+    actual_url = urllib2.urlopen(url).geturl()
+    file_name = 'chef.dmg'
+    with open(os.path.join('/tmp', file_name), 'wb') as f:
+      f.write(urllib2.urlopen(actual_url).read())
+    if os.path.exists(os.path.join('/tmp', file_name)):
+      print 'success.'
+      return os.path.join('/tmp', file_name)
+  except urllib2.URLError:
+    print "failed! Unable to download from %s!" % source_msg
+  # If we're here, we got nothing.
+  return None
+
+
+def get_chef():
+  """Determine source of Chef."""
+  # If not installed:
+  # 1. Try to use the local copy
+  install_path = get_chef_locally()
+  if install_path:
+    return install_path
+  # 2. Download from the internet
+  install_path = get_chef_web()
+  if install_path:
+    return install_path
   # If we're here, we got nothing.
   return None
 
@@ -308,27 +337,41 @@ def get_chef():
 def install_chef():
   """Install Chef client package."""
   # Is Chef installed?
-  chef_vers = is_pkg_installed('com.getchef.pkg.chef')
-  if chef_vers != '0.0.0.0' and os.path.exists('/opt/chef/bin/chef-client'):
-    print "Chef %s installed" % chef_vers
-    return True
-  # Is Chef locally available in /Library/Chef/Source?
-  localchef = glob.glob('/Library/Chef/Source/chef-*.pkg')
-  if localchef and os.path.isfile(localchef[-1]):
-    print "Using %s" % localchef
-    install_path = localchef[-1]
+  if os.path.exists('/opt/chef/bin/chef-client'):
+    chef_vers_stdout = run_subp(
+      ['/opt/chef/bin/chef-client', '-v']
+    )['stdout']
+    # Verify the output contains ':' so we can parse version
+    if ': ' in chef_vers_stdout:
+      chef_vers = chef_vers_stdout.split(': ')[1]
+      print "Chef %s installed" % chef_vers.strip()
+      return True
+    # Chef is installed, but we can't parse the version
+    else:
+      print "Chef installed, but could not get version"
+      return True
   else:
     print "Obtaining Chef..."
     install_path = get_chef()
-  # Install the package
-  if not install_path:
-    print >> sys.stderr, "Couldn't download Chef."
-    sys.exit(1)
-  print "Installing Chef."
-  result = install_package(install_path)
-  if not result:
-    print >> sys.stderr, "Could not install Chef."
-    return False
+    if not install_path:
+      print >> sys.stderr, "Couldn't download Chef."
+      exit(1)
+    print "Installing Chef..."
+    pkg_path = install_path
+    if install_path.endswith('.dmg'):
+      # Search the DMG for a valid .pkg
+      pkg_path = get_pkg_path_from_dmg(install_path)
+      if not pkg_path:
+        # Can't find a package inside the DMG.
+        return False
+      # Copy the Chef installer to /Library/Chef/Source while we're at it
+      if not os.path.isdir('/Library/Chef/Source'):
+        os.makedirs('/Library/Chef/Source', mode=0755)
+      shutil.copy2(pkg_path, '/Library/Chef/Source/')
+    result = install_package(pkg_path)
+    if not result:
+      print >> sys.stderr, "Could not install Chef."
+      return False
   print "Finished installing Chef."
   return True
 
