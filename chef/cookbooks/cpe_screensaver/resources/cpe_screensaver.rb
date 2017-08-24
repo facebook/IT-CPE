@@ -18,15 +18,21 @@ default_action :config
 action :config do
   # Enforce screen saver settings
   warn = node['cpe_screensaver']['__nowarn'] ? false : true
-  if node['cpe_screensaver']['idleTime'] >= 600
-    Chef::Log.warn(
-      'Screensaver idle time is too long!',
-    ) if warn
+  if node['cpe_screensaver']['idleTime'] &&
+     node['cpe_screensaver']['idleTime'] >= 600
+    if warn
+      Chef::Log.warn(
+        'Screensaver idle time is too long!',
+      )
+    end
   end
-  if node['cpe_screensaver']['askForPasswordDelay'] >= 5
-    Chef::Log.warn(
-      'Screensaver password delay is too long!',
-    ) if warn
+  if node['cpe_screensaver']['askForPasswordDelay'] &&
+     node['cpe_screensaver']['askForPasswordDelay'] >= 5
+    if warn
+      Chef::Log.warn(
+        'Screensaver password delay is too long!',
+      )
+    end
   end
   prefix = node['cpe_profiles']['prefix']
   organization = node['organization'] ? node['organization'] : 'Facebook'
