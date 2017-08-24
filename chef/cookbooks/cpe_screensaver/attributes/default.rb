@@ -12,6 +12,8 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 #
 
-default['cpe_screensaver']['idleTime'] = 600
-default['cpe_screensaver']['askForPassword'] = 1
-default['cpe_screensaver']['askForPasswordDelay'] = 0
+default['cpe_screensaver'] = {
+  'idleTime' => nil,
+  'askForPassword' => nil,
+  'askForPasswordDelay' => nil,
+}
