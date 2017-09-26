@@ -51,10 +51,8 @@ def get_console_user():
 
 # Exception classes used by this module.
 class AdobeAPINoUserException(Exception):
-  """Given user does not exist."""
+    """Given user does not exist."""
 
-  def __init__(self, username):
-    """Store the user that doesn't exist."""
     def __init__(self, username):
         """Store the user that doesn't exist."""
         self.username = username
