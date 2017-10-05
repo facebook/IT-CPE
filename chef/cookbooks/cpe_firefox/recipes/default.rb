@@ -12,5 +12,4 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 #
 
-# Run the appropriate cookbook based on platform
-include_recipe "cpe_firefox::#{node['platform_family']}_firefox"
+include_recipe "cpe_firefox::#{node['os']}_firefox"
