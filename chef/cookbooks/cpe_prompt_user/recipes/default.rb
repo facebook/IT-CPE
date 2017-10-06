@@ -13,3 +13,4 @@
 #
 
 # MOVE Along, Nothing to see here!
+cpe_prompt_user 'Manage Prompts'
