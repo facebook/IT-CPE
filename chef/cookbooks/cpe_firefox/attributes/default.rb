@@ -12,6 +12,8 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 #
 
-default['cpe_firefox']['settings'] = {}
-
-default['cpe_firefox']['certs'] = []
+default['cpe_firefox'] = {
+  'settings' => {},
+  'certs' => [],
+  'ff_central_store' => '/Library/Application Support/Firefox Management',
+}
