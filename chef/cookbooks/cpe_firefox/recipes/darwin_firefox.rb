@@ -12,11 +12,6 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 #
 
-unless node.type?(['lobby', 'reception', 'wayfinder'])
-  node.default['cpe_munki']['local']['managed_installs'] <<
-    'Firefox'
-end
-
 return unless node.installed?('org.mozilla.firefox')
 
 node.app_paths('org.mozilla.firefox').each do |app_path|
