@@ -116,7 +116,7 @@ class AdobeAPIObject(object):
         cache=True,
         key='email',
         allow_nonexistent_user=False,
-        splay=random.randrange(-72, 72),
+        splay=random.randrange(-144, 144),
     ):
         """
         Instantiate class variables for our API object model.
@@ -141,7 +141,7 @@ class AdobeAPIObject(object):
         where you don't actually need to interact with a user to do so.
 
         'splay' is a number of hours added to the cache length. By default,
-        this is a random value between -72 and 72 hours, so that machines
+        this is a random value between -144 and 144 hours, so that machines
         don't all invalidate their cache and query the API endpoint at the
         same time.
 
