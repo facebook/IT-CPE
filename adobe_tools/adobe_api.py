@@ -168,6 +168,8 @@ class AdobeAPIObject(object):
         if not self.user:
             # Cache didn't have values we need, so let's query the API
             self.gather_user()
+        if not self.productlist:
+            self.gather_product_list(force=True)
         if self.cache:
             self.__write_cache()
 
