@@ -47,7 +47,12 @@ load_current_value do |desired| # ~FC006
     checksum checksum_ondisk
     unless platform?('windows')
       owner Etc.getpwuid(f_stat.uid).name
-      group Etc.getgrgid(f_stat.gid).name
+      begin
+        current_group = Etc.getgrgid(f_stat.gid).name
+      rescue ArgumentError
+        current_group = nil
+      end
+      group current_group
       m = f_stat.mode
       mode "0#{(m & 07777).to_s(8)}"
     end
