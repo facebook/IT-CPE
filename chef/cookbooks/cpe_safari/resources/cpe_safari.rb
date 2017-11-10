@@ -17,35 +17,34 @@ default_action :config
 action :config do
   safari_prefs = node['cpe_safari'].reject { |_k, v| v.nil? }
   return if safari_prefs.empty?
+
   prefix = node['cpe_profiles']['prefix']
   organization = node['organization'] ? node['organization'] : 'Facebook'
-  node.default['cpe_profiles']["#{prefix}.browsers.safari"] = {
-    'PayloadIdentifier'        => "#{prefix}.browsers.safari",
+  safari_profile = {
+    'PayloadIdentifier' => "#{prefix}.browsers.safari",
     'PayloadRemovalDisallowed' => true,
-    'PayloadScope'             => 'System',
-    'PayloadType'              => 'Configuration',
-    'PayloadUUID'              => 'bf900530-2306-0131-32e2-000c2944c108',
-    'PayloadOrganization'      => organization,
-    'PayloadVersion'           => 1,
-    'PayloadDisplayName'       => 'Safari',
-    'PayloadContent'           => [
-      {
-        'PayloadType'        => 'com.apple.ManagedClient.preferences',
-        'PayloadVersion'     => 1,
-        'PayloadIdentifier'  => "#{prefix}.browsers.safari",
-        'PayloadUUID'        => '3377ead0-2310-0131-32ec-000c2944c108',
-        'PayloadEnabled'     => true,
-        'PayloadDisplayName' => 'Safari',
-        'PayloadContent'     => {
-          'com.apple.Safari' => {
-            'Forced' => [
-              {
-                'mcx_preference_settings' => safari_prefs,
-              },
-            ],
-          },
-        },
-      },
-    ],
+    'PayloadScope' => 'System',
+    'PayloadType' => 'Configuration',
+    'PayloadUUID' => 'bf900530-2306-0131-32e2-000c2944c108',
+    'PayloadOrganization' => organization,
+    'PayloadVersion' => 1,
+    'PayloadDisplayName' => 'Safari',
+    'PayloadContent' => [],
   }
+  unless safari_prefs.empty?
+    safari_profile['PayloadContent'].push(
+      'PayloadType' => 'com.apple.Safari',
+      'PayloadVersion' => 1,
+      'PayloadIdentifier' => "#{prefix}.browsers.safari",
+      'PayloadUUID' => '3377ead0-2310-0131-32ec-000c2944c108',
+      'PayloadEnabled' => true,
+      'PayloadDisplayName' => 'Safari',
+    )
+    safari_prefs.keys.each do |key|
+      next if safari_prefs[key].nil?
+      safari_profile['PayloadContent'][0][key] = safari_prefs[key]
+    end
+  end
+
+  node.default['cpe_profiles']["#{prefix}.browsers.safari"] = safari_profile
 end
