@@ -28,73 +28,82 @@ action_class do
   end
 
   def manage_chrome_osx
-    prefs = node['cpe_chrome']['profile'].reject { |_k, v| v.nil? }
-    return if prefs.empty?
+    chrome_prefs = node['cpe_chrome']['profile'].reject { |_k, v| v.nil? }
+    if chrome_prefs.empty?
+      Chef::Log.info("#{cookbook_name}: No prefs found.")
+      return
+    end
+
     prefix = node['cpe_profiles']['prefix']
     organization = node['organization'] ? node['organization'] : 'Facebook'
-    node.default['cpe_profiles']["#{prefix}.browsers.chrome"] = {
-      'PayloadIdentifier'        => "#{prefix}.browsers.chrome",
+    chrome_profile = {
+      'PayloadIdentifier' => "#{prefix}.browsers.chrome",
       'PayloadRemovalDisallowed' => true,
-      'PayloadScope'             => 'System',
-      'PayloadType'              => 'Configuration',
-      'PayloadUUID'              => 'bf900530-2306-0131-32e2-000c2944c108',
-      'PayloadOrganization'      => organization,
-      'PayloadVersion'           => 1,
-      'PayloadDisplayName'       => 'Chrome',
-      'PayloadContent'           => [
-        {
-          'PayloadType'        => 'com.apple.ManagedClient.preferences',
-          'PayloadVersion'     => 1,
-          'PayloadIdentifier'  => "#{prefix}.browsers.chrome",
-          'PayloadUUID'        => '3377ead0-2310-0131-32ec-000c2944c108',
-          'PayloadEnabled'     => true,
-          'PayloadDisplayName' => 'Chrome',
-          'PayloadContent'     => {
-            'com.google.Chrome' => {
-              'Forced' => [
-                {
-                  'mcx_preference_settings' => prefs,
-                },
-              ],
-            },
-          },
-        },
-      ],
+      'PayloadScope' => 'System',
+      'PayloadType' => 'Configuration',
+      'PayloadUUID' => 'bf900530-2306-0131-32e2-000c2944c108',
+      'PayloadOrganization' => organization,
+      'PayloadVersion' => 1,
+      'PayloadDisplayName' => 'Chrome',
+      'PayloadContent' => [],
     }
+    unless chrome_prefs.empty?
+      chrome_profile['PayloadContent'].push(
+        'PayloadType' => 'com.google.Chrome',
+        'PayloadVersion' => 1,
+        'PayloadIdentifier' => "#{prefix}.browsers.chrome",
+        'PayloadUUID' => '3377ead0-2310-0131-32ec-000c2944c108',
+        'PayloadEnabled' => true,
+        'PayloadDisplayName' => 'Chrome',
+      )
+      chrome_prefs.keys.each do |key|
+        next if chrome_prefs[key].nil?
+        chrome_profile['PayloadContent'][0][key] = chrome_prefs[key]
+      end
+    end
+
+    node.default['cpe_profiles']["#{prefix}.browsers.chrome"] = chrome_profile
+
     # Check for Chrome Canary
     if node.installed?('com.google.Chrome.canary')
+      chrome_prefs = node['cpe_chrome']['profile'].reject { |_k, v| v.nil? }
+      if chrome_prefs.empty?
+        Chef::Log.info("#{cookbook_name}: No prefs found.")
+        return
+      end
+
       prefix = node['cpe_profiles']['prefix']
       organization = node['organization'] ? node['organization'] : 'Facebook'
-      node.default['cpe_profiles']["#{prefix}.browsers.chromecanary"] = {
-        'PayloadIdentifier'        => "#{prefix}.browsers.chromecanary",
+      canary_profile = {
+        'PayloadIdentifier' => "#{prefix}.browsers.chromecanary",
         'PayloadRemovalDisallowed' => true,
-        'PayloadScope'             => 'System',
-        'PayloadType'              => 'Configuration',
-        'PayloadUUID'              => 'bf900530-2306-0131-32e2-000c2944c108',
-        'PayloadOrganization'      => organization,
-        'PayloadVersion'           => 1,
-        'PayloadDisplayName'       => 'Chrome Canary',
-        'PayloadContent'           => [
-          {
-            'PayloadType'        => 'com.apple.ManagedClient.preferences',
-            'PayloadVersion'     => 1,
-            'PayloadIdentifier'  => "#{prefix}.browsers.chromecanary",
-            'PayloadUUID'        => '3377ead0-2310-0131-32ec-000c2944c108',
-            'PayloadEnabled'     => true,
-            'PayloadDisplayName' => 'Chrome Canary',
-            'PayloadContent'     => {
-              'com.google.Chrome.canary' => {
-                'Forced' => [
-                  {
-                    'mcx_preference_settings' => prefs,
-                  },
-                ],
-              },
-            },
-          },
-        ],
+        'PayloadScope' => 'System',
+        'PayloadType' => 'Configuration',
+        'PayloadUUID' => 'bf900530-2306-0131-32e2-000c2944c108',
+        'PayloadOrganization' => organization,
+        'PayloadVersion' => 1,
+        'PayloadDisplayName' => 'Chrome Canary',
+        'PayloadContent' => [],
       }
+      unless chrome_prefs.empty?
+        canary_profile['PayloadContent'].push(
+          'PayloadType' => 'com.google.Chrome.canary',
+          'PayloadVersion' => 1,
+          'PayloadIdentifier' => "#{prefix}.browsers.chromecanary",
+          'PayloadUUID' => 'bf900530-2306-0131-32e2-000c2944c108',
+          'PayloadEnabled' => true,
+          'PayloadDisplayName' => 'Chrome Canary',
+        )
+        chrome_prefs.keys.each do |key|
+          next if chrome_prefs[key].nil?
+          canary_profile['PayloadContent'][0][key] = chrome_prefs[key]
+        end
+      end
+
+      node.default['cpe_profiles']["#{prefix}.browsers.chromecanary"] =
+        canary_profile
     end
+
     # Apply the Master Preferences file
     unless node['cpe_chrome']['mp']['UseMasterPreferencesFile'] == false
       mprefs =
