@@ -451,8 +451,8 @@ def bootstrap(force=False):
   # Adding Node name based on serial number, and Ohai config changes.
   global CLIENT_RB
   CLIENT_RB += '\n' + 'node_name \"%s\"' % serial
-  CLIENT_RB += '\n' + 'Ohai::Config[:plugin_path] << "/etc/chef/ohai_plugins"'
-  CLIENT_RB += '\n' + 'Ohai::Config[:disabled_plugins] = [:Passwd]'
+  CLIENT_RB += '\n' + 'ohai.directory = "/etc/chef/ohai_plugins"'
+  CLIENT_RB += '\n' + 'ohai.disabled_plugins = [:Passwd]'
 
   if not os.path.isdir('/etc/chef'):
     os.makedirs('/etc/chef')
