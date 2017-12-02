@@ -98,7 +98,7 @@ class Chef
     def get_shard(serial: nil, salt: nil, chunks: 100)
       # grab the serial by platform if possible
       # return nil if not possible
-      serial = serial ? serial : node.serial
+      serial ||= node.serial
       serial = node.uuid if serial.nil?
       return 0 if serial.nil?
       if salt
@@ -292,7 +292,7 @@ class Chef
           installed_apps = Plist.parse_xml(
             '/Library/Managed Installs/ManagedInstallReport.plist',
           )['managed_installs_list'].map(&:downcase)
-        rescue
+        rescue Exception
           Chef::Log.warn(
             'cpe_utils/node.munki_installed:' +
             ' Failed to retrieve applications installed by Munki',
