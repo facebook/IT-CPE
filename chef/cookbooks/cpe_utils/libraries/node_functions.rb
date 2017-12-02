@@ -231,10 +231,11 @@ class Chef
     end
 
     def os_at_least?(version)
-      case node['platform_family']
-      when 'mac_os_x'
-        Gem::Version.new(node['platform_version']) >= Gem::Version.new(version)
+      if arch?
+        # Arch is a rolling release so it's always at a sufficient version
+        return true
       end
+      Gem::Version.new(node['platform_version']) >= Gem::Version.new(version)
     end
 
     def os_at_least_or_lower?(version)
@@ -242,6 +243,10 @@ class Chef
       when 'mac_os_x'
         Gem::Version.new(node['platform_version']) <= Gem::Version.new(version)
       end
+    end
+
+    def arch?
+      return node['platform'] == 'arch'
     end
 
     def linux?
