@@ -46,6 +46,10 @@ if node.macos?
     'cpe_launchd',
     'cpe_profiles',
   ]
+elsif node.windows?
+  run_list += [
+    'cpe_win_telemetry',
+  ]
 end
 
 # Log run_list
