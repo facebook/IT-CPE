@@ -1,7 +1,7 @@
 # vim: syntax=ruby:expandtab:shiftwidth=2:softtabstop=2:tabstop=2
 require 'rspec'
-require_relative '..\libraries\windows_chrome_setting'
-require_relative '..\libraries\chrome_windows'
+require_relative '../libraries/windows_chrome_setting'
+require_relative '../libraries/chrome_windows'
 
 RSpec.configure do |config|
   config.include FB::ChromeManagement
