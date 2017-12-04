@@ -21,7 +21,7 @@ end
 # rubocop:disable Metrics/BlockLength
 action_class do
   def manage_chrome
-    return if node['cpe_chrome']['vaildate_installed'] &&
+    return if node['cpe_chrome']['validate_installed'] &&
       !node.installed?('com.google.Chrome')
     if node['cpe_chrome']['mp']['UseMasterPreferencesFile']
       mprefs =

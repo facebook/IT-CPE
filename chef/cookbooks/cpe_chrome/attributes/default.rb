@@ -15,7 +15,7 @@
 # See https://www.chromium.org/administrators/policy-list-3
 
 default['cpe_chrome'] = {
-  'vaildate_installed' => false,
+  'validate_installed' => false,
   'profile' => {
     'ExtensionInstallForcelist' => [],
     'ExtensionInstallBlacklist' => [],
