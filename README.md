@@ -1,6 +1,7 @@
 # IT-CPE tools
-The IT-CPE ("Client Platform Engineering") repo contains a suite of tools that we use to manage our fleet of over 10,000 client
-machines.
+The IT-CPE ("Client Platform Engineering") repo contains a suite of tools that we use to manage our fleet of over 10,000 client machines.
+
+We aim for compatibility with the latest public releases of the OSes we manage.
 
 ## Presentations
 * Watch our [presentation at MacIT](http://www.youtube.com/watch?v=Z3gMXUxI0Hs)
