@@ -16,10 +16,11 @@ resource_name :cpe_screensaver
 default_action :config
 
 action :config do
+  return unless node['cpe_screensaver'].values.any?
   # Enforce screen saver settings
   warn = node['cpe_screensaver']['__nowarn'] ? false : true
   if node['cpe_screensaver']['idleTime'] &&
-     node['cpe_screensaver']['idleTime'] >= 600
+     node['cpe_screensaver']['idleTime'] > 600
     if warn
       Chef::Log.warn(
         'Screensaver idle time is too long!',
@@ -27,7 +28,7 @@ action :config do
     end
   end
   if node['cpe_screensaver']['askForPasswordDelay'] &&
-     node['cpe_screensaver']['askForPasswordDelay'] >= 5
+     node['cpe_screensaver']['askForPasswordDelay'] > 5
     if warn
       Chef::Log.warn(
         'Screensaver password delay is too long!',
@@ -36,6 +37,7 @@ action :config do
   end
   prefix = node['cpe_profiles']['prefix']
   organization = node['organization'] ? node['organization'] : 'Facebook'
+
   node.default['cpe_profiles']["#{prefix}.screensaver"] = {
     'PayloadIdentifier' => "#{prefix}.screensaver",
     'PayloadRemovalDisallowed' => true,
@@ -45,7 +47,28 @@ action :config do
     'PayloadOrganization' => organization,
     'PayloadVersion' => 1,
     'PayloadDisplayName' => 'Screensaver',
-    'PayloadContent' => [
+    'PayloadContent' => [],
+  }
+  if node.os_at_least?('10.13')
+    # 10.13+ has a new payload specifically for com.apple.screensaver
+    # TODO: (frogor) remove MCX mechanism once 10.12 is deprecated
+    node.default['cpe_profiles']["#{prefix}.screensaver"]['PayloadContent'] = [
+      {
+        'PayloadType' => 'com.apple.screensaver',
+        'PayloadVersion' => 1,
+        'PayloadIdentifier' => "#{prefix}.screensaver",
+        'PayloadUUID' => '3B2AD6A9-F99E-4813-980A-4147617B2E75',
+        'PayloadEnabled' => true,
+        'PayloadDisplayName' => 'ScreenSaver',
+        'idleTime' => node['cpe_screensaver']['idleTime'],
+        'askForPassword' =>
+          node['cpe_screensaver']['askForPassword'],
+        'askForPasswordDelay' =>
+          node['cpe_screensaver']['askForPasswordDelay'],
+      },
+    ]
+  else
+    node.default['cpe_profiles']["#{prefix}.screensaver"]['PayloadContent'] = [
       {
         'PayloadType' => 'com.apple.ManagedClient.preferences',
         'PayloadVersion' => 1,
@@ -69,6 +92,6 @@ action :config do
           },
         },
       },
-    ],
-  }
+    ]
+  end
 end
