@@ -279,6 +279,30 @@ class Chef
       end
     end
 
+    def virtual_macos
+      unless macos?
+        Chef::Log.warn('node.virtual_macos called on non-OS X!')
+        return
+      end
+      return node['virtual_macos'] if node['virtual_macos']
+      if node['hardware']['boot_rom_version'].include? 'VMW'
+        virtual_type = 'vmware'
+      elsif node['hardware']['boot_rom_version'].include? 'VirtualBox'
+        virtual_type = 'virtualbox'
+      else
+        virtual_type = Mixlib::ShellOut.new(
+          '/usr/sbin/system_profiler SPEthernetDataType | grep ' +
+          '\'Vendor ID\' | awk \'{print $3}\'',
+        ).run_command.stdout.chomp
+        if virtual_type.include? '0x1ab8'
+          virtual_type = 'parallels'
+        else
+          virtual_type = 'physical'
+        end
+      end
+      return virtual_type
+    end
+
     def munki_installed?(application)
       installed_apps = []
       if File.exist?('/Library/Managed Installs/ManagedInstallReport.plist')
