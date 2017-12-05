@@ -14,5 +14,5 @@
 return unless node.macos?
 
 cpe_munki_install 'Install Munki'
-cpe_munki_local 'Manage Local Munki Manifest'
 cpe_munki_config 'Manage Munki Settings'
+cpe_munki_local 'Manage Local Munki Manifest'
