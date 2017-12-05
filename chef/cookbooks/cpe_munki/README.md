@@ -153,4 +153,3 @@ This cookbook can also attempt to remediate broken Munki installs.
 Set `node['cpe_munki']['auto_remediate']` to the amount of days Chef should allow Munki to not run before reinstalling all packages. Chef will read the /Library/Preferences/ManagedInstalls preferences domain to parse the `LastCheckDate` key. If that key is older than the number of days specified, all package receipts are forgotten and Chef will reinstall the Munki packages.
 
     node.default['cpe_munki']['auto_remediate'] = 30
-
