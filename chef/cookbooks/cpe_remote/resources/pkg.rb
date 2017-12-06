@@ -33,15 +33,32 @@ property :version, String
 
 action_class do
   include CPE::Remote
+  def log_warn(msg)
+    CPE::Log.log(
+      msg,
+      :level => :warn,
+      :type => 'cpe_remote_pkg',
+      :action => 'install',
+      :status => 'fail',
+    )
+  end
+
+  def log_unless(msg)
+    CPE::Log.unless(
+      msg, :type => 'cpe_remote_pkg', :action => 'install', :status => 'fail'
+    ) { yield }
+  end
 end
 
 load_current_value do
-  cmd = "pkgutil --pkg-info '#{receipt}'"
+  cmd = "/usr/sbin/pkgutil --pkg-info '#{receipt}'"
   version shell_out(cmd).stdout.to_s[/version: (.*)/, 1]
 end
 
 action :install do
-  return unless node['cpe_remote']['server_accessible']
+  return unless log_unless(
+    'Distro server inaccessible',
+  ) { node['cpe_remote']['server_accessible'] }
   converge_if_changed :version do
     pkg_name = new_resource.app
     pkg_version_str = "-#{new_resource.version}"
@@ -77,7 +94,7 @@ action :install do
     execute "Unzipping #{download_file_path}" do
       only_if { is_mpkg }
       only_if { valid_url }
-      command "cd #{chef_cache}; unzip -o '#{download_file_path}'"
+      command "cd #{chef_cache} && /usr/bin/unzip -o '#{download_file_path}'"
     end
 
     # install vars
@@ -95,16 +112,16 @@ action :install do
       only_if do
         # Comparing the Checksum Provided to the file downloaded
         checksum_ondisk = Chef::Digester.checksum_for_file(pkg_on_disk)
-        Chef::Log.debug(
-          "Provided checksum #{checksum} == " +
-          "File On Disk checksum #{checksum_ondisk}",
-        )
         if checksum != checksum_ondisk
+          log_warn(
+            "Package #{pkg_file} provided checksum #{checksum} != " +
+            "File On Disk checksum #{checksum_ondisk}",
+          )
           fail ArgumentError, 'Invalid Checksum, Checksum Mismatch'
         end
         true
       end
-      command "installer -pkg '#{pkg_file_path}' -target /"
+      command "/usr/sbin/installer -pkg '#{pkg_file_path}' -target /"
     end
 
     # Delete Zip if there is a ZIP
