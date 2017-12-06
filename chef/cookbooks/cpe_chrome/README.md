@@ -4,7 +4,7 @@ Configures any custom settings for Google Chrome, or Chrome Canary.
 
 Requirements
 ------------
-Mac OS X or Windows
+Linux, Mac OS X, or Windows
 
 Attributes
 ----------

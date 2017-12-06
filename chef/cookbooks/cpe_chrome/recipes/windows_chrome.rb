@@ -12,11 +12,7 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 #
 
-chrome_installed =
-  File.file?("#{ENV['ProgramFiles(x86)']}\\Google\\Chrome\\" \
-             'Application\\chrome.exe')
-
-return unless chrome_installed
+return unless node.installed?('Google Chrome')
 
 # We've been seeing users running development VMs/hardware that do not have SID
 # because of no intern person data. Also freshly imaged machines do not have
@@ -46,6 +42,11 @@ reg_settings.uniq.each do |setting|
     action :create
   end
 end
+
+# Cleanup registry settings when values are removed from the node attribute.
+# # TODO 19736300, this is causing imaging to break. Removing until a update is
+# # pushed.
+# cpe_chrome_cleanup 'Chrome Cleanup'
 
 # Apply the Master Preferences file
 master_path =

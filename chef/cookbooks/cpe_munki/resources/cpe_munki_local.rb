@@ -104,13 +104,13 @@ def parse_items_in_catalogs
   catalogs = []
   catlogs_dir = '/Library/Managed Installs/catalogs/'
   Dir.foreach(catlogs_dir) do |catalog|
-    next if catalog == '.' || catalog == '..'
+    next if ['.', '..'].include?(catalog)
     begin
       p = read_plist(catlogs_dir + catalog)
       p.each do |d|
         catalogs << d['name']
       end
-    rescue
+    rescue StandardError
       next
     end
   end

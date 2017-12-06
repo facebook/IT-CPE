@@ -13,4 +13,4 @@
 #
 
 # Run the appropriate cookbook based on platform
-include_recipe "cpe_chrome::#{node['platform_family']}_chrome"
+include_recipe "cpe_chrome::#{node['os']}_chrome"

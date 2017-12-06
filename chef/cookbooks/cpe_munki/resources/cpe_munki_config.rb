@@ -19,6 +19,7 @@ action :config do
   return unless node['cpe_munki']['configure']
   organization = node['organization'] ? node['organization'] : 'Facebook'
   prefix = node['cpe_profiles']['prefix']
+  prefs = node['cpe_munki']['preferences'].reject { |_k, v| v.nil? }
   node.default['cpe_profiles']["#{prefix}.munki"] = {
     'PayloadIdentifier'        => "#{prefix}.munki",
     'PayloadRemovalDisallowed' => true,
@@ -40,7 +41,7 @@ action :config do
           'ManagedInstalls' => {
             'Forced' => [
               {
-                'mcx_preference_settings' => node['cpe_munki']['preferences'],
+                'mcx_preference_settings' => prefs,
               },
             ],
           },

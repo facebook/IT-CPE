@@ -10,20 +10,24 @@ Requirements
 Attributes
 ------------
 * node['cpe_prompt_user']['CocoaDialog']
-* node['cpe_prompt_user']['icon'] 
+* node['cpe_prompt_user']['icon']
+* node['cpe_prompt_user']['prompts']
 
 
-Resources/Providers
--------------------
+
+Usage
+-----
 
 **cpe_prompt_user**
-* This resource's purpose is to prompt the user with a provided message
+* This api cookbook's purpose is to prompt the user with a provided message
 
-**Actions**
-* `:prompt` - action to prompt the user with a dialog
+**THIS MUST GO IN A RECIPE. DO NOT PUT THIS IN ATTRIBUTES, OR IT MAY CAUSE PAIN
+AND SUFFERING FOR YOUR FLEET!**
 
-**Properties**
-* `prompt_name`, String
+
+If you are creating a new prompt, in your recipe add a key to
+node.default['cpe_prompt_user']['prompts'] that is the name of the label of the ch of the following options:
+
 * `message`, String
 
 **Properties - Optional**
@@ -37,11 +41,7 @@ a cancel button
 * `title`, `String`, default: 'Facebook IT Says:' # title, text
 * `type`, `String`, default: 'ok-msgbox' - working on multiple propmts
 
-
-Usage
------
-
-In your company init cookbook's recipe, make sure to set the CocoaDialog bin path and icon path. 
+In your company init cookbook's recipe, make sure to set the CocoaDialog bin path and icon path.
 
     node.default['cpe_prompt_user']['CocoaDialog'] = '/Applications/CocoaDialog.app/Contents/MacOS/CocoaDialog'
     node.default['cpe_prompt_user']['icon'] = '/Library/icons/it.icns'
@@ -49,16 +49,15 @@ In your company init cookbook's recipe, make sure to set the CocoaDialog bin pat
 If you need to prompt the current user, the resource name should be short
 and sweet and not contain special characters.
 
-    cpe_prompt_user 'stuff prompt' do
-      title 'Facbook IT Says:'
-      message 'stuff'
-    end
+    node.default['cpe_prompt_user']['prompts']['NAME OF Prompt'] do
+      'title' => 'Facbook IT Says:',
+      'message' => 'stuff',
+    }
 
 If you would like to prompt at an interval pass interval in minutes
 
-    cpe_prompt_user 'stuff prompt' do
-      title 'Facbook IT Says:'
-      message 'stuff'
-      interval 10
-    end
-
+    node.default['cpe_prompt_user']['prompts']['NAME OF Prompt'] do
+      'title' => 'Facbook IT Says:',
+      'message' => 'stuff',
+      'interval' => 10,
+    }

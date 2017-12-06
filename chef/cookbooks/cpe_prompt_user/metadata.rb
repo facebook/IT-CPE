@@ -2,7 +2,6 @@
 name 'cpe_prompt_user'
 maintainer 'Facebook'
 maintainer_email 'noreply@facebook.com'
-license 'BSD'
 description 'Used to propmt users with CocoaDialog'
 long_description 'Used to propmt users with CocoaDialog'
 version '0.1.0'

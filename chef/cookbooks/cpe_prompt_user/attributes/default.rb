@@ -12,6 +12,8 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 #
 
-default['cpe_prompt_user']['CocoaDialog'] =
-  '/Applications/CocoaDialog.app/Contents/MacOS/CocoaDialog'
-default['cpe_prompt_user']['icon'] = '/Library/icons/it.icns'
+default['cpe_prompt_user'] = {
+  'CocoaDialog' => '/Applications/CocoaDialog.app/Contents/MacOS/CocoaDialog',
+  'icon' => nil,
+  'prompts' => {},
+}

@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: cpe_chrome
-# Recipe:: mac_os_x_chrome
+# Recipe:: darwin_chrome
 #
 # vim: syntax=ruby:expandtab:shiftwidth=2:softtabstop=2:tabstop=2
 #
@@ -11,7 +11,5 @@
 # LICENSE file in the root directory of this source tree. An additional grant
 # of patent rights can be found in the PATENTS file in the same directory.
 #
-
-return unless node.installed?('com.google.Chrome')
 
 cpe_chrome 'Configure Google Chrome'
