@@ -21,7 +21,7 @@ Usage
 -------------------
 You must set `base_url`
 * node['cpe_remote']['base_url']
-where are your remote pkgs and files stored - "chang.me/chef". NOTE: This resource will prefix https to the base_url.
+where are your remote pkgs and files stored - "https://chang.me/chef"
 
 * node['cpe_remote']['server_accessible']
 is your server accessible? write your own check and set value to true or false. If false the resource wont fire.  
@@ -52,7 +52,7 @@ Install `osquery` from the primary download site.
 
 ```ruby
 # in base settings
-node.default['cpe_remote']['base_url'] = "fb.com/chef/"
+node.default['cpe_remote']['base_url'] = "https://fb.com/chef/"
 # in some recipe
 # File lives at fb.com/chef/osqueryd/osqueryd-1.1.0.pkg
 cpe_remote_pkg 'osqueryd' do
@@ -80,7 +80,7 @@ This resource will download a file to the client from the server at `base_url`. 
 
 ```ruby
 # in base settings
-node.default['cpe_remote']['base_url'] = "STUFF.co/chef/"
+node.default['cpe_remote']['base_url'] = "https://STUFF.co/chef/"
 # https://STUFF.co/chef/cool_things/omgfile
 # in some recipe
 cpe_remote_file 'cool_things' do
@@ -93,7 +93,7 @@ end
 
 ```ruby
 # in base settings
-node.default['cpe_remote']['base_url'] = "STUFF.co/chef/"
+node.default['cpe_remote']['base_url'] = "https://STUFF.co/chef/"
 # https://STUFF.co/chef/javaruleset/DeploymentRuleSet.jar
 cpe_remote_file 'javaruleset' do
   file_name 'DeploymentRuleSet.jar'
@@ -102,3 +102,32 @@ cpe_remote_file 'javaruleset' do
 end
 ```
 The above example will download the DeploymentRuleSet.jar file from the javaruleset folder from the server provided at `base_url`. This will only happen if the file is missing from the expected location, or the checksum on the file doesn't match the provided checksum.
+
+### .zip
+
+This resource will download a .zip file and extract it. The file will be stored on the client at in the `Chef::Config[:file_cache_path]`. The `folder_name` specifies the folder on the server where the file is located. The `file_name` specifies the file within the `folder_name` to download.
+
+#### Actions
+- :create - download and place file on the client.
+
+#### Parameter attributes:
+- `folder_name` - [name] This is the name of the folder where the file is located on the repo.
+- `zip_checksum` - sha256 checksum of the file to download. On macOS, you can use `shasum -a 256 filename` to calculate this.
+- `cleanup` - Specify whether or not we should keep the downloaded file. (default is true)
+- `zip_name` - The name of the zip being downloaded
+- `zip_url` - URL of the zip on the server if it's different than `base_url/app/app-version.zip`.
+- `extract_location` - The path of where the zip file will be extracted.
+
+#### Examples
+
+```ruby
+# in base settings
+node.default['cpe_remote']['base_url'] = "https://STUFF.co/chef/ (https://stuff.co/chef/)"
+# https://STUFF.co/chef/my_zip_files/best.zip
+# in some recipe
+cpe_remote_zip 'my_zip_files' do
+zip_name 'best.zip'
+zip_checksum the_checksum256_of_the_best.zip_file
+extract_location path_of_where_to_extract_zip
+end
+```
