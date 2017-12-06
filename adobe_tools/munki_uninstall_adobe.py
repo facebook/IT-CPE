@@ -21,12 +21,12 @@ def log(message):
 
 
 if email is None or email == '':
-  # No user, could likely be root
-  exit(0)
+    # No user, could likely be root
+    exit(0)
 
 result = adobe_tools.remove_products(target_product, email)
 if not result:
-  log("Removal of product %s from %s failed." % (target_product, email))
-  exit(1)
+    log("Removal of product %s from %s failed." % (target_product, email))
+    exit(1)
 
 log("Removed %s from %s's account" % (target_product, email))
