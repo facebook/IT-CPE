@@ -16,9 +16,6 @@ country = 'US'
 
 
 def log(message):
-  """Log with tag."""
-  tag = 'CPE-add_adobe'
-  print (tag + ': %s' % str(message))
 try:
     # Do I exist as a user?
     if not adobe_tools.user_exists(email):

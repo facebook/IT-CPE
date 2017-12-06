@@ -85,7 +85,7 @@ class AdobeAPIBadStatusException(Exception):
 
     def __str__(self):
         """Text for the error."""
-        return str(self.text)
+        return 'Status code %s: %s' % (self.status_code, str(self.text))
 
     def __int__(self):
         """Return status code of the error."""
@@ -102,6 +102,18 @@ class AdobeAPIIncompleteUserActionException(Exception):
     def __str__(self):
         """Text for the error."""
         return str(self.errors)
+
+
+class AdobeAPIMissingRequirementsException(Exception):
+    """Missing a required file for API usage."""
+
+    def __init__(self, filename):
+        """Store the filename that is missing."""
+        self.filename = filename
+
+    def __str__(self):
+        """Text for the error."""
+        return 'Required file is missing: %s' % str(self.filename)
 
 
 class AdobeAPIObject(object):
@@ -252,25 +264,21 @@ class AdobeAPIObject(object):
             access_token = json.loads(res.text)["access_token"]
             return access_token
         else:
-            # print response
-            print(res.status_code)
-            print(res.headers)
-            print(res.text)
-            return None
+            raise AdobeAPIBadStatusException(
+                res.status_code, res.headers, res.text
+            )
 
     def __generate_config(self, userconfig, private_key_filename):
         """Return tuple of necessary config data."""
         # Get userconfig data
         user_config_path = userconfig
         if not os.path.isfile(str(user_config_path)):
-            print('Management config not found!')
-            sys.exit(1)
+            raise AdobeAPIMissingRequirementsException(str(user_config_path))
 
         # Get private key
         priv_key_path = private_key_filename
         if not os.path.isfile(str(priv_key_path)):
-            print('Private key not found!')
-            sys.exit(1)
+            raise AdobeAPIMissingRequirementsException(str(priv_key_path))
 
         self.priv_key = self.__get_private_key(priv_key_path)
         # Get config data
@@ -288,9 +296,6 @@ class AdobeAPIObject(object):
             self.configs,
             self.jwt_token
         )
-        if not self.access_token:
-            print("Access token failed!")
-            sys.exit(1)
 
     def __headers(self, config_data, access_token):
         """Return the headers needed."""

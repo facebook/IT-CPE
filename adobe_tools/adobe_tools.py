@@ -87,3 +87,16 @@ def remove_products(removed_products, username):
     """Remove products from specific user."""
     instance = adobe_api.AdobeAPIObject(username)
     return instance.remove_product_from_user(removed_products)
+
+
+def api_reachable():
+    """Return True if the API is reachable."""
+    try:
+        adobe_api.AdobeAPIObject(
+            "fake@fake.com",
+            allow_nonexistent_user=True
+        )
+    except (adobe_api.AdobeAPIBadStatusException,
+            adobe_api.AdobeAPIMissingRequirementsException):
+        return False
+    return True
