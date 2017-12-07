@@ -292,7 +292,7 @@ class Chef
           installed_apps = Plist.parse_xml(
             '/Library/Managed Installs/ManagedInstallReport.plist',
           )['managed_installs_list'].map(&:downcase)
-        rescue Exception
+        rescue StandardError
           Chef::Log.warn(
             'cpe_utils/node.munki_installed:' +
             ' Failed to retrieve applications installed by Munki',
