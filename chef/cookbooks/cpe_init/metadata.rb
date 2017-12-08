@@ -30,6 +30,7 @@ depends 'cpe_prompt_user'
 depends 'cpe_screensaver'
 depends 'cpe_spotlight'
 depends 'cpe_remote'
+depends 'cpe_win_telemetry'
 
 ## Web Browser API Cookbooks
 depends 'cpe_chrome'
