@@ -23,7 +23,7 @@ action :config do
       # Disable these services to kill telemetry data to Microsoft
       windows_service svc_name do
         startup_type :disabled
-        action [:disable, :stop]
+        action %i[disable stop]
       end
     end
     # Reset Telemetry to min allowed value
