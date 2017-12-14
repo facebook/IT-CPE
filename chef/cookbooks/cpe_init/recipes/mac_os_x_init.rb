@@ -49,6 +49,7 @@ if node.macos?
 elsif node.windows?
   run_list += [
     'cpe_win_telemetry',
+    'cpe_kms',
   ]
 end
 
