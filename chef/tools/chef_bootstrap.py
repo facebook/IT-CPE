@@ -235,9 +235,11 @@ def install_cli_tools():
   """Install the Xcode CLI tools, from Apple if necessary."""
   os_ver = get_os_version()
   # Install command line tools if necessary:
-  # 10.12 receipt name
-  receipt = 'com.apple.pkg.DevSDK_OSX1012'
-  desired_platform = 'macOS Sierra'
+  receipt = 'com.apple.pkg.DevSDK_macOS1013_Public'
+  desired_platform = 'macOS High Sierra'
+  if '10.12' in os_ver:
+      receipt = 'com.apple.pkg.DevSDK_OSX1012'
+      desired_platform = 'macOS Sierra'
   if '10.11' in os_ver:
     receipt = 'com.apple.pkg.DevSDK_OSX1011'
     desired_platform = 'OS X 10.11'
