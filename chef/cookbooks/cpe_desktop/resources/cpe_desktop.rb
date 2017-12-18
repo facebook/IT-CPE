@@ -20,7 +20,7 @@ action :run do
   return if prefs.empty?
   prefix = node['cpe_profiles']['prefix']
   organization = node['organization'] ? node['organization'] : 'Facebook'
-  override_picture_path = node['cpe_desktop']['override-picture-path']
+  override-picture-path = node['cpe_desktop']['override-picture-path']
   node.default['cpe_profiles']["#{prefix}.desktop"] = {
     'PayloadIdentifier' => "#{prefix}.desktop",
     'PayloadRemovalDisallowed' => true,
@@ -39,7 +39,7 @@ action :run do
         'PayloadEnabled' => true,
         'PayloadDisplayName' => 'Desktop',
         'locked' => true,
-        'override-picture-path' => override_picture_path,
+        'override-picture-path' => override-picture-path,
       },
     ],
   }
