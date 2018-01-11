@@ -28,7 +28,7 @@ AND SUFFERING FOR YOUR FLEET!**
 If you are creating a new launchd, in your recipe add a key to
 node.default['cpe_launchd'] that is the name of the label of the launchd that
 you would like to create and the value should be the key found in the launchd
-docs on docs.chef.org
+docs on docs.chef.io
 
     node.default['cpe_launchd']['com.facebook.chef.CPE.chefctl'] = {
       'program_arguments' => ['/opt/scripts/chef/chefctl.sh'],
