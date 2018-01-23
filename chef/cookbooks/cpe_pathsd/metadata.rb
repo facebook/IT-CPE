@@ -3,7 +3,7 @@
 name 'cpe_pathsd'
 maintainer 'Facebook'
 maintainer_email 'noreply@facebook.com'
-license 'BSD'
+license 'All rights reserved'
 description 'Installs/Configures cpe_pathsd'
 long_description 'Installs/Configures cpe_pathsd'
 version '0.1.0'

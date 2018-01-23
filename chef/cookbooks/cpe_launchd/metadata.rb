@@ -3,7 +3,7 @@
 name 'cpe_launchd'
 maintainer 'Facebook'
 maintainer_email 'noreply@facebook.com'
-license 'BSD'
+license 'All rights reserved'
 description 'Installs/Configures cpe_launchd'
 long_description 'Installs/Configures cpe_launchd'
 version '0.1.0'
