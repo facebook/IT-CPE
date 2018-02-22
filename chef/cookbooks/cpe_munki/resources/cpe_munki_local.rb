@@ -115,4 +115,7 @@ def parse_items_in_catalogs
     end
   end
   catalogs.uniq
+rescue StandardError
+  []
 end
+
