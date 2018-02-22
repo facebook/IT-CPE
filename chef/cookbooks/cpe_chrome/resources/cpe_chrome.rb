@@ -83,68 +83,57 @@ action_class do
   def manage_chrome_osx(mprefs, prefs)
     prefix = node['cpe_profiles']['prefix']
     organization = node['organization'] ? node['organization'] : 'Facebook'
-    node.default['cpe_profiles']["#{prefix}.browsers.chrome"] = {
-      'PayloadIdentifier'        => "#{prefix}.browsers.chrome",
+    chrome_profile = {
+      'PayloadIdentifier' => "#{prefix}.browsers.chrome",
       'PayloadRemovalDisallowed' => true,
-      'PayloadScope'             => 'System',
-      'PayloadType'              => 'Configuration',
-      'PayloadUUID'              => 'bf900530-2306-0131-32e2-000c2944c108',
-      'PayloadOrganization'      => organization,
-      'PayloadVersion'           => 1,
-      'PayloadDisplayName'       => 'Chrome',
-      'PayloadContent'           => [
-        {
-          'PayloadType'        => 'com.apple.ManagedClient.preferences',
-          'PayloadVersion'     => 1,
-          'PayloadIdentifier'  => "#{prefix}.browsers.chrome",
-          'PayloadUUID'        => '3377ead0-2310-0131-32ec-000c2944c108',
-          'PayloadEnabled'     => true,
-          'PayloadDisplayName' => 'Chrome',
-          'PayloadContent'     => {
-            'com.google.Chrome' => {
-              'Forced' => [
-                {
-                  'mcx_preference_settings' => prefs,
-                },
-              ],
-            },
-          },
-        },
-      ],
+      'PayloadScope' => 'System',
+      'PayloadType' => 'Configuration',
+      'PayloadUUID' => 'bf900530-2306-0131-32e2-000c2944c108',
+      'PayloadOrganization' => organization,
+      'PayloadVersion' => 1,
+      'PayloadDisplayName' => 'Chrome',
+      'PayloadContent' => [{
+        'PayloadType' => 'com.google.Chrome',
+        'PayloadVersion' => 1,
+        'PayloadIdentifier' => "#{prefix}.browsers.chrome",
+        'PayloadUUID' => '3377ead0-2310-0131-32ec-000c2944c108',
+        'PayloadEnabled' => true,
+        'PayloadDisplayName' => 'Chrome',
+      }],
     }
+    prefs.each do |k, v|
+      chrome_profile['PayloadContent'][0][k] = v
+    end
+    profile_domain = "#{node['cpe_profiles']['prefix']}.browsers.chrome"
+    node.default['cpe_profiles'][profile_domain] = chrome_profile
+
     # Check for Chrome Canary
     if node.installed?('com.google.Chrome.canary')
       prefix = node['cpe_profiles']['prefix']
       organization = node['organization'] ? node['organization'] : 'Facebook'
-      node.default['cpe_profiles']["#{prefix}.browsers.chromecanary"] = {
-        'PayloadIdentifier'        => "#{prefix}.browsers.chromecanary",
+      canary_profile = {
+        'PayloadIdentifier' => "#{prefix}.browsers.chromecanary",
         'PayloadRemovalDisallowed' => true,
-        'PayloadScope'             => 'System',
-        'PayloadType'              => 'Configuration',
-        'PayloadUUID'              => 'bf900530-2306-0131-32e2-000c2944c108',
-        'PayloadOrganization'      => organization,
-        'PayloadVersion'           => 1,
-        'PayloadDisplayName'       => 'Chrome Canary',
-        'PayloadContent'           => [
-          {
-            'PayloadType'        => 'com.apple.ManagedClient.preferences',
-            'PayloadVersion'     => 1,
-            'PayloadIdentifier'  => "#{prefix}.browsers.chromecanary",
-            'PayloadUUID'        => '3377ead0-2310-0131-32ec-000c2944c108',
-            'PayloadEnabled'     => true,
-            'PayloadDisplayName' => 'Chrome Canary',
-            'PayloadContent'     => {
-              'com.google.Chrome.canary' => {
-                'Forced' => [
-                  {
-                    'mcx_preference_settings' => prefs,
-                  },
-                ],
-              },
-            },
-          },
-        ],
+        'PayloadScope' => 'System',
+        'PayloadType' => 'Configuration',
+        'PayloadUUID' => 'bf900530-2306-0131-32e2-000c2944c108',
+        'PayloadOrganization' => organization,
+        'PayloadVersion' => 1,
+        'PayloadDisplayName' => 'Chrome Canary',
+        'PayloadContent' => [{
+          'PayloadType' => 'com.google.Chrome.canary',
+          'PayloadVersion' => 1,
+          'PayloadIdentifier' => "#{prefix}.browsers.chromecanary",
+          'PayloadUUID' => 'bf900530-2306-0131-32e2-000c2944c108',
+          'PayloadEnabled' => true,
+          'PayloadDisplayName' => 'Chrome Canary',
+        }],
       }
+      prefs.each do |k, v|
+        canary_profile['PayloadContent'][0][k] = v
+      end
+      profile_domain = "#{node['cpe_profiles']['prefix']}.browsers.chromecanary"
+      node.default['cpe_profiles'][profile_domain] = canary_profile
     end
     # Apply the Master Preferences file
     master_path = value_for_platform_family(
@@ -193,3 +182,4 @@ action_class do
   end
 end
 # rubocop:enable Metrics/BlockLength
+

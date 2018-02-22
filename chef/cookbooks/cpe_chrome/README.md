@@ -20,7 +20,7 @@ includes two platform-specific recipes:
 * `cpe_chrome::(mac_os_x|windows)_chrome`
     * Manages all aspects of the Google Chrome browser for both Mac and Windows.
 
-`node['cpe_chrome']` is the hash that contains a hash of all the settings.  
+`node['cpe_chrome']` is the hash that contains a hash of all the settings.
 
 The profile's organization key defaults to `Facebook` unless `node['organization']` is
 configured in your company's custom init recipe.
@@ -37,12 +37,12 @@ To add a managed setting to your profile, simply add the key from the URL list a
     node.default['cpe_chrome']['profile']['BookmarkBarEnabled'] = true
 
 #### Extensions installed by policy
-`node['cpe_chrome']['profile']['ExtensionInstallForcelist']`  
+`node['cpe_chrome']['profile']['ExtensionInstallForcelist']`
 
 * Extensions that are installed by policy (and cannot be disabled by the user)
 * Must be the extension ID followed by the Update URL.
 * The extension ID can be found in the URL from the Web Store, or at [chrome://extensions]()
-* The Update URL for the Chrome Web Store is always "https://clients2.google.com/service/update2/crx"  
+* The Update URL for the Chrome Web Store is always "https://clients2.google.com/service/update2/crx"
 This example is the Messenger Screen Sharing extension from the Web Store:
 
     `degmgkchmbgaognjjlhggmhbcpicdifm;https://clients2.google.com/service/update2/crx`
@@ -50,14 +50,14 @@ This example is the Messenger Screen Sharing extension from the Web Store:
 
 To add your own, simply add to this array:
 
-    # Install the LastPass extension  
+    # Install the LastPass extension
     chrome_ext_update_url = 'https://clients2.google.com/service/update2/crx'
     node.default['cpe_chrome']['profile']['ExtensionInstallForcelist'] <<
       "hdokiejnpimakedhajhdlcegeplioahd;#{chrome_ext_update_url}"
 
 Likewise, extensions can be blacklisted (and thus forcibly removed from your browser):
 
-    # Forecefully remove the BetterHistory malware extension  
+    # Forecefully remove the BetterHistory malware extension
     node.default['cpe_chrome']['profile']['ExtensionInstallBlacklist'] <<
       "obciceimmggglbmelaidpjlmodcebijb"
 
@@ -106,3 +106,4 @@ This hash should contain keys that are described in the link above.  An example:
 The Master Preferences file will only be written to disk if the node attribute `node['cpe_chrome']['mp']['UseMasterPreferencesFile']` is `true`:
 
   node.default['cpe_chrome']['mp']['UseMasterPreferencesFile'] = true
+
