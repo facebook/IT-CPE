@@ -26,7 +26,7 @@ action_class do
     when 'linux'
       return
     when 'windows'
-      uid = node.attr_lookup('cpe/person/uid')
+      uid = node.person['uid']
       return if uid.nil?
       source = node['cpe_chrome']['profile']
       path = "HKEY_USERS\\#{uid}\\SOFTWARE\\Policies\\Google\\Chrome\\"

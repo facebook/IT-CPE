@@ -142,6 +142,7 @@ module FB
         'SearchSuggestEnabled' => :dword,
         'ShowAppsShortcutInBookmarkBar' => :dword,
         'ShowHomeButton' => :dword,
+        'SitePerProcess' => :dword,
         'SkipMetadataCheck' => :dword,
         'SpellCheckServiceEnabled' => :dword,
         'SupervisedUserCreationEnabled' => :dword,

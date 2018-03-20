@@ -11,4 +11,5 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 #
 
+return unless node.macos?
 cpe_safari 'Configure Safari'
