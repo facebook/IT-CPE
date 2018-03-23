@@ -67,7 +67,7 @@ action :install do
       pkg_version_str = ''
     end
 
-    is_mpkg = mpkg
+    is_mpkg =  current_resource.mpkg
     chef_cache = Chef::Config[:file_cache_path]
 
     # Download vars
@@ -77,16 +77,16 @@ action :install do
     valid_url = true
 
     server = node['cpe_remote']['base_url']
-    pkg_source = gen_url(server, app, download_file)
+    pkg_source = gen_url(server, new_resource.app, download_file)
     # someone can choose to override where there pkg is coming from
-    pkg_source = pkg_url if pkg_url
+    pkg_source = pkg_url if current_resource.pkg_url
 
     valid_url = valid_url?(pkg_source)
     remote_file download_file do
       path download_file_path
       source pkg_source
       checksum checksum unless is_mpkg
-      backup !cleanup
+      backup !current_resource.cleanup
       only_if { valid_url }
     end
 
@@ -112,7 +112,7 @@ action :install do
       only_if do
         # Comparing the Checksum Provided to the file downloaded
         checksum_ondisk = Chef::Digester.checksum_for_file(pkg_on_disk)
-        if checksum != checksum_ondisk
+        if new_resource.checksum != checksum_ondisk
           log_warn(
             "Package #{pkg_file} provided checksum #{checksum} != " +
             "File On Disk checksum #{checksum_ondisk}",
@@ -146,7 +146,7 @@ action :install do
     file pkg_file_path do
       not_if { is_mpkg }
       only_if { valid_url }
-      only_if { cleanup }
+      only_if { current_resource.cleanup }
       action :delete
       backup false
     end
