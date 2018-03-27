@@ -23,7 +23,7 @@ default_action :install
 provides :cpe_remote_pkg, :os => 'darwin'
 property :app, String, :name_property => true
 property :checksum, String
-property :cleanup, [TrueClass, FalseClass], :default => true
+property :backup, [FalseClass, Integer], :default => false
 property :mpkg, [TrueClass, FalseClass], :default => false
 property :pkg_name, String
 property :pkg_url, String
@@ -67,27 +67,26 @@ action :install do
       pkg_version_str = ''
     end
 
-    is_mpkg =  current_resource.mpkg
+    is_mpkg = current_resource.mpkg
     chef_cache = Chef::Config[:file_cache_path]
 
     # Download vars
     ext = is_mpkg ? 'zip' : 'pkg'
     download_file = "#{pkg_name}#{pkg_version_str}.#{ext}"
     download_file_path = "#{chef_cache}/#{download_file}"
-    valid_url = true
 
-    server = node['cpe_remote']['base_url']
-    pkg_source = gen_url(server, new_resource.app, download_file)
+    pkg_source = gen_url(current_resource.app, download_file)
     # someone can choose to override where there pkg is coming from
-    pkg_source = pkg_url if current_resource.pkg_url
+    pkg_source = current_resource.pkg_url if current_resource.pkg_url
 
     valid_url = valid_url?(pkg_source)
-    remote_file download_file do
-      path download_file_path
-      source pkg_source
-      checksum checksum unless is_mpkg
-      backup !current_resource.cleanup
+    cpe_remote_file download_file do
       only_if { valid_url }
+      path download_file_path
+      file_url pkg_source
+      folder_name new_resource.app
+      backup new_resource.backup
+      checksum new_resource.checksum
     end
 
     # Unzip if is_mpkg
@@ -124,11 +123,12 @@ action :install do
       command "/usr/sbin/installer -pkg '#{pkg_file_path}' -target /"
     end
 
+    keep_pkg = current_resource.backup ? true : false
     # Delete Zip if there is a ZIP
     file download_file_path do
       only_if { is_mpkg }
       only_if { valid_url }
-      only_if { cleanup }
+      not_if { keep_pkg }
       action :delete
       backup false
     end
@@ -137,16 +137,17 @@ action :install do
     directory pkg_file_path do
       only_if { is_mpkg }
       only_if { valid_url }
-      only_if { cleanup }
+      not_if { keep_pkg }
       action :delete
       recursive true
     end
 
     # Delete PKG
-    file pkg_file_path do
+    file "delete-#{pkg_file_path}" do
       not_if { is_mpkg }
       only_if { valid_url }
-      only_if { current_resource.cleanup }
+      not_if { keep_pkg }
+      path pkg_file_path
       action :delete
       backup false
     end

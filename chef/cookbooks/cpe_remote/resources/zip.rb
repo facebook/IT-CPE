@@ -23,7 +23,7 @@ provides :cpe_remote_zip
 
 property :folder_name, String, :name_property => true
 property :zip_checksum, String
-property :cleanup, [FalseClass, Integer],
+property :backup, [FalseClass, Integer],
          :default => false,
          :desired_state => false
 property :zip_name, String, :desired_state => false
@@ -42,7 +42,9 @@ end
 
 load_current_value do |desired| # ~FC006
   chef_cache = Chef::Config[:file_cache_path]
-  zip_path = ::File.join(chef_cache, 'remote_zip', extract_location, zip_name)
+  extra_loco = extract_location.delete(':')
+  zip_path = ::File.join(chef_cache, 'remote_zip', extra_loco, zip_name)
+
   if ::File.exists?(zip_path)
     checksum_ondisk = Chef::Digester.checksum_for_file(zip_path)
     zip_checksum checksum_ondisk
@@ -62,9 +64,14 @@ end
 
 action :create do
   chef_cache = Chef::Config[:file_cache_path]
-  zip_path = ::File.join(chef_cache, 'remote_zip', extract_location, zip_name)
+  extra_loco = new_resource.extract_location.delete(':')
+  zip_path = ::File.join(
+    chef_cache, 'remote_zip', extra_loco, new_resource.zip_name
+  )
+
   return unless node['cpe_remote']['server_accessible']
   converge_if_changed do
+    # @lint-ignore FBCHEFFoodcritic
     directory ::File.dirname(zip_path) do
       recursive true
     end
@@ -75,9 +82,16 @@ action :create do
       checksum new_resource.zip_checksum
       file_url new_resource.zip_url if new_resource.zip_url
       path zip_path
+      backup new_resource.backup
       action :create
+      notifies :install, 'package[unzip]', :immediately if node.linux?
       notifies :run, 'execute[extract_zip]' unless node.windows?
       notifies :run, 'powershell_script[extract_zip]' if node.windows?
+    end
+
+    package 'unzip' do
+      only_if { node.linux? }
+      action :nothing
     end
 
     execute 'extract_zip' do
@@ -99,6 +113,7 @@ action :create do
       end
     end
 
+    # @lint-ignore FBCHEFFoodcritic
     directory extract_location do
       not_if { node.windows? }
       recursive true

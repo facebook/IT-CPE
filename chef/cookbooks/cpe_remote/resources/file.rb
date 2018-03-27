@@ -23,7 +23,7 @@ provides :cpe_remote_file
 
 property :folder_name, String, :name_property => true
 property :checksum, String
-property :cleanup, [FalseClass, Integer],
+property :backup, [FalseClass, Integer],
          :default => false,
          :desired_state => false
 property :file_name, String, :desired_state => false
@@ -34,6 +34,7 @@ property :mode, [String, Integer], :default => '0644', :coerce => proc { |m|
 }
 property :owner, String
 property :path, String, :desired_state => false
+property :headers, Hash, :desired_state => false
 
 action_class do
   include CPE::Remote
@@ -62,10 +63,12 @@ end
 action :create do
   return unless node['cpe_remote']['server_accessible']
   converge_if_changed do
-    filename = new_resource.file_name ? new_resource.file_name : folder_name
-    server = node['cpe_remote']['base_url']
-    file_source = gen_url(server, folder_name, filename)
-    file_source = file_url if file_url
+    filename = new_resource.file_name ?
+      new_resource.file_name : new_resource.folder_name
+    file_source = new_resource.file_url ?
+      new_resource.file_url : gen_url(folder_name, filename)
+    hders = new_resource.headers ?
+      new_resource.headers : CPE::Distro.auth_headers(file_source, 'GET')
 
     # Delete symlink before creating remote file.
     # Using link resource vs force_unlink property due to bug see:
@@ -84,7 +87,8 @@ action :create do
       owner new_resource.owner
       group new_resource.group
       checksum new_resource.checksum
-      backup new_resource.cleanup
+      backup new_resource.backup
+      headers(hders) if hders
     end
   end
 end

@@ -32,7 +32,7 @@ The second provider is a file provider (`cpe_remote_file`). This provider is com
 
 ### pkg
 
-This resource will install a Apple package (`.pkg` file). It will retrieve the package from a remote URL. The package file will be stored in the `Chef::Config[:file_cache_path]` and deleted after the install unless you set `cleanup` to false.
+This resource will install a Apple package (`.pkg` file). It will retrieve the package from a remote URL. The package file will be stored in the `Chef::Config[:file_cache_path]` and deleted after the install unless you set `backup` to the number of files to keep.
 
 #### Actions
 - :install - Install the package.
@@ -41,7 +41,7 @@ This resource will install a Apple package (`.pkg` file). It will retrieve the p
 - `app` - [name] This is the name of the app that the pkg will be installing,
           and the location of the pkg on the server: `base_url/app/app-version.pkg`
 - `checksum` - sha256 checksum of the pkg to download.
-- `cleanup` - Specify whether or not we should keep the downloaded pkg.
+- `backup` - Specify the # of files to backup. Default is 0
 - `pkg_name` - Specify the name of the pkg if it is not the same as `app-version`, or if the name has spaces.
 - `pkg_url` - URL of the pkg on the server if it's different than `base_url/app/app-version.pkg`.
 - `receipt` - Receipt registered with pkgutil when a pkg is installed.
@@ -64,7 +64,7 @@ end
 
 ### file
 
-This resource will download a file to the client from the server at `base_url`. The file will be stored on the client at `path`.  The `folder_name` specifies the folder on the server where the file is located.  The `file_name` specifies the file within the `folder_name` to download.  The provider will only store the latest version of the file unless you set `cleanup` to false.
+This resource will download a file to the client from the server at `base_url`. The file will be stored on the client at `path`.  The `folder_name` specifies the folder on the server where the file is located.  The `file_name` specifies the file within the `folder_name` to download.  The provider will only store the latest version of the file unless you set `backup` to the # of files to keep.
 
 #### Actions
 - :create - download and place file on the client.
@@ -72,9 +72,10 @@ This resource will download a file to the client from the server at `base_url`. 
 #### Parameter attributes:
 - `folder_name` - [name] This is the name of the folder where the file is located on the repo.
 - `checksum` - sha256 checksum of the file to download. On macOS, you can use `shasum -a 256 filename` to calculate this.
-- `cleanup` - Specify whether or not we should keep the downloaded file. (default is true)
+- `backup` - Specify the # of files to backup. Default is 0
 - `file_name` - The name of the file being downloaded.
 - `file_url` - The url of the file being downloaded.
+- `mode` - Set the Unix permissions for the downloaded file.
 
 #### Examples
 
@@ -87,6 +88,7 @@ cpe_remote_file 'cool_things' do
   file_name 'omgfile'
   checksum the_checksum256_of_the_omgfile
   path path_of_where_to_put_file
+  mode 0755
 end
 ```
 # Install `java_white_list` from the primary download site.
@@ -113,7 +115,7 @@ This resource will download a .zip file and extract it. The file will be stored 
 #### Parameter attributes:
 - `folder_name` - [name] This is the name of the folder where the file is located on the repo.
 - `zip_checksum` - sha256 checksum of the file to download. On macOS, you can use `shasum -a 256 filename` to calculate this.
-- `cleanup` - Specify whether or not we should keep the downloaded file. (default is true)
+- `backup` - Specify the # of files to backup. Default is 0
 - `zip_name` - The name of the zip being downloaded
 - `zip_url` - URL of the zip on the server if it's different than `base_url/app/app-version.zip`.
 - `extract_location` - The path of where the zip file will be extracted.
