@@ -19,6 +19,7 @@ default['cpe_munki'] = {
 default['cpe_munki']['local'] = {
   'managed_installs' => [],
   'managed_uninstalls' => [],
+  'optional_installs' => [],
 }
 default['cpe_munki']['preferences'] = {
   'AppleSoftwareUpdatesOnly' => false,
