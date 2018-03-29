@@ -1,7 +1,9 @@
 module CPE
   module Remote
-    def gen_url(server, path, file)
-      return "https://#{server}/#{path}/#{file}"
+    def gen_url(path, file)
+      url = "https://#{node['cpe_remote']['base_url']}/#{path}/#{file}"
+      Chef::Log.info("Source URL: #{url}")
+      url
     end
 
     def valid_url?(url)
@@ -9,9 +11,10 @@ module CPE
       http = Chef::HTTP::Simple.new(url)
       # CHEF-4762: we expect a nil return value from Chef::HTTP for a
       # "200 Success" response and false for a "304 Not Modified" response
-      http.head(url)
+      headers = CPE::Distro.auth_headers(url, 'HEAD')
+      http.head(url, headers)
       true
-    rescue
+    rescue StandardError
       Chef::Log.warn("INVALID URL GIVEN: #{url}")
       false
     end
