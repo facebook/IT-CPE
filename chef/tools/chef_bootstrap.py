@@ -242,7 +242,7 @@ def install_cli_tools():
       desired_platform = 'macOS Sierra'
   if '10.11' in os_ver:
     receipt = 'com.apple.pkg.DevSDK_OSX1011'
-    desired_platform = 'OS X 10.11'
+    desired_platform = 'macOS El Capitan'
   if (
     is_pkg_installed('com.apple.pkg.CLTools_Executables') != '0.0.0.0' and
     is_pkg_installed(receipt) != '0.0.0.0'
