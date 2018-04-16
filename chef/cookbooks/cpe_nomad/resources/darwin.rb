@@ -47,12 +47,15 @@ action_class do
   end
 
   def configure_profile
-    nomad_prefs = node['cpe_nomad']['prefs'].reject { |_k, v| v.nil? }
-    noload_prefs = node['cpe_nomad']['noload_prefs'].reject { |_k, v| v.nil? }
-    actions_prefs = node['cpe_nomad']['actions_prefs'].reject { |_k, v| v.nil? }
+    nomad_prefs =
+      node['cpe_nomad']['prefs'].reject { |_k, v| v.nil? }
+    login_prefs =
+      node['cpe_nomad']['login']['prefs'].reject { |_k, v| v.nil? }
+    actions_prefs =
+      node['cpe_nomad']['actions']['prefs'].reject { |_k, v| v.nil? }
     if [
       nomad_prefs,
-      noload_prefs,
+      login_prefs,
       actions_prefs,
     ].all?(&:empty?)
       Chef::Log.info("#{cookbook_name}: prefs not found.")
@@ -70,7 +73,7 @@ action_class do
       }.each { |k, v| nomad_prefs[k] = v }
     end
 
-    unless noload_prefs.empty?
+    unless login_prefs.empty?
       {
         'PayloadEnabled' => true,
         'PayloadIdentifier' => '94f48d1b-8fbf-4c40-9325-9c3775450250',
@@ -78,7 +81,7 @@ action_class do
         'PayloadVersion' => 1,
         'PayloadType' => 'menu.nomad.login.ad',
         'PayloadUUID' => '94f48d1b-8fbf-4c40-9325-9c3775450250',
-      }.each { |k, v| noload_prefs[k] = v }
+      }.each { |k, v| login_prefs[k] = v }
     end
 
     unless actions_prefs.empty?
@@ -111,7 +114,7 @@ action_class do
 
     [
       nomad_prefs,
-      noload_prefs,
+      login_prefs,
       actions_prefs,
     ].each do |prefs|
       profile['PayloadContent'] << prefs unless prefs.empty?
