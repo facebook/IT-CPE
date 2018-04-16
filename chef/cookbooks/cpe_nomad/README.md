@@ -35,8 +35,10 @@ Attributes
 * node['cpe_nomad']['prefs']['ChangePasswordCommand']
 * node['cpe_nomad']['prefs']['ChangePasswordOptions']
 * node['cpe_nomad']['prefs']['ChangePasswordType']
+* node['cpe_nomad']['prefs']['CleanCerts']
 * node['cpe_nomad']['prefs']['ConfigureChrome']
 * node['cpe_nomad']['prefs']['ConfigureChromeDomain']
+* node['cpe_nomad']['prefs']['CustomLDAPAttributes']
 * node['cpe_nomad']['prefs']['DontMatchKerbPrefs']
 * node['cpe_nomad']['prefs']['DontShowWelcome']
 * node['cpe_nomad']['prefs']['DontShowWelcomeDefaultOn']
@@ -47,6 +49,7 @@ Attributes
 * node['cpe_nomad']['prefs']['GetHelpType']
 * node['cpe_nomad']['prefs']['HicFix']
 * node['cpe_nomad']['prefs']['HideExpiration']
+* node['cpe_nomad']['prefs']['HideAbout']
 * node['cpe_nomad']['prefs']['HideExpirationMessage']
 * node['cpe_nomad']['prefs']['HideGetSoftware']
 * node['cpe_nomad']['prefs']['HideHelp']
@@ -55,6 +58,7 @@ Attributes
 * node['cpe_nomad']['prefs']['HideRenew']
 * node['cpe_nomad']['prefs']['HideSignOut']
 * node['cpe_nomad']['prefs']['HideQuit']
+* node['cpe_nomad']['prefs']['HomeAppendDomain']
 * node['cpe_nomad']['prefs']['IconOff']
 * node['cpe_nomad']['prefs']['IconOffDark']
 * node['cpe_nomad']['prefs']['IconOn']
@@ -68,11 +72,13 @@ Attributes
 * node['cpe_nomad']['prefs']['LDAPOnly']
 * node['cpe_nomad']['prefs']['LDAPOverSSL']
 * node['cpe_nomad']['prefs']['LDAPType']
+* node['cpe_nomad']['prefs']['LightsOutIKnowWhatImDoing']
 * node['cpe_nomad']['prefs']['LocalPasswordSync']
 * node['cpe_nomad']['prefs']['LocalPasswordSyncDontSyncLocalUsers']
 * node['cpe_nomad']['prefs']['LocalPasswordSyncDontSyncNetworkUsers']
 * node['cpe_nomad']['prefs']['LocalPasswordSyncOnMatchOnly']
 * node['cpe_nomad']['prefs']['LoginItem']
+* node['cpe_nomad']['prefs']['MenuAbout']
 * node['cpe_nomad']['prefs']['MenuChangePassword']
 * node['cpe_nomad']['prefs']['MenuGetCertificate']
 * node['cpe_nomad']['prefs']['MenuHomeDirectory']
@@ -86,6 +92,7 @@ Attributes
 * node['cpe_nomad']['prefs']['MessageNotConnected']
 * node['cpe_nomad']['prefs']['MessagePasswordChangePolicy']
 * node['cpe_nomad']['prefs']['MessageUPCAlert']
+* node['cpe_nomad']['prefs']['MountSharesWithFinder']
 * node['cpe_nomad']['prefs']['PasswordExpireAlertTime']
 * node['cpe_nomad']['prefs']['PasswordExpireCustomAlert']
 * node['cpe_nomad']['prefs']['PasswordExpireCustomWarnTime']
@@ -110,18 +117,28 @@ Attributes
 * node['cpe_nomad']['prefs']['UPCAlertAction']
 * node['cpe_nomad']['prefs']['UPCAlertAction']
 * node['cpe_nomad']['prefs']['UseKeychainPrompt']
+* node['cpe_nomad']['prefs']['UserSwitch']
 * node['cpe_nomad']['prefs']['Verbose']
 * node['cpe_nomad']['prefs']['WifiNetworks']
 * node['cpe_nomad']['prefs']['X509CA']
-* node['cpe_nomad']['noload_prefs']['ADDomain']
-* node['cpe_nomad']['noload_prefs']['createAdminUser']
-* node['cpe_nomad']['noload_prefs']['DemobilizeUsers']
-* node['cpe_nomad']['noload_prefs']['KeychainAddNoMAD']
-* node['cpe_nomad']['noload_prefs']['KeychainCreate']
-* node['cpe_nomad']['actions_prefs']['Version']
-* node['cpe_nomad']['actions_prefs']['MenuIcon']
-* node['cpe_nomad']['actions_prefs']['MenuText']
-* node['cpe_nomad']['actions_prefs']['Actions']
+* node['cpe_nomad']['login']['install']['ADDomain']
+* node['cpe_nomad']['login']['enable']['ADDomain']
+* node['cpe_nomad']['login']['pkg']
+* node['cpe_nomad']['login']['pkg']['name']
+* node['cpe_nomad']['login']['pkg']['checksum']
+* node['cpe_nomad']['login']['pkg']['receipt']
+* node['cpe_nomad']['login']['pkg']['version']
+* node['cpe_nomad']['login']['pkg']['pkg_name']
+* node['cpe_nomad']['login']['pkg']['pkg_url']
+* node['cpe_nomad']['login']['prefs']['ADDomain']
+* node['cpe_nomad']['login']['prefs']['createAdminUser']
+* node['cpe_nomad']['login']['prefs']['DemobilizeUsers']
+* node['cpe_nomad']['login']['prefs']['KeychainAddNoMAD']
+* node['cpe_nomad']['login']['prefs']['KeychainCreate']
+* node['cpe_nomad']['actions']['prefs']['Version']
+* node['cpe_nomad']['actions']['prefs']['MenuIcon']
+* node['cpe_nomad']['actions']['prefs']['MenuText']
+* node['cpe_nomad']['actions']['prefs']['Actions']
 
 Usage
 -----
@@ -131,9 +148,9 @@ Usage
 
 `node['cpe_nomad']['prefs']` will manage the `com.trusourcelabs.NoMAD` preference domain. See NoMAD's [site for documentation](https://nomad.menu/help-center/preferences-and-what-they-do/) on preference keys and values.
 
-`node['cpe_nomad']['noload_prefs']` will manage the `menu.nomad.NoMADLoginAD` preference domain. See NoMADLoginAD's [site for documentation](https://gitlab.com/macshome/NoMADLogin-AD/wikis/preferences) on preference keys and values.
+`node['cpe_nomad']['login']['prefs']` will manage the `menu.nomad.ad` preference domain. See NoMADLoginAD's [site for documentation](https://gitlab.com/orchardandgrove-oss/NoMADLogin-AD/wikis/Configuration/preferences) on preference keys and values.
 
-`node['cpe_nomad']['actions_prefs']` will manage the `menu.nomad.actions'` preference domain. See NoMAD's [site for documentation](https://gitlab.com/Mactroll/NoMAD/blob/Experimental/NoMAD/ACTIONS%20README.md) on preference keys and values.
+`node['cpe_nomad']['actions']['prefs']` will manage the `menu.nomad.actions'` preference domain. See NoMAD's [site for documentation](https://gitlab.com/Mactroll/NoMAD/blob/Experimental/NoMAD/ACTIONS%20README.md) on preference keys and values.
 
 The profile's organization key defaults to `Facebook` unless `node['organization']` is
 configured in your company's custom init recipe. The profile will also use
@@ -157,4 +174,4 @@ You can add any arbitrary keys to have them added to your profile.  As long as t
           },
         ],
       },
-    ].each { |i| node.default['cpe_nomad']['actions_prefs']['Actions'] << i }
+    ].each { |i| node.default['cpe_nomad']['actions']['prefs']['Actions'] << i }
