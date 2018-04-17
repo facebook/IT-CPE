@@ -25,12 +25,14 @@ module CPE
       dscl_out = shell_out(
         "#{dscl} -plist . -read /Users/#{console_user} " +
         'dsAttrTypeNative:authentication_authority',
-      )
+      ).stdout
+      log_vars('verify', 'fail')
+      msg = "Cannot find dscl output for #{console_user}"
+      return if log_if(msg) { dscl_out.nil? }
 
       auths = Plist.parse_xml(
-        dscl_out.stdout,
+        dscl_out,
       ).fetch('dsAttrTypeNative:authentication_authority', nil)
-
       log_vars('verify', 'fail')
       msg = "Cannot find auth authorities for #{console_user}"
       return if log_if(msg) { auths.nil? || auths.empty? }
