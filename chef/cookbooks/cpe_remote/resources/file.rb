@@ -68,7 +68,7 @@ action :create do
     file_source = new_resource.file_url ?
       new_resource.file_url : gen_url(folder_name, filename)
     hders = new_resource.headers ?
-      new_resource.headers : CPE::Distro.auth_headers(file_source, 'GET')
+      new_resource.headers : auth_headers(file_source, 'GET')
 
     # Delete symlink before creating remote file.
     # Using link resource vs force_unlink property due to bug see:
