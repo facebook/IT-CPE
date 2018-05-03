@@ -67,7 +67,7 @@ action :install do
       pkg_version_str = ''
     end
 
-    is_mpkg = current_resource.mpkg
+    is_mpkg = new_resource.mpkg
     chef_cache = Chef::Config[:file_cache_path]
 
     # Download vars
@@ -75,9 +75,9 @@ action :install do
     download_file = "#{pkg_name}#{pkg_version_str}.#{ext}"
     download_file_path = "#{chef_cache}/#{download_file}"
 
-    pkg_source = gen_url(current_resource.app, download_file)
+    pkg_source = gen_url(new_resource.app, download_file)
     # someone can choose to override where there pkg is coming from
-    pkg_source = current_resource.pkg_url if current_resource.pkg_url
+    pkg_source = new_resource.pkg_url if new_resource.pkg_url
 
     valid_url = valid_url?(pkg_source)
     cpe_remote_file download_file do
@@ -123,7 +123,7 @@ action :install do
       command "/usr/sbin/installer -pkg '#{pkg_file_path}' -target /"
     end
 
-    keep_pkg = current_resource.backup ? true : false
+    keep_pkg = new_resource.backup ? true : false
     # Delete Zip if there is a ZIP
     file download_file_path do
       only_if { is_mpkg }
