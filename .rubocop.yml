@@ -117,25 +117,28 @@ Style/ConditionalAssignment:
 #
 # Modified rules
 #
-LineLength:
+Metrics/LineLength:
   Max: 80
 
-DotPosition:
+Layout/DotPosition:
   EnforcedStyle: trailing
 
-HashSyntax:
+Style/HashSyntax:
   EnforcedStyle: hash_rockets
 
 Style/Documentation:
   Enabled: false
 
-TrailingCommaInLiteral:
+Style/TrailingCommaInArrayLiteral:
+  EnforcedStyleForMultiline: comma
+  
+Style/TrailingCommaInHashLiteral:
   EnforcedStyleForMultiline: comma
 
-TrailingCommaInArguments:
+Style/TrailingCommaInArguments:
   EnforcedStyleForMultiline: comma
 
-Style/IndentArray:
+Layout/IndentArray:
   EnforcedStyle: consistent
 
 Style/SignalException:
