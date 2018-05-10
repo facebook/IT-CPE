@@ -78,10 +78,61 @@ remote_pkg 'VMWareTools' do
 end
 ```
 
+#### node.virtual_macos_type ####
+This is similar to node.virtual?, except it will allow you to apply granular conditions based on virtual machine type. This is useful for scoping tools to specific virtualization platforms.
+
+```
+def parallels?
+  node.virtual_macos_type == 'parallels'
+end
+
+def vmware?
+  node.virtual_macos_type == 'vmware'
+end
+
+def virtualbox?
+  node.virtual_macos_type == 'virtualbox'
+end
+```
+
+#### node.min_package_installed? ####
+This allows you to wrap a conditional item, based on the package receipt version. This checks to see if the minimum receipt version is present.
+
+```
+launchd 'com.googlecode.munki.app_usage_monitor' do
+  keep_alive true
+  label 'com.googlecode.munki.app_usage_monitor'
+  program_arguments ['/usr/local/munki/app_usage_monitor']
+  run_at_load true
+  type 'agent'
+  action :enable
+  only_if do
+    node.min_package_installed?('com.googlecode.munki.app_usage', '3.3.0.3513')
+  end
+end
+```
+
+#### node.max_package_installed? ####
+This allows you to wrap a conditional item, based on the package receipt version. This checks to see if the maximum receipt version is present.
+
+```
+launchd 'com.googlecode.munki.app_usage_monitor' do
+  keep_alive true
+  label 'com.googlecode.munki.app_usage_monitor'
+  program_arguments ['/usr/local/munki/app_usage_monitor']
+  run_at_load true
+  type 'daemon'
+  action :enable
+  only_if do
+    node.max_package_installed?('com.googlecode.munki.app_usage', '3.2.1.3498')
+  end
+end
+```
+
 #### node.munki_installed? ####
 Returns true if the item is in munki's managed_installs list.
 ```
 if node.munki_installed?('Firefox') do
-  something 
+  something
 end
 ```
