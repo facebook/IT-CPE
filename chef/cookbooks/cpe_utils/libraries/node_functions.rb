@@ -356,5 +356,39 @@ class Chef
       paths = app_paths(bundle_identifier)
       !paths.empty?
     end
+
+    def min_package_installed?(pkg_identifier, min_pkg_version)
+      unless macos?
+        Chef::Log.warn('node.min_package_installed? called on non-OS X!')
+        return false
+      end
+      installed_pkg_version = shell_out(
+        "/usr/sbin/pkgutil --pkg-info \"#{pkg_identifier}\"",
+      ).run_command.stdout.to_s[/version: (.*)/, 1]
+      # Compare the installed version to the minimum version
+      if Gem::Version.new(installed_pkg_version) >= Gem::Version.new(
+        min_pkg_version)
+        return true
+      else
+        return false
+      end
+    end
+
+    def max_package_installed?(pkg_identifier, max_pkg_version)
+      unless macos?
+        Chef::Log.warn('node.max_package_installed? called on non-OS X!')
+        return false
+      end
+      installed_pkg_version = shell_out(
+        "/usr/sbin/pkgutil --pkg-info \"#{pkg_identifier}\"",
+      ).run_command.stdout.to_s[/version: (.*)/, 1]
+      # Compare the installed version to the maximum version
+      if Gem::Version.new(installed_pkg_version) <= Gem::Version.new(
+        max_pkg_version)
+        return true
+      else
+        return false
+      end
+    end
   end
 end
