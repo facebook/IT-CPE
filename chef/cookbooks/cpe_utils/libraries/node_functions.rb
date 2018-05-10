@@ -273,6 +273,18 @@ class Chef
       return node['os'] == 'windows'
     end
 
+    def parallels?
+      return virtual_macos_type == 'parallels'
+    end
+
+    def vmware?
+      return virtual_macos_type == 'vmware'
+    end
+
+    def virtualbox?
+      return virtual_macos_type == 'virtualbox'
+    end
+
     # Does not work on OS X as it does not have this ohai plugin by default
     def virtual?
       if node['virtualization2']
