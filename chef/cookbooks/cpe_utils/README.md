@@ -78,20 +78,33 @@ remote_pkg 'VMWareTools' do
 end
 ```
 
-#### node.virtual_macos_type ####
+#### node.parallels? ####
 This is similar to node.virtual?, except it will allow you to apply granular conditions based on virtual machine type. This is useful for scoping tools to specific virtualization platforms.
 
 ```
-def parallels?
-  node.virtual_macos_type == 'parallels'
+remote_pkg 'parallels_tools'
+  only_if { node.parallels? }
+  source 'https://someserver/sometool.pkg'
 end
+```
 
-def vmware?
-  node.virtual_macos_type == 'vmware'
+#### node.vmware? ####
+This is similar to node.virtual?, except it will allow you to apply granular conditions based on virtual machine type. This is useful for scoping tools to specific virtualization platforms.
+
+```
+remote_pkg 'vmware_tools'
+  only_if { node.vmware? }
+  source 'https://someserver/sometool.pkg'
 end
+```
 
-def virtualbox?
-  node.virtual_macos_type == 'virtualbox'
+#### node.virtualbox? ####
+This is similar to node.virtual?, except it will allow you to apply granular conditions based on virtual machine type. This is useful for scoping tools to specific virtualization platforms.
+
+```
+remote_pkg 'virtualbox_tools'
+  only_if { node.virtualbox? }
+  source 'https://someserver/sometool.pkg'
 end
 ```
 
