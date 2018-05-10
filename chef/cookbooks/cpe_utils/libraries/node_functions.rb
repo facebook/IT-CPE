@@ -296,7 +296,7 @@ class Chef
       elsif node['hardware']['boot_rom_version'].include? 'VirtualBox'
         virtual_type = 'virtualbox'
       else
-        virtual_type = Mixlib::ShellOut.new(
+        virtual_type = shell_out(
           '/usr/sbin/system_profiler SPEthernetDataType',
         ).run_command.stdout.to_s[/Vendor ID: (.*)/, 1]
         if virtual_type.include? '0x1ab8'
