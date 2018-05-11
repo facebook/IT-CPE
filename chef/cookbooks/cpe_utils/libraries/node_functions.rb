@@ -378,11 +378,7 @@ class Chef
         "/usr/sbin/pkgutil --pkg-info \"#{pkg_identifier}\"",
       ).run_command.stdout.to_s[/version: (.*)/, 1]
       # Compare the installed version to the minimum version
-      if Gem::Version.new(installed_pkg_version) >= Gem::Version.new(min_pkg)
-        return true
-      else
-        return false
-      end
+      Gem::Version.new(installed_pkg_version) >= Gem::Version.new(min_pkg)
     end
 
     def max_package_installed?(pkg_identifier, max_pkg)
@@ -394,11 +390,7 @@ class Chef
         "/usr/sbin/pkgutil --pkg-info \"#{pkg_identifier}\"",
       ).run_command.stdout.to_s[/version: (.*)/, 1]
       # Compare the installed version to the maximum version
-      if Gem::Version.new(installed_pkg_version) <= Gem::Version.new(max_pkg)
-        return true
-      else
-        return false
-      end
+      Gem::Version.new(installed_pkg_version) <= Gem::Version.new(max_pkg)
     end
   end
 end
