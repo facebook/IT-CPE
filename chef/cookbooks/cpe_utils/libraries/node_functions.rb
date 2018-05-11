@@ -378,12 +378,11 @@ class Chef
         "/usr/sbin/pkgutil --pkg-info \"#{pkg_identifier}\"",
       ).run_command.stdout.to_s[/version: (.*)/, 1]
       # Compare the installed version to the minimum version
-      unless installed_pkg_version.nil?
-        return Gem::Version.new(installed_pkg_version) >= Gem::Version.new(
-          min_pkg)
+      if installed_pkg_version.nil?
+        Chef::Log.warn("Package #{pkg_identifier} returned nil.")
+        return false
       end
-      Chef::Log.warn("Package #{pkg_identifier} returned nil.")
-      return false
+      Gem::Version.new(installed_pkg_version) >= Gem::Version.new(min_pkg)
     end
 
     def max_package_installed?(pkg_identifier, max_pkg)
@@ -395,12 +394,11 @@ class Chef
         "/usr/sbin/pkgutil --pkg-info \"#{pkg_identifier}\"",
       ).run_command.stdout.to_s[/version: (.*)/, 1]
       # Compare the installed version to the maximum version
-      unless installed_pkg_version.nil?
-        return Gem::Version.new(installed_pkg_version) <= Gem::Version.new(
-          max_pkg)
+      if installed_pkg_version.nil?
+        Chef::Log.warn("Package #{pkg_identifier} returned nil.")
+        return false
       end
-      Chef::Log.warn("Package #{pkg_identifier} returned nil.")
-      return false
+      Gem::Version.new(installed_pkg_version) <= Gem::Version.new(max_pkg)
     end
   end
 end
