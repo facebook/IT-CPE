@@ -273,6 +273,18 @@ class Chef
       return node['os'] == 'windows'
     end
 
+    def parallels?
+      virtual_macos_type == 'parallels'
+    end
+
+    def vmware?
+      virtual_macos_type == 'vmware'
+    end
+
+    def virtualbox?
+      virtual_macos_type == 'virtualbox'
+    end
+
     # Does not work on OS X as it does not have this ohai plugin by default
     def virtual?
       if node['virtualization2']
@@ -355,6 +367,38 @@ class Chef
       end
       paths = app_paths(bundle_identifier)
       !paths.empty?
+    end
+
+    def min_package_installed?(pkg_identifier, min_pkg)
+      unless macos?
+        Chef::Log.warn('node.min_package_installed? called on non-OS X!')
+        return false
+      end
+      installed_pkg_version = shell_out(
+        "/usr/sbin/pkgutil --pkg-info \"#{pkg_identifier}\"",
+      ).run_command.stdout.to_s[/version: (.*)/, 1]
+      # Compare the installed version to the minimum version
+      if installed_pkg_version.nil?
+        Chef::Log.warn("Package #{pkg_identifier} returned nil.")
+        return false
+      end
+      Gem::Version.new(installed_pkg_version) >= Gem::Version.new(min_pkg)
+    end
+
+    def max_package_installed?(pkg_identifier, max_pkg)
+      unless macos?
+        Chef::Log.warn('node.max_package_installed? called on non-OS X!')
+        return false
+      end
+      installed_pkg_version = shell_out(
+        "/usr/sbin/pkgutil --pkg-info \"#{pkg_identifier}\"",
+      ).run_command.stdout.to_s[/version: (.*)/, 1]
+      # Compare the installed version to the maximum version
+      if installed_pkg_version.nil?
+        Chef::Log.warn("Package #{pkg_identifier} returned nil.")
+        return false
+      end
+      Gem::Version.new(installed_pkg_version) <= Gem::Version.new(max_pkg)
     end
   end
 end
