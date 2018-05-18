@@ -131,7 +131,7 @@ Local Munki is where items from the `node['cpe_munki']['local']['managed_install
 
 If an item is removed from `managed_installs` or `managed_uninstalls` in this manner, Munki will no longer forcefully manage its installation or removal. If an item is added to `managed_uninstalls`, it is also removed from the 'managed_installs' array of the SelfServeManifest if the item exists there.
 
-Support for `optional_installs` is currently only available in the unreleased [`Munki3ev`](https://github.com/munki/munki/tree/Munki3dev) code branch.
+Support for `optional_installs` requires Munki v3.3 or later.
 
 The default list of items to be installed on clients is in cpe_munki::managed_installs. Anyone can override this value to add or remove things that they want (or don't want).
 
