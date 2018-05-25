@@ -41,9 +41,11 @@ pref_path = ::File.join(defaults_dir, 'preferences')
 end
 
 # Apply the new config template
-fbcfg = ::File.join(ff_base_path, 'facebook.cfg')
-template fbcfg do
-  source 'facebook.erb'
+template 'autoconfig.cfg' do
+  path lazy {
+    ::File.join(ff_base_path, node['cpe_firefox']['cfg_file_name'])
+  }
+  source 'autoconfig.erb'
   owner 'root'
   group 'root'
   mode '0644'
@@ -58,8 +60,8 @@ remote_directory fbdir do
 end
 
 acjs = ::File.join(pref_path, 'autoconfig.js')
-cookbook_file acjs do
-  source 'firefox/defaults/pref/autoconfig.js'
+template acjs do
+  source 'autoconfig.js'
   owner 'root'
   group 'root'
   mode '0644'

@@ -14,6 +14,7 @@
 
 # Windows can have both a 64-bit and 32-bit version installed
 # So we need to check for each path
+
 # TODO: When Chef supports 64-bit namespaces, switch this back to ENVs
 path32 =
   # "#{ENV['ProgramFiles(x86)']}\\Mozilla Firefox"
@@ -64,9 +65,11 @@ end
 
 # Apply the new config template
 resources_path.each do |res_path|
-  fbcfg_file = File.join(res_path, 'facebook.cfg')
-  template fbcfg_file do
-    source 'facebook.erb'
+  template "#{res_path}-autoconfig.cfg" do
+    path lazy {
+      ::File.join(res_path, node['cpe_firefox']['cfg_file_name'])
+    }
+    source 'autoconfig.erb'
     rights :read, 'Everyone'
     rights :full_control, 'Administrators'
   end
@@ -82,8 +85,8 @@ resources_path.each do |res_path|
   end
 
   acjs = File.join(res_path, 'defaults', 'pref', 'autoconfig.js')
-  cookbook_file acjs do
-    source 'firefox/defaults/pref/autoconfig.js'
+  template acjs do
+    source 'autoconfig.js'
     rights :read, 'Everyone'
     rights :full_control, 'Administrators'
   end

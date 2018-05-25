@@ -49,12 +49,25 @@ node.app_paths('firefox').each do |app_path|
     recursive true
   end
 
+  template "#{app_path}-autoconfig.js" do
+    source 'autoconfig.js'
+    path lazy {
+      ::File.join(node['cpe_firefox']['ff_central_store'], 'autoconfig.js')
+    }
+    owner 'root'
+    group 'wheel'
+    mode '0644'
+  end
+
   # Apply the new config template
   template "#{app_path}-autoconfig_template" do
     path lazy {
-      ::File.join(node['cpe_firefox']['ff_central_store'], 'facebook.cfg')
+      ::File.join(
+        node['cpe_firefox']['ff_central_store'],
+        node['cpe_firefox']['cfg_file_name'],
+      )
     }
-    source 'facebook.erb'
+    source 'autoconfig.erb'
     owner 'root'
     group 'wheel'
     mode '0644'
@@ -63,15 +76,20 @@ node.app_paths('firefox').each do |app_path|
   # Link new autoconfig.js
   link ::File.join(defaults_path, 'autoconfig.js') do
     to lazy {
-      ::File.join(node['cpe_firefox']['ff_central_store'],
-                  'defaults', 'pref', 'autoconfig.js')
+      ::File.join(node['cpe_firefox']['ff_central_store'], 'autoconfig.js')
     }
   end
 
-  # Link facebook.cfg
-  link ::File.join(resources_dir, 'facebook.cfg') do
+  # Link the autoconfig file
+  link 'autoconfig.cfg' do
+    target_file lazy {
+      ::File.join(resources_dir, node['cpe_firefox']['cfg_file_name'])
+    }
     to lazy {
-      ::File.join(node['cpe_firefox']['ff_central_store'], 'facebook.cfg')
+      ::File.join(
+        node['cpe_firefox']['ff_central_store'],
+        node['cpe_firefox']['cfg_file_name'],
+      )
     }
   end
 

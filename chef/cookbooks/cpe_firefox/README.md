@@ -11,6 +11,7 @@ Requirements
 Attributes
 ----------
 
+* node['cpe_firefox']['cfg_file_name']
 * node['cpe_firefox']['settings']
 * node['cpe_firefox']['certs']
 * node['cpe_firefox']['ff_base_paths']
@@ -39,11 +40,13 @@ Some of the documentation I referenced along the way:
   - These are documents related to the XPCOM interfaces
 
 ### Settings
-To find more parameters to set, use `about:config` in Firefox. See https://support.mozilla.org/en-US/kb/about-config-editor-firefox for details.
+`node['cpe_firefox']['cfg_file_name']` sets the name of the config file that gets written out in the Firefox directory.
 
 `node['cpe_firefox']['settings']` is the hash that contains a hash of all the settings.
 
-Each key in the hash is a preference key from `about:config` to manage. The value is a hash containing a `value` key and optional `locked`, `default`, and `clear` keys.  
+To find more parameters to set, use `about:config` in Firefox. See https://support.mozilla.org/en-US/kb/about-config-editor-firefox for details.
+
+Each key in the hash is a preference key from `about:config` to manage. The value is a hash containing a `value` key and optional `locked`, `default`, and `clear` keys.
 
 - `value`: the actual value for the setting.
 - `locked` (optional): whether or not the setting can be changed by the user in about:config (default `false`). `lockPref()` is used if this is present and `true`, otherwise `unlockPref()` is called to ensure the preference is unlocked.
