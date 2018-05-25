@@ -12,13 +12,6 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 #
 
-# Verify the package is installed
-extend ::Windows::Helper
-firefox_installed =
-  !installed_packages.select { |pkg| /Mozilla Firefox/.match(pkg) }.empty?
-
-return unless firefox_installed
-
 # Windows can have both a 64-bit and 32-bit version installed
 # So we need to check for each path
 # TODO: When Chef supports 64-bit namespaces, switch this back to ENVs
@@ -28,6 +21,17 @@ path32 =
 path64 =
   # "#{ENV['ProgramFiles']}\\Mozilla Firefox"
   'C:\\Program Files\\Mozilla Firefox'
+
+firefox_installed = node.installed?('Firefox') ||
+                    File.exist?(path64) ||
+                    File.exist?(path32)
+# We have to manually check the path because choco installs the .exe version,
+# so the system has no receipt
+unless firefox_installed
+  Chef::Log.debug('Mozilla Firefox is not installed')
+  return
+end
+
 resources_path = []
 [
   path32,
@@ -58,47 +62,11 @@ required_pref_paths.each do |req_pref_path|
   end
 end
 
-pref_file = 'firefox_fb_prefs.cfg'
-local_settings = 'local-settings.js'
-
-# Delete the existing config file, we're going to replace it
-fb_prefs = []
-resources_path.each do |path|
-  fb_prefs << File.join(
-    path,
-    pref_file,
-  )
-end
-
-fb_prefs.each do |fb_pref|
-  file fb_pref do
-    action :delete
-  end
-end
-
-# Delete the "local-settings.js" file if it exists
-fb_localjs = []
-resources_path.each do |path|
-  fb_localjs << File.join(
-    path,
-    'defaults',
-    'pref',
-    local_settings,
-  )
-end
-
-fb_localjs.each do |localsettings|
-  file localsettings do
-    only_if { File.exist?(localsettings) }
-    action :delete
-  end
-end
-
 # Apply the new config template
 resources_path.each do |res_path|
-  cck2_file = File.join(res_path, 'cck2.cfg')
-  template cck2_file do
-    source 'cck2.erb'
+  fbcfg_file = File.join(res_path, 'facebook.cfg')
+  template fbcfg_file do
+    source 'facebook.erb'
     rights :read, 'Everyone'
     rights :full_control, 'Administrators'
   end
@@ -107,7 +75,15 @@ end
 # Windows gets the config installed for either 32, 64 or both
 resources_path.each do |res_path|
   remote_directory res_path do
-    source 'firefox'
+    source 'firefox/resources'
+    path "#{res_path}/fb-resources"
+    rights :read, 'Everyone'
+    rights :full_control, 'Administrators'
+  end
+
+  acjs = File.join(res_path, 'defaults', 'pref', 'autoconfig.js')
+  cookbook_file acjs do
+    source 'firefox/defaults/pref/autoconfig.js'
     rights :read, 'Everyone'
     rights :full_control, 'Administrators'
   end
