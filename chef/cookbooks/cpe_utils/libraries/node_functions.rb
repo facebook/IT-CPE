@@ -285,8 +285,10 @@ class Chef
       virtual_macos_type == 'virtualbox'
     end
 
-    # Does not work on OS X as it does not have this ohai plugin by default
     def virtual?
+      if macos?
+        return virtual_macos_type != 'physical'
+      end
       if node['virtualization2']
         return node['virtualization2'] &&
           node['virtualization2']['role'] == 'guest'
@@ -299,7 +301,7 @@ class Chef
     # Granular virtual device type for macOS
     def virtual_macos_type
       unless macos?
-        Chef::Log.warn('node.virtual_macos called on non-OS X!')
+        Chef::Log.warn('node.virtual_macos called on non-macOS!')
         return
       end
       return node['virtual_macos'] if node['virtual_macos']
@@ -311,13 +313,13 @@ class Chef
         virtual_type = shell_out(
           '/usr/sbin/system_profiler SPEthernetDataType',
         ).run_command.stdout.to_s[/Vendor ID: (.*)/, 1]
-        if virtual_type.include? '0x1ab8'
+        if virtual_type && virtual_type.include?('0x1ab8')
           virtual_type = 'parallels'
         else
           virtual_type = 'physical'
         end
       end
-      return virtual_type
+      virtual_type
     end
 
     def munki_installed?(application)
@@ -342,11 +344,15 @@ class Chef
     end
 
     def loginwindow?
-      unless macos?
-        Chef::Log.warn('node.loginwindow? called on non-OS X!')
+      if windows?
+        Chef::Log.warn('node.loginwindow? called on Windows!')
         return
       end
-      console_user == 'root'
+      if macos?
+        console_user == 'root'
+      elsif linux?
+        attr_lookup("sessions/by_user/#{console_user}").nil?
+      end
     end
 
     def app_paths(bundle_identifier)
