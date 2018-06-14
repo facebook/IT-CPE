@@ -13,6 +13,7 @@
 #
 
 default['cpe_firefox'] = {
+  'cfg_file_name' => 'cpe-firefox.cfg',
   'settings' => {},
   'certs' => [],
   'ff_central_store' => '/Library/Application Support/Firefox Management',

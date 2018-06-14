@@ -14,42 +14,33 @@
 
 return unless node.installed?('org.mozilla.firefox')
 
-node.app_paths('org.mozilla.firefox').each do |app_path|
+node.app_paths('firefox').each do |app_path|
+  # We don't want to manage externally mounted volumes
+  next if app_path.start_with?('/Volumes/')
+
   resources_dir = ::File.join(app_path, 'Contents', 'Resources')
   # Skip if this is a broken Firefox install
-
   next unless Dir.exist?(::File.join(resources_dir, 'defaults'))
+
   defaults_path = ::File.join(resources_dir, 'defaults', 'pref')
   # This will typically be:
   # /Applications/Firefox.app/Contents/Resources/defaults/pref
 
   # Set up required directories
-  directory resources_dir do
-    recursive true
-    owner 'root'
-    group 'admin'
-    mode '0775'
-    action :create
-  end
-
-  # Delete the old configs
   [
-    ::File.join(resources_dir, 'firefox_fb_prefs.cfg'),
-    ::File.join(resources_dir, 'local-settings.js'),
-  ].each do |old_config|
-    file old_config do
-      action :delete
+    ::File.join(resources_dir, 'defaults'),
+    ::File.join(resources_dir, 'defaults', 'pref'),
+  ].each do |d|
+    directory d do
+      owner 'root'
+      group 'wheel'
+      mode '0775'
+      action :create
     end
   end
 
-  # Delete the old local settings file
-  file ::File.join(resources_dir, 'local-settings.js') do
-    action :delete
-  end
-
   # We're going to place the configs in a central directory
-
-  remote_directory 'remote_directory' do
+  remote_directory "#{app_path}-#{node['cpe_firefox']['ff_central_store']}" do
     path lazy { node['cpe_firefox']['ff_central_store'] }
     source 'firefox'
     owner 'root'
@@ -58,43 +49,54 @@ node.app_paths('org.mozilla.firefox').each do |app_path|
     recursive true
   end
 
-  # Apply the new config template
-  template 'cck2_template' do
+  template "#{app_path}-autoconfig.js" do
+    source 'autoconfig.js'
     path lazy {
-      ::File.join(node['cpe_firefox']['ff_central_store'], 'cck2.cfg')
+      ::File.join(node['cpe_firefox']['ff_central_store'], 'autoconfig.js')
     }
-    source 'cck2.erb'
     owner 'root'
     group 'wheel'
     mode '0644'
   end
 
-  # Delete the old autoconfig.js in the resources directory
-  autoconfig_old = ::File.join(resources_dir, 'autoconfig.js')
-  link 'old_autoconfig_link' do
-    target_file autoconfig_old
-    action :delete
+  # Apply the new config template
+  template "#{app_path}-autoconfig_template" do
+    path lazy {
+      ::File.join(
+        node['cpe_firefox']['ff_central_store'],
+        node['cpe_firefox']['cfg_file_name'],
+      )
+    }
+    source 'autoconfig.erb'
+    owner 'root'
+    group 'wheel'
+    mode '0644'
   end
 
   # Link new autoconfig.js
   link ::File.join(defaults_path, 'autoconfig.js') do
     to lazy {
-      ::File.join(node['cpe_firefox']['ff_central_store'],
-                  'defaults', 'pref', 'autoconfig.js')
+      ::File.join(node['cpe_firefox']['ff_central_store'], 'autoconfig.js')
     }
   end
 
-  # Link cck2.cfg
-  link ::File.join(resources_dir, 'cck2.cfg') do
+  # Link the autoconfig file
+  link 'autoconfig.cfg' do
+    target_file lazy {
+      ::File.join(resources_dir, node['cpe_firefox']['cfg_file_name'])
+    }
     to lazy {
-      ::File.join(node['cpe_firefox']['ff_central_store'], 'cck2.cfg')
+      ::File.join(
+        node['cpe_firefox']['ff_central_store'],
+        node['cpe_firefox']['cfg_file_name'],
+      )
     }
   end
 
-  # Link cck2 folder
-  link ::File.join(resources_dir, 'cck2') do
+  # Link resources folder
+  link ::File.join(resources_dir, 'fb-resources') do
     to lazy {
-      ::File.join(node['cpe_firefox']['ff_central_store'], 'cck2')
+      ::File.join(node['cpe_firefox']['ff_central_store'], 'resources')
     }
   end
 end

@@ -1,0 +1,174 @@
+// Autoconfig file for Facebook Firefox installs
+
+var config = {
+  "preferences": {
+  <% @node['cpe_firefox']['settings'].each do |key, vals| -%>
+    "<%= key %>": {
+      <% vals.each do |key, val| -%>
+        "<%= key %>": "<%= val %>",
+      <% end %>
+    },
+  <% end %>
+  },
+  "certs": {
+    "ca": [
+    <% @node['cpe_firefox']['certs'].each do |certdata| -%>
+      {
+        <%#= The backticks are the ECMAScript 6 way to specify a multi-line
+             string. Technically it's an interpolated template string, but the
+             important part for this is they can be multi-line. -%>
+        "cert": `<%= certdata['cert'] %>`,
+        "trust": "<%= certdata['trust'] %>"
+      },
+    <% end %>
+    ]
+  }
+};
+
+<%#= You probably do not need to change anything below here -%>
+// Set preferences.
+if ("preferences" in config) {
+  for (key in config.preferences) {
+    preference = config.preferences[key];
+    var value = preference.value;
+
+    if (value.toLowerCase() === "true" || value.toLowerCase() === "false") {
+      value = value.match(/^true$/i) !== null;
+    } else if (value.match(/^\d+$/)) {
+      value = parseInt(value);
+    }
+
+    <%#= This is in a separate if-block because this just sets the default
+         value. It can also be locked, and it's feasible someone may want to
+         set their own value as a regular preference; in that case we would
+         still want to specify the default value. -%>
+    if ("default" in preference && preference.default) {
+      defaultPref(key, value);
+    }
+
+    if ("locked" in preference && preference.locked) {
+      lockPref(key, value);
+    }
+    else if (!("default" in preference) || !preference.default) {
+      if (getPref(key) !== null) {
+        <%#= The preference needs to be unlocked just in case it was locked
+             before. That may persist, and it's safe to unlock an unlocked
+             preference. -%>
+        unlockPref(key);
+      }
+      pref(key, value);
+    }
+
+    if ("clear" in preference && preference.clear) {
+      clearPref(key);
+    }
+  }
+}
+
+<%#= This loads the certificate databases. I have no idea why the fallback for
+     certDB2 is set up like this and we don't just use one interface, one of
+     the commonalities in all the documentation I saw is this is how setting up
+     certificate manipulation is done. Even Mozilla's code sample for
+     manipulation of the certificate store does it exactly this way. -%>
+var certDB = Components.classes["@mozilla.org/security/x509certdb;1"]
+  .getService(Components.interfaces.nsIX509CertDB);
+var certDB2;
+try {
+  certDB2 = Components.classes["@mozilla.org/security/x509certdb;1"]
+    .getService(Components.interfaces.nsIX509CertDB2);
+} catch(e) {
+  certDB2 = Components.classes["@mozilla.org/security/x509certdb;1"]
+    .getService(Components.interfaces.nsIX509CertDB);
+}
+
+// PEM certificates specified in the 'untrust' key above or read from files
+// disk will have the mandatory BEGIN/END CERTIFICATE lines, and will likely
+// be multi-line and may have indentation, but the Mozilla APIs want only the
+// Base64 content all on one line. This strips off the BEGIN/END CERTIFICATE
+// chunks, merges all lines, and makes sure there's no whitespace left over.
+function fixupCert(cert) {
+  var beginCert = "-----BEGIN CERTIFICATE-----";
+  var endCert = "-----END CERTIFICATE-----";
+
+  cert = cert.replace(/[\r\n]/g, "");
+  var begin = cert.indexOf(beginCert);
+  var end = cert.indexOf(endCert);
+  return cert.substring(begin + beginCert.length, end).replace(/\s/g, "");
+}
+
+// This reports an error string to the Browser Console (not the JS Console).
+// It's only useful if Firefox will actually start, if there's an error reading
+// the AutoConfig script Firefox will completely fail to start; in that event
+// see http://web.mit.edu/~firefox/www/maintainers/autoconfig.html for
+// environment variables to set to make AutoConfig debugging easier.
+function certError(e) {
+  var stack = e.stack || Error().stack;
+  Components.utils.reportError(
+    "FB AutoConfig Cert Error: " + e + "\n\n" + stack);
+}
+
+function addCertToDB(cert, trust) {
+  // Firefox 52 ESR uses an older method signature which requires a third
+  // parameter. It's ignored, but it's still required in ESR 52. So try to call
+  // the newer one (which is also the one Firefox 60 ESR will use) and fall
+  // back to the older.
+  if (cert.startsWith("-----BEGIN CERTIFICATE-----")) {
+    // PEM certificate. It's assumed there's only one in each file being read.
+    try {
+      certDB2.addCertFromBase64(fixupCert(cert), trust);
+    } catch (e) {
+      certDB2.addCertFromBase64(fixupCert(cert), trust, "");
+    }
+  } else {
+    // Binary/DER certificate. Again, only one certificate per file is assumed.
+    try {
+      certDB.addCert(cert, trust);
+    } catch (e) {
+      certDB.addCert(cert, trust, "");
+    }
+  }
+}
+
+// Import certificates.
+if ("certs" in config) {
+  var certDir = Components.classes["@mozilla.org/file/directory_service;1"]
+    .getService(Components.interfaces.nsIProperties)
+    .get("GreD", Components.interfaces.nsIFile);
+  certDir.append("fb-resources");
+  certDir.append("certs");
+
+  // Install CA certificates
+  if ("ca" in config.certs) {
+    for (var cacert of config.certs.ca) {
+      var certTrust = "trust" in cacert ? cacert.trust : ",,";
+
+      try {
+        if (cacert.cert.startsWith("-----BEGIN CERTIFICATE-----")) {
+          cert = cacert.cert;
+        }
+        else {
+          var certFile = certDir.clone();
+          certFile.append(cacert.cert);
+
+          var ios = Components.classes["@mozilla.org/network/file-input-stream;1"]
+            .createInstance(Components.interfaces.nsIFileInputStream);
+          ios.init(certFile, 1, 0, 0);
+          var bio = Components.classes["@mozilla.org/binaryinputstream;1"]
+            .createInstance(Components.interfaces.nsIBinaryInputStream);
+          bio.setInputStream(ios);
+          var byteArray = bio.readByteArray(ios.available());
+          bio.close();
+          ios.close();
+
+          var cert = byteArray.map(function (elem) {
+            return String.fromCharCode(elem);
+          }).join("");
+        }
+
+        addCertToDB(cert, certTrust);
+      } catch(e) {
+        certError(e);
+      }
+    }
+  }
+}
