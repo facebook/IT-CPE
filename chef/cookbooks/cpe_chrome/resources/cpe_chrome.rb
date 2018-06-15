@@ -15,11 +15,48 @@ resource_name :cpe_chrome
 default_action :config
 
 action :config do
+  install_repos
+  install_chrome
   manage_chrome
 end
 
 # rubocop:disable Metrics/BlockLength
 action_class do
+  def install_repos
+    return unless node.linux?
+    return unless node['cpe_chrome']['manage_repo']
+
+    yum_repository 'google-chrome' do
+      only_if { node.fedora? }
+      description 'Google Chrome repo'
+      baseurl 'http://dl.google.com/linux/chrome/rpm/stable/x86_64'
+      enabled true
+      gpgkey 'https://dl.google.com/linux/linux_signing_key.pub'
+      gpgcheck true
+      action :create
+    end
+
+    apt_repository 'google-chrome' do
+      only_if { node.debian_family? }
+      uri 'http://dl.google.com/linux/chrome/deb/'
+      distribution 'stable'
+      components ['main']
+      arch 'amd64'
+      key 'EB4C1BFD4F042F6DDDCCEC917721F63BD38B4796'
+      action :add
+    end
+  end
+
+  def install_chrome
+    return unless node.linux?
+    return unless node['cpe_chrome']['install_package']
+
+    package 'google-chrome-stable' do
+      only_if { node.fedora? || node.debian_family? }
+      action :upgrade
+    end
+  end
+
   def manage_chrome
     return if node['cpe_chrome']['validate_installed'] &&
       !node.installed?('com.google.Chrome')
@@ -182,4 +219,3 @@ action_class do
   end
 end
 # rubocop:enable Metrics/BlockLength
-

@@ -21,19 +21,8 @@ action :config do
   chrome_installed = ::File.file?(
     "#{ENV['ProgramFiles(x86)']}\\Google\\Chrome\\Application\\chrome.exe",
   )
-  unless node.installed?('Google Chrome') || chrome_installed
-    Chef::Log.warn(
-      "#{cookbook_name}::#{recipe_name} - Google Chrome not installed.",
-    )
-    return
-  end
+  return unless node.installed?('Google Chrome') || chrome_installed
   return unless node['cpe_chrome']['profile'].values.any?
-  # We've been seeing users running development VMs/hardware that do not have
-  # SID because of no intern person data. Also freshly imaged machines do not
-  # have intern person data until the laptop is used. So we will (for now) exit
-  # out of the cookbook to accomodate that scenario.
-  uid = node.person['uid']
-  return if uid.nil?
 
   reg_settings = []
   node['cpe_chrome']['profile'].each do |setting|
@@ -43,24 +32,32 @@ action :config do
     reg_settings << WindowsChromeSetting.new(reconstruct_setting, false)
   end
 
+  # Set all the keys we care about
   reg_settings.uniq.each do |setting|
-    # We cannot reference HKEY_CURRENT_USER directly for the owner of the
-    # machine, so instead we use intern person data to find out their AD SID and
-    # then replace the HKEY_CURRENT_USER string in the path with the user's SID
-    # so we can modify their user preferences in HKEY_USERS
-    setting.sid(uid)
     registry_key setting.fullpath do
       values setting.to_chef_reg_provider
       recursive true
-      ignore_failure true # TODO: remove when person refactor stuff sorted out
       action :create
     end
   end
 
-  # Cleanup registry settings when values are removed from the node attribute.
-  # # TODO 19736300, this is causing imaging to break. Removing until a update
-  # is pushed.
-  # cpe_chrome_cleanup 'Chrome Cleanup'
+  # Look at all the subkeys total of the root Chrome key.
+  all_chrome_keys = []
+  if registry_key_exists?(CPE::ChromeManagement.chrome_reg_root) &&
+    registry_has_subkeys?(CPE::ChromeManagement.chrome_reg_root)
+    all_chrome_keys =
+      registry_get_subkeys(CPE::ChromeManagement.chrome_reg_root)
+  end
+  # This variable should be a superset (or a match) to the list of keys
+  # in the node attribute.
+  extra_chrome_keys = all_chrome_keys - node['cpe_chrome']['profile'].keys
+  Chef::Log.debug("#{cookbook_name}: Extra keys: #{extra_chrome_keys}")
+  extra_chrome_keys.each do |rip_key|
+    registry_key "#{CPE::ChromeManagement.chrome_reg_root}\\#{rip_key}" do
+      action :delete_key
+      recursive true
+    end
+  end
 
   # Apply the Master Preferences file
   master_path =
