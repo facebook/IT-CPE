@@ -4,7 +4,7 @@ require_relative '../libraries/windows_chrome_setting'
 require_relative '../libraries/chrome_windows'
 
 RSpec.configure do |config|
-  config.include FB::ChromeManagement
+  config.include CPE::ChromeManagement
   config.disable_monkey_patching!
   config.order = :random
   config.default_formatter = 'doc'

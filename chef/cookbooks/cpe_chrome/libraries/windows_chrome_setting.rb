@@ -19,15 +19,14 @@ require_relative 'chrome_windows'
 # class will then figure out relevant information about the setting to provide
 # to the Chef registry_key resource.
 class WindowsChromeSetting
-  include FB::ChromeManagement
+  include CPE::ChromeManagement
   def initialize(setting, forced = false)
-    hkey_root = forced ? 'HKEY_LOCAL_MACHINE' : 'HKEY_CURRENT_USER'
     @forced = forced
     @name = setting.keys.first
     @data = setting.values.first
 
     reg_entry = construct_reg_key_path(setting.keys.first)
-    @fullpath = "#{hkey_root}\\#{reg_entry.keys.first}"
+    @fullpath = reg_entry.keys.first.to_s
     @path = @fullpath.split(@name).first.chop
     @type = reg_entry.values.first
   end
@@ -55,22 +54,6 @@ class WindowsChromeSetting
     end
   end
 
-  # If you want to redirect to a user's HKEY_USER Registry Hive you can call
-  # this method to shuffle the keys around
-  def sid(id)
-    if id.nil? || id.empty?
-      return self
-    end
-
-    regex = /HKEY_CURRENT_USER|HKEY_LOCAL_MACHINE/
-    replacement = "HKEY_USERS\\#{id}"
-
-    @path.gsub!(regex, replacement)
-    @fullpath.gsub!(regex, replacement)
-
-    self
-  end
-
   def empty?
     @data.empty?
   end
@@ -93,18 +76,24 @@ class WindowsChromeSetting
   # is.
   def construct_reg_key_path(key = @name)
     if ENUM_REG_KEYS.keys.include?(key)
-      return { "#{CHROME_REG_ROOT}\\#{key}" => ENUM_REG_KEYS[key] }
+      {
+        "#{CPE::ChromeManagement.chrome_reg_root}\\#{key}" =>
+          ENUM_REG_KEYS[key],
+      }
     elsif in_complex_key?
-      return lookup_complex(key)
+      lookup_complex(key)
     end
   end
 
   def lookup_complex(key)
     if chrome_root?(key)
-      { CHROME_REG_ROOT => COMPLEX_REG_KEYS[which_complex_key][key] }
+      {
+        CPE::ChromeManagement.chrome_reg_root =>
+          COMPLEX_REG_KEYS[which_complex_key][key],
+      }
     else
       {
-        "#{CHROME_REG_ROOT}\\#{key}" =>
+        "#{CPE::ChromeManagement.chrome_reg_root}\\#{key}" =>
           COMPLEX_REG_KEYS[which_complex_key][key],
       }
     end

@@ -16,7 +16,10 @@
 
 default['cpe_chrome'] = {
   'validate_installed' => false,
+  'install_package' => true,
+  'manage_repo' => true,
   'profile' => {
+    'AutoplayWhitelist' => [],
     'ExtensionInstallForcelist' => [],
     'ExtensionInstallBlacklist' => [],
     'EnabledPlugins' => [],

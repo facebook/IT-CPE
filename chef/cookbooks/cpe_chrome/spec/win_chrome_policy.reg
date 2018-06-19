@@ -117,6 +117,10 @@ Windows Registry Editor Version 5.00
 "VideoCaptureAllowed"=dword:00000000
 "WPADQuickCheckEnabled"=dword:00000001
 
+[HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome\AutoplayWhitelist]
+"1"="http://www.example.com/"
+"2"="http://[*.]example.edu/"
+
 [HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome\AudioCaptureAllowedUrls]
 "1"="http://www.example.com/"
 "2"="http://[*.]example.edu/"

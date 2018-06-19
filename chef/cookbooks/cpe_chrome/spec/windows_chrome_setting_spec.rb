@@ -20,10 +20,10 @@ RSpec.describe WindowsChromeSetting do
       { 'ExtensionInstallBlacklist' => [] },
     'example_setting' => {
       'ExtensionInstallForcelist' =>
-      ['degmgkchmbgaognjjlhggmhbcpicdifm;bacon']
+      ['ncfpggehkhmjpdjpefomjchjafhmbnai;bacon'],
     },
     'doc_setting' =>
-      { 'AlternateErrorPagesEnabled' => [true] }
+      { 'AlternateErrorPagesEnabled' => [true] },
   }
 
   expected_results = {
@@ -33,60 +33,62 @@ RSpec.describe WindowsChromeSetting do
       'type' => :string,
       'data' => [],
       'expected_class' => 'Array',
-      'fullpath' => 'HKEY_CURRENT_USER\Software\Policies\Google\Chrome' \
+      'fullpath' => 'HKLM\Software\Policies\Google\Chrome' +
                 '\ExtensionInstallBlacklist',
-      'fullpath_forced' => 'HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome'\
-                       '\ExtensionInstallBlacklist',
-      'path' => 'HKEY_CURRENT_USER\Software\Policies\Google\Chrome'
+      'fullpath_forced' =>
+        'HKLM\Software\Policies\Google\Chrome' +
+        '\ExtensionInstallBlacklist',
+      'path' => 'HKLM\Software\Policies\Google\Chrome',
     },
     'example_setting' => {
-      'header' => 'A simple setting I arbitrarily grabbed from the attributes '\
+      'header' =>
+        'A simple setting I arbitrarily grabbed from the attributes ' +
         'file',
       'name' => 'ExtensionInstallForcelist',
       'type' => :string,
-      'data' => ['degmgkchmbgaognjjlhggmhbcpicdifm;bacon'],
+      'data' => ['ncfpggehkhmjpdjpefomjchjafhmbnai;bacon'],
       'expected_class' => 'Array',
-      'fullpath' => 'HKEY_CURRENT_USER\Software\Policies\Google\Chrome' \
+      'fullpath' => 'HKLM\Software\Policies\Google\Chrome' +
                 '\ExtensionInstallForcelist',
-      'fullpath_forced' => 'HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome'\
-                       '\ExtensionInstallForcelist',
-      'path' => 'HKEY_CURRENT_USER\Software\Policies\Google\Chrome'
+      'fullpath_forced' =>
+        'HKLM\Software\Policies\Google\Chrome' +
+        '\ExtensionInstallForcelist',
+      'path' => 'HKLM\Software\Policies\Google\Chrome',
     },
     'doc_setting' => {
-      'header' => 'A more complex setting I grabbed from the Chrome '\
+      'header' => 'A more complex setting I grabbed from the Chrome ' +
         'documentation',
       'name' => 'AlternateErrorPagesEnabled',
       'type' => :dword,
       'data' => [true],
       'expected_class' => 'Array',
-      'fullpath' => 'HKEY_CURRENT_USER\Software\Policies\Google\Chrome' \
+      'fullpath' => 'HKLM\Software\Policies\Google\Chrome' +
                 '\AlternateErrorPagesEnabled',
-      'fullpath_forced' => 'HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome'\
-                       '\AlternateErrorPagesEnabled',
-      'path' => 'HKEY_CURRENT_USER\Software\Policies\Google\Chrome'
-    }
+      'fullpath_forced' =>
+        'HKLM\Software\Policies\Google\Chrome' +
+        '\AlternateErrorPagesEnabled',
+      'path' => 'HKLM\Software\Policies\Google\Chrome',
+    },
   }
 
-  shared_examples 'it can handle null or empty sid values' do
+  shared_examples 'the chrome setting creates the key in HKLM' do
     context 'setting is forced' do
       let(:result) do
-        "HKEY_LOCAL_MACHINE\\Software\\Policies\\Google\\Chrome" \
+        'HKLM\\Software\\Policies\\Google\\Chrome' +
         '\ExtensionInstallForcelist'
       end
       subject do
-        WindowsChromeSetting.new(settings['example_setting'], true).
-          sid(user_sid).fullpath
+        WindowsChromeSetting.new(settings['example_setting'], true)
       end
       it { should eq result }
     end
     context 'setting is not forced' do
       let(:result) do
-        "HKEY_CURRENT_USER\\Software\\Policies\\Google\\Chrome" \
+        'HKLM\\Software\\Policies\\Google\\Chrome' +
         '\ExtensionInstallForcelist'
       end
       subject do
-        WindowsChromeSetting.new(settings['example_setting'], false).
-          sid(user_sid).fullpath
+        WindowsChromeSetting.new(settings['example_setting'], false)
       end
       it { should eq result }
     end
@@ -102,29 +104,7 @@ RSpec.describe WindowsChromeSetting do
       it { should be true }
     end
   end
-  context 'given a setting that is scoped to the user, add the right SID' do
-    context 'the user has a sid' do
-      let(:user_sid) { 'S-1-1-0' }
-      let(:result) do
-        "HKEY_USERS\\#{user_sid}\\Software\\Policies\\Google\\Chrome" \
-        '\ExtensionInstallForcelist'
-      end
-      subject do
-        WindowsChromeSetting.new(settings['example_setting']).
-          sid(user_sid).fullpath
-      end
-      it { should eq result }
-    end
-    context 'the user has a nil sid' do
-      let(:user_sid) { nil }
-      it_behaves_like 'it can handle null or empty sid values'
-    end
-    context 'the user has an empty sid' do
-      let(:user_sid) { [] }
-      it_behaves_like 'it can handle null or empty sid values'
-    end
-  end
-  settings.each do |setting, _|
+  settings.each_key do |setting|
     context expected_results['header'] do
       context 'registry key name' do
         subject { WindowsChromeSetting.new(settings[setting]).name }
