@@ -107,6 +107,14 @@ The `install` resource will loop through all the package names and use `cpe_remo
         '42fb19dbaa1d24691a596a3d60e900f57d2b9d6e1a8018972fe4c52c2f988682',
 }
 
+You can also override the application name on a per-package basis if you so wish:
+
+node.default['cpe_munki']['munki_version_to_install']['admin'] = {
+  'version' => '3.0.0.3333',
+  'app_name' => 'munkitools_admin'
+  'checksum' =>
+    '42fb19dbaa1d24691a596a3d60e900f57d2b9d6e1a8018972fe4c52c2f988682',
+}
 
 ### Munki Configuration
 The 'cpe_munki_config' resource will install a profile that configures Munki settings. You must set `node['cpe_munki']['config']` to be `true` for this to run.

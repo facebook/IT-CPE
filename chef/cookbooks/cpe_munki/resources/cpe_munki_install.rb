@@ -68,9 +68,10 @@ action :install do
   remediate?
   node['cpe_munki']['munki_version_to_install'].to_h.each do |pkg, opts|
     package_version = opts['version']
+    app_name = opts['app_name'] ? opts['app_name'] : 'munkitools'
     package_name = "munkitools_#{pkg}-#{package_version}"
     cpe_remote_pkg "munkitools_#{pkg}" do # ~FC037
-      app 'munkitools'
+      app app_name
       pkg_name package_name
       pkg_url opts['url'] if opts['url']
       checksum opts['checksum']
