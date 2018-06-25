@@ -13,6 +13,7 @@ Attributes
 * node['cpe_munki']['install']
 * node['cpe_munki']['local']['managed_installs']
 * node['cpe_munki']['local']['managed_uninstalls']
+* node['cpe_munki']['local']['optional_installs']
 * node['cpe_munki']['munki_version_to_install']
 * node['cpe_munki']['preferences']
 
@@ -126,9 +127,11 @@ By leveraging `cpe_profiles`, we can craft a profile that has the base settings 
 ### Local Manifests
 The 'cpe_munki_local' resource will implement a local-only manifest.
 
-Local Munki is where items from the `node['cpe_munki']['local']['managed_installs']` and `node['cpe_munki']['local']['managed_uninstalls']` node attributes are added to a local manifest in the respective `managed_installs` and `managed_uninstalls` keys.  This allows any individual (or group, or node, etc.) to specify an existing optional install as either an install or uninstall.  Adding an item to either of these two attributes will combine with the existing client manifest.
+Local Munki is where items from the `node['cpe_munki']['local']['managed_installs']`, `node['cpe_munki']['local']['managed_uninstalls']` and `node['cpe_munki']['local']['optional_installs']` node attributes are added to a local manifest in the respective `managed_installs`, `managed_uninstalls` and `optional_installs` keys.  This allows any individual (or group, or node, etc.) to specify an existing optional install as either an install or uninstall.  Adding an item to either of these two attributes will combine with the existing client manifest.
 
 If an item is removed from `managed_installs` or `managed_uninstalls` in this manner, Munki will no longer forcefully manage its installation or removal. If an item is added to `managed_uninstalls`, it is also removed from the 'managed_installs' array of the SelfServeManifest if the item exists there.
+
+Support for `optional_installs` requires Munki v3.3 or later.
 
 The default list of items to be installed on clients is in cpe_munki::managed_installs. Anyone can override this value to add or remove things that they want (or don't want).
 

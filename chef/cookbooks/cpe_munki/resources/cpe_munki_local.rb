@@ -20,7 +20,8 @@ default_action :run
 
 action :run do
   locals_exist = node['cpe_munki']['local']['managed_installs'].any? ||
-                node['cpe_munki']['local']['managed_uninstalls'].any?
+                node['cpe_munki']['local']['managed_uninstalls'].any? ||
+                node['cpe_munki']['local']['optional_installs'].any?
 
   return unless locals_exist
   return unless ::File.exist?('/usr/local/munki/managedsoftwareupdate')
@@ -71,9 +72,13 @@ def gen_plist
   uninstalls = validate_install_array(
     node['cpe_munki']['local']['managed_uninstalls'],
   )
+  optional = validate_install_array(
+    node['cpe_munki']['local']['optional_installs'],
+  )
   plist_hash = {
     'managed_installs' => installs,
     'managed_uninstalls' => uninstalls,
+    'optional_installs' => optional,
   }
   ::Chef::Log.info("cpe_munki_local: Managed installs: #{installs}")
   Plist::Emit.dump(plist_hash) unless plist_hash.nil?
