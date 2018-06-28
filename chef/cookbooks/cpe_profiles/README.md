@@ -5,7 +5,8 @@ chef.
 
 Requirements
 ------------
-Mac OS X
+* Mac OS X
+* cpe_utils cookbook
 
 
 Attributes

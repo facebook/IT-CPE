@@ -8,3 +8,5 @@ description 'Installs/Configures OS X confiuration profiles'
 long_description 'Installs/Configures OS X confiuration profiles'
 version '0.1.0'
 supports 'mac_os_x'
+
+depends 'cpe_utils'
