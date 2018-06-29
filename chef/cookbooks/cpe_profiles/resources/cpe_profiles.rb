@@ -92,6 +92,7 @@ def find_managed_profile_identifiers
   else
     # 10.7 -> 10.9 require a legacy profile provider
     profiles = query_installed_profiles_legacy
+  end
   if profiles['_computerlevel']
     profiles['_computerlevel'].each do |profile|
       if profile['ProfileIdentifier'].start_with?(
