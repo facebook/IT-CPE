@@ -85,11 +85,13 @@ def find_managed_profile_identifiers
     profiles_string = shell_out!('profiles list -output stdout-xml')
   elsif node.os_at_least?('10.10')
     profiles_string = shell_out!('profiles -P -o stdout-xml')
-  else
-    profiles_string = shell_out!('profiles -P -o stdout-xml; '\
-      'cat stdout-xml.plist')
   end
-  profiles = Plist.parse_xml(profiles_string.stdout)
+  # Take the profile content from stdout on 10.10 and higher
+  if node.os_at_least?('10.10')
+    profiles = Plist.parse_xml(profiles_string.stdout)
+  else
+    # 10.7 -> 10.9 require a legacy profile provider
+    profiles = query_installed_profiles_legacy
   if profiles['_computerlevel']
     profiles['_computerlevel'].each do |profile|
       if profile['ProfileIdentifier'].start_with?(
