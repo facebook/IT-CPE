@@ -32,6 +32,26 @@ action :clean_up do
   end
 end
 
+def query_installed_profiles_legacy
+  # 10.7 has a bug where if you pass .plist it makes a second .plist.
+  if node.os_less_than?('10.8')
+    tempfile = ::Dir::Tmpname.create('stdout-xml') {}
+  else
+    tempfile = ::Dir::Tmpname.create('stdout-xml.plist') {}
+  end
+  # Dump all profile metadata to a tempfile
+  shell_out!("profiles -P -o '#{tempfile}'")
+  # 10.7 has a bug where if you pass .plist it makes a second .plist.
+  if node.os_less_than?('10.8')
+    installed_profiles = Plist.parse_xml(tempfile + '.plist')
+  else
+    installed_profiles = Plist.parse_xml(tempfile)
+  end
+  # Clean up the temp file as we do not need it anymore
+  ::File.unlink(tempfile)
+  installed_profiles
+end
+
 def process_identifier(profile)
   identifier = profile['PayloadIdentifier']
   unless identifier.start_with?(node['cpe_profiles']['prefix'])
