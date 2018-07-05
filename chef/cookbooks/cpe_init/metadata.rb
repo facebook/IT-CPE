@@ -17,7 +17,7 @@ depends 'cpe_utils'
 # depends 'cpe_autopkg' # requires 'mac_os_x' community cookbook
 depends 'cpe_bluetooth'
 depends 'cpe_desktop'
-depends 'cpe_hosts'
+# depends 'cpe_hosts' # requires 'line' community cookbook
 depends 'cpe_kms'
 depends 'cpe_launchd'
 depends 'cpe_macos_server'
