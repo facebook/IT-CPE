@@ -27,7 +27,7 @@ if node.macos?
     'cpe_bluetooth',
     'cpe_chrome',
     'cpe_desktop',
-    'cpe_hosts',
+    # 'cpe_hosts', # requires 'line' community cookbook
     'cpe_macos_server',
     'cpe_nightly_reboot',
     'cpe_pathsd',
