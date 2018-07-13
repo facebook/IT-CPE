@@ -66,7 +66,7 @@ action :create do
     filename = new_resource.file_name ?
       new_resource.file_name : new_resource.folder_name
     file_source = new_resource.file_url ?
-      new_resource.file_url : gen_url(folder_name, filename)
+      new_resource.file_url : gen_url(new_resource.folder_name, filename)
     hders = new_resource.headers ?
       new_resource.headers : auth_headers(file_source, 'GET')
 
