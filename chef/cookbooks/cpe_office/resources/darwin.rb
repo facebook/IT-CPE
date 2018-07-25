@@ -16,6 +16,7 @@ provides :cpe_office_darwin, :os => 'darwin'
 default_action :manage
 
 action :manage do
+  mau_prefs = node['cpe_office']['mac']['mau'].reject { |_k, v| v.nil? }
   o365_prefs = node['cpe_office']['mac']['o365'].reject { |_k, v| v.nil? }
   onenote_prefs = node['cpe_office']['mac']['onenote'].reject { |_k, v| v.nil? }
   excel_prefs = node['cpe_office']['mac']['excel'].reject { |_k, v| v.nil? }
@@ -24,6 +25,7 @@ action :manage do
   word_prefs = node['cpe_office']['mac']['word'].reject { |_k, v| v.nil? }
 
   if [
+    mau_prefs,
     o365_prefs,
     onenote_prefs,
     excel_prefs,
@@ -33,6 +35,17 @@ action :manage do
   ].all?(&:empty?)
     Chef::Log.info("#{cookbook_name}: prefs not found.")
     return
+  end
+
+  unless mau_prefs.empty?
+    {
+      'PayloadEnabled' => true,
+      'PayloadIdentifier' => '447f7d4d-572d-4308-8e59-e51478f03a5c',
+      'PayloadDescription' => 'Microsoft Autoupdate Settings',
+      'PayloadVersion' => 1,
+      'PayloadType' => 'com.microsoft.autoupdate2',
+      'PayloadUUID' => '447f7d4d-572d-4308-8e59-e51478f03a5c',
+    }.each { |k, v| mau_prefs[k] = v }
   end
 
   unless o365_prefs.empty?
@@ -119,6 +132,7 @@ action :manage do
   }
 
   [
+    mau_prefs,
     o365_prefs,
     onenote_prefs,
     excel_prefs,
