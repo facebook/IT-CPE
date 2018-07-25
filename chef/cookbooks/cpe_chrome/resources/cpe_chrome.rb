@@ -119,7 +119,7 @@ action_class do
 
   def manage_chrome_osx(mprefs, prefs)
     prefix = node['cpe_profiles']['prefix']
-    organization = node['organization'] ? node['organization'] : 'Facebook'
+    organization = node['organization'] || 'Facebook'
     chrome_profile = {
       'PayloadIdentifier' => "#{prefix}.browsers.chrome",
       'PayloadRemovalDisallowed' => true,
@@ -147,7 +147,6 @@ action_class do
     # Check for Chrome Canary
     if node.installed?('com.google.Chrome.canary')
       prefix = node['cpe_profiles']['prefix']
-      organization = node['organization'] ? node['organization'] : 'Facebook'
       canary_profile = {
         'PayloadIdentifier' => "#{prefix}.browsers.chromecanary",
         'PayloadRemovalDisallowed' => true,

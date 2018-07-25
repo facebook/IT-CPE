@@ -36,7 +36,7 @@ action :config do
     end
   end
   prefix = node['cpe_profiles']['prefix']
-  organization = node['organization'] ? node['organization'] : 'Facebook'
+  organization = node['organization'] || 'Facebook'
 
   node.default['cpe_profiles']["#{prefix}.screensaver"] = {
     'PayloadIdentifier' => "#{prefix}.screensaver",

@@ -18,7 +18,7 @@ action :config do
   safari_prefs = node['cpe_safari'].reject { |_k, v| v.nil? }
   return if safari_prefs.empty?
   prefix = node['cpe_profiles']['prefix']
-  organization = node['organization'] ? node['organization'] : 'Facebook'
+  organization = node['organization'] || 'Facebook'
   node.default['cpe_profiles']["#{prefix}.browsers.safari"] = {
     'PayloadIdentifier'        => "#{prefix}.browsers.safari",
     'PayloadRemovalDisallowed' => true,

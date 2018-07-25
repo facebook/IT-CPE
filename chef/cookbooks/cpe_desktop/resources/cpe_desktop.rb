@@ -19,7 +19,7 @@ action :run do
   prefs = node['cpe_desktop'].reject { |_k, v| v.nil? }
   return if prefs.empty?
   prefix = node['cpe_profiles']['prefix']
-  organization = node['organization'] ? node['organization'] : 'Facebook'
+  organization = node['organization'] || 'Facebook'
   override_picture_path = node['cpe_desktop']['override-picture-path']
   node.default['cpe_profiles']["#{prefix}.desktop"] = {
     'PayloadIdentifier' => "#{prefix}.desktop",
