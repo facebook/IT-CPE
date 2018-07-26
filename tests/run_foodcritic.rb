@@ -1,4 +1,4 @@
-# rubocop:disable Metric/BlockLength
+# rubocop:disable Metrics/BlockLength
 RSpec.describe 'Check that the cookbooks changed pass foodcritic.' do
   before do
     # Foodcritic rules to exclude.
@@ -44,4 +44,4 @@ RSpec.describe 'Check that the cookbooks changed pass foodcritic.' do
     end
   end
 end
-# rubocop:enable Metric/BlockLength
+# rubocop:enable Metrics/BlockLength
