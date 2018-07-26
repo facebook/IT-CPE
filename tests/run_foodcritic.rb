@@ -34,7 +34,7 @@ RSpec.describe 'Check that the cookbooks changed pass foodcritic.' do
       puts 'Foodcritic not performed. No cookbooks changed.'
     else
       puts 'Running foodcritic for changed cookbooks: ' +
-           "#{@cookbooks}"
+           @cookbooks
       puts 'bundle exec foodcritic -f any -t ' +
            "~#{@exclude_rules} #{@cookbooks}"
       args = 'bundle exec foodcritic -f any -t ' +
