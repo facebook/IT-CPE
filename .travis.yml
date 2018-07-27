@@ -5,5 +5,5 @@ rvm:
 gemfile:
   Gemfile
 script:
-  - ruby tests/travisci.rb
-  - ./tests/run_foodcritic
+  - rspec 'tests/run_rubocop.rb'
+  - rspec 'tests/run_foodcritic.rb'
