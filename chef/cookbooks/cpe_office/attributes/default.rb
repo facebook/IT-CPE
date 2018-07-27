@@ -28,6 +28,16 @@ default['cpe_office']['win']['manage_reg'] = {
 }
 
 default['cpe_office']['mac'] = {
+  'mau' => {
+    'ChannelName' => nil,
+    'DisableInsiderCheckbox' => nil,
+    'ExtendedLogging' => nil,
+    'HowToCheck' => nil,
+    'ManifestServer' => nil,
+    'SendAllTelemetryEnabled' => nil,
+    'StartDaemonOnAppLaunch' => nil,
+    'UpdateCache' => nil,
+  },
   'o365' => {
     'SendAllTelemetryEnabled' => nil,
   },
