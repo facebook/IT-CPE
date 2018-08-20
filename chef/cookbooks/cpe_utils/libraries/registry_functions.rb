@@ -30,15 +30,18 @@ module CPE
     # First pass at determining data type for registry, verify returned data
     # type is correct as type detection needs to be refined for all edge cases.
     def reg_data_type(data)
-      data_type = :dword
       case data
       when String
         data_type = :string
         if data.include?('%')
           data_type = :expand_string
         end
-      when Bignum # rubocop:disable Lint/UnifiedInteger
-        data_type = :qword
+      when Integer
+        if data < (2**62 - 1)
+          data_type = :dword
+        else
+          data_type = :qword
+        end
       end
       return data_type
     end
