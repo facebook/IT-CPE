@@ -24,7 +24,7 @@ module CPE
         data_type = reg_data_type(value)
         hash << { :name => name, :type => data_type, :data => value }
       end
-      return hash
+      hash
     end
 
     # First pass at determining data type for registry, verify returned data
@@ -43,7 +43,7 @@ module CPE
           data_type = :qword
         end
       end
-      return data_type
+      data_type
     end
   end
 end
