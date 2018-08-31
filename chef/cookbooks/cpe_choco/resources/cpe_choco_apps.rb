@@ -34,7 +34,7 @@ def custom_exception_message(e)
   when Mixlib::ShellOut::ShellCommandFailed
     pkg_fail = pkg_fail_re.match(e.to_s)
     exit_code = /, but received '(?<code>\d+)'/.match(e.to_s)
-    return format(
+    format(
       "%s failed with exit code %s\n%s",
       pkg_fail.to_s,
       exit_code[:code],
@@ -42,7 +42,7 @@ def custom_exception_message(e)
     )
   when ::NoMethodError
     pkg_fail = pkg_fail_re.match(e.to_s)
-    return format(
+    format(
       "%s failed to install package '%s' with a NoMethod exception\n%s",
       self,
       pkg_fail[:pkg],
@@ -93,14 +93,14 @@ action_class do
 
   def action_guard(option)
     if option['version'].casecmp('latest').zero?
-      return :upgrade
+      :upgrade
     end
     :install
   end
 
   def version_guard(option)
     if option['version'].casecmp('latest').zero?
-      return nil
+      nil
     end
     option['version']
   end

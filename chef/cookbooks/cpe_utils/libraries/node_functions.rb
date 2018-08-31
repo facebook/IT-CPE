@@ -78,7 +78,7 @@ class Chef
         '|grep IOPlatformSerialNumber | awk \'{print $4}\' | sed -e s/\"//g',
       ).run_command.stdout.chomp
       node.default['serial'] = serial
-      return serial
+      serial
     end
 
     def uuid
@@ -92,7 +92,7 @@ class Chef
         '| awk \'/UUID/ { print $3; }\'',
       ).run_command.stdout.chomp
       node.default['uuid'] = uuid
-      return uuid
+      uuid
     end
 
     def get_shard(serial: nil, salt: nil, chunks: 100)
@@ -106,7 +106,7 @@ class Chef
       end
       shard = Digest::MD5.hexdigest(serial).to_i(16) % chunks.to_i
       # we dont want to have a zero shard
-      return shard + 1
+      shard + 1
     end
 
     def in_shard?(threshold)
@@ -163,7 +163,7 @@ class Chef
       if curtime > st + duration
         warn_to_remove(3)
       end
-      return curtime >= time_threshold
+      curtime >= time_threshold
     end
 
     def shard_over_a_week_starting(start_date)
@@ -201,7 +201,7 @@ class Chef
       numdays -= num_weekend_days
 
       if numdays < 0
-        return 0
+        0
       end
 
       Chef::Log.debug("rollout_shard: days into rollout: #{numdays}")
@@ -233,7 +233,7 @@ class Chef
     def os_at_least?(version)
       if arch?
         # Arch is a rolling release so it's always at a sufficient version
-        return true
+        true
       end
       Gem::Version.new(node['platform_version']) >= Gem::Version.new(version)
     end
@@ -246,23 +246,23 @@ class Chef
     end
 
     def arch?
-      return node['platform'] == 'arch'
+      node['platform'] == 'arch'
     end
 
     def linux?
-      return node['os'] == 'linux'
+      node['os'] == 'linux'
     end
 
     def ubuntu?
-      return node['platform'] == 'ubuntu'
+      node['platform'] == 'ubuntu'
     end
 
     def centos?
-      return node['platform'] == 'centos'
+      node['platform'] == 'centos'
     end
 
     def macos?
-      return node['platform'] == 'mac_os_x'
+      node['platform'] == 'mac_os_x'
     end
 
     def macosx?
@@ -270,7 +270,7 @@ class Chef
     end
 
     def windows?
-      return node['os'] == 'windows'
+      node['os'] == 'windows'
     end
 
     def parallels?
@@ -287,13 +287,13 @@ class Chef
 
     def virtual?
       if macos?
-        return virtual_macos_type != 'physical'
+        virtual_macos_type != 'physical'
       end
       if node['virtualization2']
-        return node['virtualization2'] &&
+        node['virtualization2'] &&
           node['virtualization2']['role'] == 'guest'
       else
-        return node['virtualization'] &&
+        node['virtualization'] &&
           node['virtualization']['role'] == 'guest'
       end
     end
@@ -358,7 +358,7 @@ class Chef
     def app_paths(bundle_identifier)
       unless macos?
         Chef::Log.warn('node.app_paths called on non-OS X!')
-        return []
+        []
       end
       # Search Spotlight for matching identifier, strip newlines
       Mixlib::ShellOut.new(
@@ -369,7 +369,7 @@ class Chef
     def installed?(bundle_identifier)
       unless macos?
         Chef::Log.warn('node.installed? called on non-OS X!')
-        return false
+        false
       end
       paths = app_paths(bundle_identifier)
       !paths.empty?
@@ -378,7 +378,7 @@ class Chef
     def min_package_installed?(pkg_identifier, min_pkg)
       unless macos?
         Chef::Log.warn('node.min_package_installed? called on non-OS X!')
-        return false
+        false
       end
       installed_pkg_version = shell_out(
         "/usr/sbin/pkgutil --pkg-info \"#{pkg_identifier}\"",
@@ -386,7 +386,7 @@ class Chef
       # Compare the installed version to the minimum version
       if installed_pkg_version.nil?
         Chef::Log.warn("Package #{pkg_identifier} returned nil.")
-        return false
+        false
       end
       Gem::Version.new(installed_pkg_version) >= Gem::Version.new(min_pkg)
     end
@@ -394,7 +394,7 @@ class Chef
     def max_package_installed?(pkg_identifier, max_pkg)
       unless macos?
         Chef::Log.warn('node.max_package_installed? called on non-OS X!')
-        return false
+        false
       end
       installed_pkg_version = shell_out(
         "/usr/sbin/pkgutil --pkg-info \"#{pkg_identifier}\"",
@@ -402,7 +402,7 @@ class Chef
       # Compare the installed version to the maximum version
       if installed_pkg_version.nil?
         Chef::Log.warn("Package #{pkg_identifier} returned nil.")
-        return false
+        false
       end
       Gem::Version.new(installed_pkg_version) <= Gem::Version.new(max_pkg)
     end
