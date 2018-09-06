@@ -96,11 +96,25 @@ class Chef
     end
 
     def get_shard(serial: nil, salt: nil, chunks: 100)
-      # grab the serial by platform if possible
-      # return nil if not possible
-      serial ||= node.serial
-      serial = node.uuid if serial.nil?
-      return 0 if serial.nil?
+      if serial.nil?
+        # grab the serial by platform if possible
+        # return nil if not possible
+        case node['os']
+        when 'darwin', 'linux'
+          serial ||= node.serial
+          if serial.nil?
+            serial = attr_lookup('cpe/hardware/system_uuid')
+          end
+        when 'windows'
+          # On windows prefer uuid first
+          serial = attr_lookup('cpe/hardware/system_uuid')
+        end
+      end
+      if serial.nil?
+        # use the last possible shard so that when we slowroll
+        # we don't hit these hosts until the end
+        99
+      end
       if salt
         serial += salt.to_s
       end
@@ -139,6 +153,7 @@ class Chef
     end
 
     def in_timeshard?(start_time, duration)
+      passed_duration = duration
       st = Time.parse(start_time).tv_sec
       return false unless st
       # Multiply the number of days by 1440 min and 60 s to convert a day into
@@ -157,6 +172,10 @@ class Chef
       time_shard = get_shard(:chunks => duration)
       # The time threshold is the sum of the start time and time shard.
       time_threshold = st + time_shard
+      Chef::Log.debug("time_shard: #{time_shard}, #{Time.at(time_threshold)}")
+      node.default['timeshard']["#{start_time}_#{passed_duration}"] = {
+        'time' => Time.at(time_threshold),
+      }
       # If the current time is greater than the threshold then the node will be
       # within the threshold of time as defined by the start time and duration,
       # and will return true.
@@ -173,6 +192,22 @@ class Chef
     def shard_over_a_week_ending(end_date)
       start_date = Date.parse(end_date) - 7
       in_shard?(rollout_shard(start_date.to_s))
+    end
+
+    def shard_per_hour(percent, start_time)
+      hours = "#{100 / percent}H"
+      Chef::Log.debug(
+        "shard_per_hour:time: #{hours}, start_time: #{start_time}",
+      )
+      in_timeshard?(start_time, hours)
+    end
+
+    def shard_per_day(percent, start_date)
+      days = "#{(100 / percent)}D"
+      Chef::Log.debug(
+        "shard_per_day:time: #{days}, s art_date: #{start_date}",
+      )
+      in_timeshard?("#{start_date} 9:00", days)
     end
 
     def rollout_shard(start_date)
@@ -257,20 +292,88 @@ class Chef
       node['platform'] == 'ubuntu'
     end
 
+    def debian?
+      node['platform'] == 'debian'
+    end
+
     def centos?
       node['platform'] == 'centos'
     end
 
-    def macos?
-      node['platform'] == 'mac_os_x'
+    def fedora?
+      node['platform'] == 'fedora'
+    end
+
+    def linuxmint?
+      node['platform'] == 'linuxmint'
+    end
+
+    def debian_family?
+      node['platform_family'] == 'debian'
+    end
+
+    def arch_family?
+      node['platform_family'] == 'arch'
+    end
+
+    def fedora_family?
+      node['platform_family'] == 'fedora'
     end
 
     def macosx?
       self.macos?
     end
 
+    def macos?
+      node['platform'] == 'mac_os_x'
+    end
+
     def windows?
       node['os'] == 'windows'
+    end
+
+    def windows8?
+      self.windows? && node['platform_version'].start_with?('6.2')
+    end
+
+    def windows8_1?
+      self.windows? && node['platform_version'].start_with?('6.3')
+    end
+
+    def windows10?
+      self.windows? && node['platform_version'].start_with?('10.0')
+    end
+
+    def windows2012?
+      self.windows? && node['platform_version'].start_with?('6.2')
+    end
+
+    def windows2012r2?
+      self.windows? && node['platform_version'].start_with?('6.3')
+    end
+
+    def ubuntu14?
+      self.ubuntu? && node['platform_version'].start_with?('14.')
+    end
+
+    def ubuntu15?
+      self.ubuntu? && node['platform_version'].start_with?('15.')
+    end
+
+    def ubuntu16?
+      self.ubuntu? && node['platform_version'].start_with?('16.')
+    end
+
+    def fedora27?
+      self.fedora? && node['platform_version'].eql?('27')
+    end
+
+    def fedora28?
+      self.fedora? && node['platform_version'].eql?('28')
+    end
+
+    def debian_sid?
+      self.debian? && node['platform_version'].include?('sid')
     end
 
     def parallels?
@@ -283,6 +386,106 @@ class Chef
 
     def virtualbox?
       virtual_macos_type == 'virtualbox'
+    end
+
+    def sysnative_path
+      if RUBY_PLATFORM.include? '64'
+        "#{ENV['WINDIR']}\\system32\\"
+      else
+        "#{ENV['WINDIR']}\\sysnative\\"
+      end
+    end
+
+    def supports_dsc?
+      if node['languages'].attribute?('powershell')
+        node['languages']['powershell']['version'].to_i >= 5
+      end
+      false
+    end
+
+    def windows_supports_long_paths?
+      case node['os']
+      when 'darwin'
+        # let's be pedantic in relation to the function name
+        false
+      when 'windows'
+        res = node['platform_version'].delete('.').to_i >= 10014393
+        unless res
+          Chef::Log.warn(
+            'Windows build is too old to support long paths. ' +
+            'Update to at least 10.0.14393.',
+          )
+        end
+        res
+      end
+      Chef::Log.warn(
+        "The platform #{node['os']} is unknown. " +
+        'Please contact CPE if you see this message',
+      )
+      false
+    end
+
+
+    # returns either nil, "mdm", "uamdm", or "dep"
+    def _parse_profiles_status(output)
+      if output.include?('Enrolled via DEP: Yes')
+        'dep'
+      elsif output.include?('An enrollment profile is currently installed ' +
+          'on this system') # macOS 10.13.1 response
+        'dep'
+      elsif output.include?('MDM enrollment: Yes (User Approved)')
+        'uamdm'
+      elsif output.include?('MDM enrollment: Yes')
+        'mdm'
+      end
+    end
+
+    # returns nil or "mdm"
+    def _parse_profiles_profiles(output)
+      profiles = Plist.parse_xml(output)
+      fail 'profiles XML parsing cannot be nil!' if profiles.nil?
+      fail 'profiles XML parsing must be a Hash!' unless profiles.is_a?(Hash)
+      if profiles.key?('_computerlevel')
+        profiles['_computerlevel'].each do |profile|
+          profile['ProfileItems'].each do |item|
+            'mdm' if item['PayloadType'] == 'com.apple.mdm'
+          end
+        end
+      end
+      nil
+    end
+
+    def macos_mdm_state
+      unless macos?
+        Chef::Log.warn('node.macos_mdm_state called on non-macOS!')
+        nil
+      end
+      status = nil
+      if os_at_least?('10.13.0')
+        status = _parse_profiles_status(shell_out(
+          '/usr/bin/profiles status -type enrollment',
+        ).stdout.to_s)
+      end
+      # on 10.13.3 or ealier we can detect DEP but cannot detect non-DEP MDM
+      # in those cases fall back to looking at profiles
+      if os_at_least_or_lower?('10.13.3') && status != 'dep'
+        status = _parse_profiles_profiles(shell_out(
+          '/usr/bin/profiles -Lo stdout-xml',
+        ).stdout.to_s)
+      end
+      status
+    end
+
+    def mdm?
+      macos_mdm_state == 'mdm'
+    end
+
+    def uamdm?
+      macos_mdm_state == 'uamdm'
+    end
+
+    def dep?
+      macos_mdm_state == 'dep'
     end
 
     def virtual?
@@ -304,7 +507,7 @@ class Chef
         Chef::Log.warn('node.virtual_macos called on non-macOS!')
         return
       end
-      return node['virtual_macos'] if node['virtual_macos']
+      node['virtual_macos'] if node['virtual_macos']
       if node['hardware']['boot_rom_version'].include? 'VMW'
         virtual_type = 'vmware'
       elsif node['hardware']['boot_rom_version'].include? 'VirtualBox'
@@ -355,9 +558,58 @@ class Chef
       end
     end
 
-    def app_paths(bundle_identifier)
+    def mac_bundleid_installed?(bundle_identifier)
       unless macos?
-        Chef::Log.warn('node.app_paths called on non-OS X!')
+        Chef::Log.warn('node.mac_bundleid_installed? called on non-macOS!')
+        false
+      end
+      # bundle_identifiers are case sensitive
+      query = <<-SQL
+        SELECT name
+        FROM apps
+        WHERE
+          LOWER(bundle_identifier) == LOWER('#{bundle_identifier}')
+      SQL
+      osquery_data = Osquery.query(query)
+      !osquery_data.empty?
+    rescue StandardError
+      Chef::Log.warn("Unable to query bundle identifier #{bundle_identifier}")
+      nil
+    end
+
+    def app_paths(app_name)
+      case node['os']
+      when 'darwin'
+        table_name = 'apps'
+        platform = 'posix'
+      when 'windows'
+        table_name = 'programs'
+        platform = 'windows'
+      when 'linux'
+        table_name = value_for_platform_family(
+          'debian' => 'deb_packages',
+          # Eventually, more Linux distros can go here
+        )
+        platform = 'posix'
+      end
+      query = <<-SQL
+        SELECT path
+        FROM #{table_name}
+        WHERE
+          LOWER(name) LIKE LOWER('%#{app_name}%')
+      SQL
+      osquery_data = Osquery.query(query, platform)
+      matches = osquery_data.map(&:values).flatten
+      Chef::Log.debug("Fuzzy matches: #{matches}")
+      matches
+    rescue StandardError
+      Chef::Log.warn("Unable to query app paths #{app_name}")
+      []
+    end
+
+    def app_paths_deprecated(bundle_identifier)
+      unless macos?
+        Chef::Log.warn('node.app_paths_deprecated called on non-OS X!')
         []
       end
       # Search Spotlight for matching identifier, strip newlines
@@ -371,8 +623,39 @@ class Chef
         Chef::Log.warn('node.installed? called on non-OS X!')
         false
       end
-      paths = app_paths(bundle_identifier)
+      paths = app_paths_deprecated(bundle_identifier)
       !paths.empty?
+    end
+
+    def app_installed?(app_name)
+      case node['os']
+      when 'darwin'
+        table_name = 'apps'
+        platform = 'posix'
+      when 'windows'
+        table_name = 'programs'
+        platform = 'windows'
+      when 'linux'
+        table_name = value_for_platform_family(
+          'debian' => 'deb_packages',
+          'fedora' => 'rpm_packages',
+          # Eventually, more Linux distros can go here
+        )
+        platform = 'posix'
+      end
+      query = <<-SQL
+        SELECT name
+        FROM #{table_name}
+        WHERE
+          LOWER(name) LIKE LOWER('%#{app_name}%')
+      SQL
+      osquery_data = Osquery.query(query, platform)
+      matches = osquery_data.map(&:values).flatten
+      Chef::Log.debug("Fuzzy matches: #{matches}")
+      !osquery_data.empty?
+    rescue StandardError
+      Chef::Log.warn("Unable to query app #{app_name}")
+      nil
     end
 
     def min_package_installed?(pkg_identifier, min_pkg)
