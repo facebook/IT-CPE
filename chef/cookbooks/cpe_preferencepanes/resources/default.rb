@@ -20,7 +20,7 @@ action :config do
   prefs = node['cpe_preferencepanes'].reject { |_k, v| v.nil? }
   return if prefs.empty?
   prefix = node['cpe_profiles']['prefix']
-  organization = node['organization'] ? node['organization'] : 'Facebook'
+  organization = node['organization'] || 'Facebook'
   pane_profile = {
     'PayloadIdentifier' => "#{prefix}.prefpanes",
     'PayloadRemovalDisallowed' => true,

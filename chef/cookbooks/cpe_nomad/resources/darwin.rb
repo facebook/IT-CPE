@@ -96,7 +96,7 @@ action_class do
     end
 
     prefix = node['cpe_profiles']['prefix']
-    organization = node['organization'] ? node['organization'] : 'Facebook'
+    organization = node['organization'] || 'Facebook'
 
     profile = {
       'PayloadEnabled' => true,

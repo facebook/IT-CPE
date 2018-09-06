@@ -18,7 +18,7 @@ default_action :config
 action :config do
   prefs = node['cpe_bluetooth'].reject { |_k, v| v.nil? }
   return if prefs.empty?
-  organization = node['organization'] ? node['organization'] : 'Facebook'
+  organization = node['organization'] || 'Facebook'
   prefix = node['cpe_profiles']['prefix']
   node.default['cpe_profiles']["#{prefix}.bluetooth"] = {
     'PayloadIdentifier' => "#{prefix}.bluetooth",

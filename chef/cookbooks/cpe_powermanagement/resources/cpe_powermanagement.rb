@@ -27,7 +27,7 @@ action :config do
   }
 
   prefix = node['cpe_profiles']['prefix']
-  organization = node['organization'] ? node['organization'] : 'Facebook'
+  organization = node['organization'] || 'Facebook'
   energy_profile = {
     'PayloadIdentifier'        => "#{prefix}.powermanagement",
     'PayloadRemovalDisallowed' => true,
