@@ -205,7 +205,7 @@ class Chef
     def shard_per_day(percent, start_date)
       days = "#{(100 / percent)}D"
       Chef::Log.debug(
-        "shard_per_day:time: #{days}, s art_date: #{start_date}",
+        "shard_per_day:time: #{days}, start_date: #{start_date}",
       )
       in_timeshard?("#{start_date} 9:00", days)
     end
