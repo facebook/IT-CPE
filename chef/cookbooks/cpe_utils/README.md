@@ -41,17 +41,37 @@ end
 
 #### OS Checks ####
 
-These are to check if a node is a specific OS type
+These are to check if a node is a specific OS family, type, or version.
 
 ```
-node.linux?
-node.ubuntu?
+node.arch_family?
+node.debian_family?
+node.fedora_family?
+node.arch?
 node.centos?
+node.debian?
+node.debian_sid?
+node.fedora?
+node.fedora27?
+node.fedora28?
+node.linux?
+node.linuxmint?
+node.macosx?
 node.macos?
+node.ubuntu?
+node.ubuntu14?
+node.ubuntu15?
+node.ubuntu16?
 node.windows?
+node.windows8?
+node.windows8_1?
+node.windows10?
+node.windows2012?
+node.windows2012r2?
 ```
 
 These are generally used to scope os-specific features. For instance:
+
 ```
 if node.macos?
   osx_profile 'com.company.screensaver.mobileconfig' 
