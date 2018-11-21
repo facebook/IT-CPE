@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: cpe_pathsd
-# Recipe:: default
+# Recipe:: linux
 #
 # vim: syntax=ruby:expandtab:shiftwidth=2:softtabstop=2:tabstop=2
 #
@@ -12,5 +12,15 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 #
 
-return if node.windows?
-include_recipe "cpe_pathsd::#{node['os']}"
+directory '/etc/profile.d' do
+  owner root_owner
+  group root_group
+  mode '0755'
+end
+
+template '/etc/profile.d/cpe_paths.sh' do
+  source 'profile.d_paths.erb'
+  owner root_owner
+  group root_group
+  mode '0644'
+end

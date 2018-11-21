@@ -8,3 +8,5 @@ description 'Installs/Configures cpe_pathsd'
 long_description 'Installs/Configures cpe_pathsd'
 version '0.1.0'
 supports 'mac_os_x'
+
+depends 'cpe_utils'
