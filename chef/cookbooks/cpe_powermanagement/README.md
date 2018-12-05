@@ -30,7 +30,7 @@ Attributes
 
 Usage
 -----
-There are two sets of attributes that are identical - 'AC' for when on AC power (plugged in), and 'Battery' for when on battery.
+There are two sets of attributes that are identical - 'ACPower' for when on AC power (plugged in), and 'Battery' for when on battery.
 
 'Battery' settings will have no effect on desktops (and will not be applied by this recipe).
 
