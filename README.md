@@ -42,7 +42,7 @@ See the internal README for more information.
 
 * Generate a key scan of your code sync server to establish trust between clients and the code sync server via `ssh-keyscan -t rsa yourcodesyncserver.com`. Place the resulting fingerprint into your /etc/ssh_known_hosts file on all your client machines. A sample file is placed at IT-CPE/code/lib/conf/ssh_known_hosts.
 
-* The key server should run apache/nginx to servere the contents of the single-use SSH key. Clients will download the rsync key from this server using a curl. Clients will use this key to rsync code from the code sync server to the client.
+* The key server should run apache/nginx to serve the contents of the single-use SSH key. Clients will download the rsync key from this server using a curl. Clients will use this key to rsync code from the code sync server to the client.
 
 * Setup the code sync server. Setup a limited access SSH account, such as a 'util' account that only has access to the code sync directory. See the links below for more details on creating a limited access SSH account.
  * http://www.paulkeck.com/ssh/
