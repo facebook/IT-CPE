@@ -76,8 +76,8 @@ action :create do
       recursive true
     end
 
-    cpe_remote_file folder_name do
-      file_name zip_name
+    cpe_remote_file new_resource.folder_name do
+      file_name new_resource.zip_name
       mode new_resource.mode
       checksum new_resource.zip_checksum
       file_url new_resource.zip_url if new_resource.zip_url
@@ -97,15 +97,15 @@ action :create do
     execute 'extract_zip' do
       only_if { ::File.exist?(zip_path) }
       not_if { node.windows? }
-      cwd extract_location
-      command "unzip -o #{zip_path} -d #{extract_location}"
+      cwd new_resource.extract_location
+      command "unzip -o #{zip_path} -d #{new_resource.extract_location}"
       action :nothing
     end
 
     if node.windows?
       cmd =
         "Expand-Archive -Path #{zip_path} " +
-        "-DestinationPath #{extract_location} -Force"
+        "-DestinationPath #{new_resource.extract_location} -Force"
       powershell_script 'extract_zip' do
         only_if { ::File.exist?(zip_path) }
         code cmd
@@ -114,7 +114,7 @@ action :create do
     end
 
     # @lint-ignore FBCHEFFoodcritic
-    directory extract_location do
+    directory new_resource.extract_location do
       not_if { node.windows? }
       recursive true
       mode new_resource.mode
