@@ -64,7 +64,7 @@ class Chef
       elsif ubuntu?
         username = Etc.getlogin
       else
-        Chef::Log.warn('node.console_user called on and unsupported platform!')
+        Chef::Log.warn('node.console_user called on an unsupported platform!')
         return
       end
       username
