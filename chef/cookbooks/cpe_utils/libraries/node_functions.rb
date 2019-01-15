@@ -56,14 +56,17 @@ class Chef
     end
 
     def console_user
-      unless macos?
-        Chef::Log.warn('node.console_user called on non-OS X!')
+      if macos?
+        usercmd = Mixlib::ShellOut.new(
+          '/usr/bin/stat -f%Su /dev/console',
+        ).run_command.stdout
+        username = usercmd.chomp
+      elsif ubuntu?
+        username = Etc.getlogin
+      else
+        Chef::Log.warn('node.console_user called on and unsupported platform!')
         return
       end
-      usercmd = Mixlib::ShellOut.new(
-        '/usr/bin/stat -f%Su /dev/console',
-      ).run_command.stdout
-      username = usercmd.chomp
       username
     end
 
