@@ -202,9 +202,6 @@ def validate_preferences(prefs):
   if VERBOSE:
     display_verbose(prefs)
   prefs_valid = True
-  if not autopkglib.get_pref('RECIPE_REPO_DIR'):
-    timeprint('RECIPE_REPO_DIR is missing or empty.')
-    prefs_valid = False
   if not autopkglib.get_pref('RECIPE_OVERRIDE_DIRS'):
     timeprint('RECIPE_OVERRIDE_DIRS is missing or empty.')
     prefs_valid = False
@@ -431,8 +428,12 @@ def parse_report_plist(report_plist_path):
 def handle_recipe(recipe, pkg_path=None):
   """Handle the complete workflow of an autopkg recipe."""
   display_verbose("Handling %s" % recipe)
+  if autopkglib.get_pref('RECIPE_REPO_DIR'):
+    recipe_repo_dir = autopkglib.get_pref('RECIPE_REPO_DIR')
+  else:
+    recipe_repo_dir = os.path.expanduser('~/Library/AutoPkg/RecipeRepos')
   report_plist_path = os.path.join(
-    os.path.dirname(autopkglib.get_pref('RECIPE_REPO_DIR')),
+    os.path.dirname(recipe_repo_dir),
     'autopkg.plist'
   )
   # 1. Syncing is no longer implemented
