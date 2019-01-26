@@ -99,7 +99,7 @@ def parent_recipes(identifier):
 def parse_recipe_name(identifier):
   """Get the name of the recipe."""
   # display_verbose("Calling parse_recipe_name")
-  branch = identifier.split('.munki')[0]
+  branch = identifier.replace(' ', '-').lower().split('.munki')[0]
   # Check to see if branch name already exists
   current_branches = branch_list()
   if branch in current_branches:
