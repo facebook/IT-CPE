@@ -10,6 +10,12 @@ import time
 import argparse
 
 try:
+    import yaml
+    YAML_INSTALLED = True
+except ImportError:
+    YAML_INSTALLED = False
+
+try:
   from Foundation import NSDate
   from Foundation import CFPreferencesAppSynchronize
   from Foundation import CFPreferencesCopyAppValue
@@ -465,7 +471,7 @@ def handle_recipe(recipe, pkg_path=None):
 
 
 def parse_recipe_list(file_path):
-  """Parse a recipe list from a file path. Supports JSON or plist."""
+  """Parse a recipe list from a file path. Supports JSON, YAML, or plist."""
   timeprint("Parsing recipe list")
   if not os.path.isfile(file_path):
     timeprint("No recipe list found at that path!")
@@ -475,6 +481,9 @@ def parse_recipe_list(file_path):
   if extension == '.json':
     with open(file_path, 'rb') as f:
       recipe_list = json.load(f)
+  elif extension in ('.yaml', '.yml') and YAML_INSTALLED:
+    with open(file_path, 'rb') as f:
+      recipe_list = yaml.load(f)
   elif extension == '.plist':
     recipe_list = FoundationPlist.readPlist(file_path)
   else:
@@ -488,7 +497,7 @@ if __name__ == '__main__':
     description='Wrap AutoPkg with git support.')
   group = parser.add_mutually_exclusive_group()
   group.add_argument(
-    '-l', '--list', help='Path to a plist or JSON list of recipe names.'
+    '-l', '--list', help='Path to a plist, JSON, or YAML list of recipe names.'
   )
   group.add_argument(
     '-r', '--recipes', nargs='+',
