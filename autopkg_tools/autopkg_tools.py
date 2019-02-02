@@ -10,6 +10,12 @@ import time
 import argparse
 
 try:
+    import yaml
+    YAML_INSTALLED = True
+except ImportError:
+    YAML_INSTALLED = False
+
+try:
   from Foundation import NSDate
   from Foundation import CFPreferencesAppSynchronize
   from Foundation import CFPreferencesCopyAppValue
@@ -93,7 +99,7 @@ def parent_recipes(identifier):
 def parse_recipe_name(identifier):
   """Get the name of the recipe."""
   # display_verbose("Calling parse_recipe_name")
-  branch = identifier.split('.munki')[0]
+  branch = identifier.replace(' ', '-').lower().split('.munki')[0]
   # Check to see if branch name already exists
   current_branches = branch_list()
   if branch in current_branches:
@@ -196,9 +202,6 @@ def validate_preferences(prefs):
   if VERBOSE:
     display_verbose(prefs)
   prefs_valid = True
-  if not autopkglib.get_pref('RECIPE_REPO_DIR'):
-    timeprint('RECIPE_REPO_DIR is missing or empty.')
-    prefs_valid = False
   if not autopkglib.get_pref('RECIPE_OVERRIDE_DIRS'):
     timeprint('RECIPE_OVERRIDE_DIRS is missing or empty.')
     prefs_valid = False
@@ -425,8 +428,12 @@ def parse_report_plist(report_plist_path):
 def handle_recipe(recipe, pkg_path=None):
   """Handle the complete workflow of an autopkg recipe."""
   display_verbose("Handling %s" % recipe)
+  if autopkglib.get_pref('RECIPE_REPO_DIR'):
+    recipe_repo_dir = autopkglib.get_pref('RECIPE_REPO_DIR')
+  else:
+    recipe_repo_dir = os.path.expanduser('~/Library/AutoPkg/RecipeRepos')
   report_plist_path = os.path.join(
-    os.path.dirname(autopkglib.get_pref('RECIPE_REPO_DIR')),
+    os.path.dirname(recipe_repo_dir),
     'autopkg.plist'
   )
   # 1. Syncing is no longer implemented
@@ -465,7 +472,7 @@ def handle_recipe(recipe, pkg_path=None):
 
 
 def parse_recipe_list(file_path):
-  """Parse a recipe list from a file path. Supports JSON or plist."""
+  """Parse a recipe list from a file path. Supports JSON, YAML, or plist."""
   timeprint("Parsing recipe list")
   if not os.path.isfile(file_path):
     timeprint("No recipe list found at that path!")
@@ -475,6 +482,9 @@ def parse_recipe_list(file_path):
   if extension == '.json':
     with open(file_path, 'rb') as f:
       recipe_list = json.load(f)
+  elif extension in ('.yaml', '.yml') and YAML_INSTALLED:
+    with open(file_path, 'rb') as f:
+      recipe_list = yaml.load(f)
   elif extension == '.plist':
     recipe_list = FoundationPlist.readPlist(file_path)
   else:
@@ -488,7 +498,7 @@ if __name__ == '__main__':
     description='Wrap AutoPkg with git support.')
   group = parser.add_mutually_exclusive_group()
   group.add_argument(
-    '-l', '--list', help='Path to a plist or JSON list of recipe names.'
+    '-l', '--list', help='Path to a plist, JSON, or YAML list of recipe names.'
   )
   group.add_argument(
     '-r', '--recipes', nargs='+',
