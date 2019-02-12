@@ -14,12 +14,12 @@
 
 begin
   user = node.console_user
-  include_recipe "cpe_user_customizations::#{user}"
+  include_recipe "cpe_user_customizations::#{user.downcase}"
 rescue Chef::Exceptions::RecipeNotFound
   return
 rescue Exception => e
   Chef::Log.warn(
-    "Error in cpe_user_customizations::#{user} \n"+
+    "Error in cpe_user_customizations::#{user.downcase} \n"+
     "#{e.message} \n" +
     "#{e.backtrace.inspect} \n"
   )
