@@ -17,6 +17,12 @@ default_action :config
 action :config do
   safari_prefs = node['cpe_safari'].reject { |_k, v| v.nil? }
   return if safari_prefs.empty?
+  if node.os_at_least?('10.14')
+    Chef::Log.warn(
+      'cpe_safari no longer works on 10.14 and higher.',
+    )
+    return
+  end
   prefix = node['cpe_profiles']['prefix']
   organization = node['organization'] ? node['organization'] : 'Facebook'
   node.default['cpe_profiles']["#{prefix}.browsers.safari"] = {
