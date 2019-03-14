@@ -49,7 +49,9 @@ Attributes
 * node['cpe_adobe_flash']['configs']['NetworkRequestTimeout']
 * node['cpe_adobe_flash']['configs']['EnableInsecureJunctionBehavior']
 * node['cpe_adobe_flash']['configs']['EnableLocalAppData']
-* node['cpe_adobe_flash']['configs']['DefaultLanguage']
+* node['cpe_adobe_flash']['configs']['EventJitterMicroseconds']
+* node['cpe_adobe_flash']['configs']['TimerJitterMicroseconds']
+* node['cpe_adobe_flash']['configs']['InsecureJitterDisabledDomain']
 
 Usage
 -----
