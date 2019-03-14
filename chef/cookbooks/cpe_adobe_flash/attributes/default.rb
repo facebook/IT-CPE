@@ -57,4 +57,7 @@ default['cpe_adobe_flash']['configs'] = {
   'EnableInsecureJunctionBehavior' => nil,
   'EnableLocalAppData' => nil,
   'DefaultLanguage' => nil,
+  'EventJitterMicroseconds' => nil,
+  'TimerJitterMicroseconds' => nil,
+  'InsecureJitterDisabledDomain' => nil,
 }
