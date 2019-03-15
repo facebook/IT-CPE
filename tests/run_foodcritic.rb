@@ -9,6 +9,11 @@ RSpec.describe 'Check that the cookbooks changed pass foodcritic.' do
       FC059
       FC064
       FC065
+      FC066
+      FC067
+      FC069
+      FC071
+      FC078
     ]
     @exclude_rules = @exclude_rules.join(' -t ~')
 
