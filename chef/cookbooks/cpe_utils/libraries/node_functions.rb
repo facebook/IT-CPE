@@ -55,16 +55,48 @@ class Chef
       end
     end
 
-    def console_user
-      unless macos?
-        Chef::Log.warn('node.console_user called on non-OS X!')
-        return
+    def loginctl_users
+      @loginctl_users ||= begin
+        # More liux distros that support loginctl can go here
+        loginctl_path = value_for_platform_family(
+          'debian' => '/bin/loginctl',
+          'fedora' => '/usr/bin/loginctl',
+        )
+        if self.linux? && ::File.exist?(loginctl_path)
+          res = shell_out("#{loginctl_path} list-users")
+          return [] if res.error?
+
+          # first line is header
+          # last two lines are empty line and user count
+          user_lines = res.stdout.lines[1..-3]
+          user_lines.map do |u|
+            uid, uname = u.split
+            { 'uid' => Integer(uid), 'username' => uname }
+          end
+        else []
+        end
       end
-      usercmd = Mixlib::ShellOut.new(
-        '/usr/bin/stat -f%Su /dev/console',
-      ).run_command.stdout
-      username = usercmd.chomp
-      username
+    end
+
+    def console_user
+      # memoize the value so it isn't run multiple times per run
+      @console_user ||=
+        if self.macos?
+          Etc.getpwuid(::File.stat('/dev/console').uid).name
+        elsif self.linux?
+          filtered_users = self.loginctl_users.select do |u|
+            u['username'] != 'gdm' && u['uid'] >= 1000
+          end
+          if filtered_users.empty?
+            Chef::Log.warn("Unable to determine user: #{e}")
+            nil
+          else
+            filtered_users[0]['username']
+          end
+        end
+    rescue StandardError => e
+      Chef::Log.warn("Unable to determine user: #{e}")
+      nil
     end
 
     def serial
