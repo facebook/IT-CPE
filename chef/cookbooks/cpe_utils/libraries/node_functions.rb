@@ -100,17 +100,39 @@ class Chef
     end
 
     def serial
-      unless macos?
-        Chef::Log.warn('node.serial called on non-OS X!')
-        return
-      end
-      return node['serial'] if node['serial']
-      serial = Mixlib::ShellOut.new(
-        '/usr/sbin/ioreg -c IOPlatformExpertDevice |head -30' +
-        '|grep IOPlatformSerialNumber | awk \'{print $4}\' | sed -e s/\"//g',
-      ).run_command.stdout.chomp
-      node.default['serial'] = serial
-      serial
+      @serial ||=
+        if self.macos?
+          ioreg_xml = shell_out!(
+            '/usr/sbin/ioreg -c IOPlatformExpertDevice -d 2 -a',
+          ).stdout
+          Plist.parse_xml(
+            ioreg_xml,
+          )['IORegistryEntryChildren'][0]['IOPlatformSerialNumber']
+        elsif self.debian_family?
+          cmd = '/usr/sbin/dmidecode -s system-serial-number'
+          s_n = shell_out!(cmd).stdout.chomp
+          s_n.split("\n").reject { |line| line.include?('#') }.join.chomp
+        elsif self.windows?
+          require 'chef/mixin/powershell_out'
+          serial_cmd = 'Get-CimInstance Win32_ComputerSystemProduct |' +
+          ' Select-Object IdentifyingNumber | ConvertTo-Json'
+          id_json = powershell_out!(serial_cmd).stdout
+          begin
+            serial_json = JSON.parse(id_json)
+            serial_json['IdentifyingNumber']
+          rescue JSON::ParserError => e
+            Chef::Log.error(
+              "node/uuid_serial: Error: #{e.message}",
+            )
+            nil
+          end
+        else
+          Chef::Log.warn(
+            "#{node['platform']} is not yet supported by node.serial",
+          )
+        end
+    rescue StandardError => e
+      Chef::Log.warn("Unable to get serial: #{e}")
     end
 
     def uuid
