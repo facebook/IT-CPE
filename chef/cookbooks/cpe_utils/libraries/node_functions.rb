@@ -45,6 +45,7 @@ class Chef
     #  => ":)"
     def attr_lookup(path, delim: '/', default: nil)
       return default if path.nil?
+      
       node_path = path.split(delim)
       node_path.inject(self) do |location, key|
         begin
@@ -141,6 +142,7 @@ class Chef
         return
       end
       return node['uuid'] if node['uuid']
+      
       uuid = Mixlib::ShellOut.new(
         '/usr/sbin/system_profiler SPHardwareDataType' +
         '| awk \'/UUID/ { print $3; }\'',
@@ -210,6 +212,7 @@ class Chef
       passed_duration = duration
       st = Time.parse(start_time).tv_sec
       return false unless st
+      
       # Multiply the number of days by 1440 min and 60 s to convert a day into
       # seconds.
       if duration.match('^[0-9]+[dD]$')
@@ -479,7 +482,6 @@ class Chef
       false
     end
 
-
     # returns either nil, "mdm", "uamdm", or "dep"
     def _parse_profiles_status(output)
       if output.include?('Enrolled via DEP: Yes')
@@ -499,6 +501,7 @@ class Chef
       profiles = Plist.parse_xml(output)
       fail 'profiles XML parsing cannot be nil!' if profiles.nil?
       fail 'profiles XML parsing must be a Hash!' unless profiles.is_a?(Hash)
+      
       if profiles.key?('_computerlevel')
         profiles['_computerlevel'].each do |profile|
           profile['ProfileItems'].each do |item|
