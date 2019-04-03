@@ -4,8 +4,9 @@ Manage Adobe Flash settings for macOS and Windows.
 
 Requirements
 ------------
-macOS, Windows
-chef 13+
+* macOS
+* Windows
+* Chef 13+
 
 Attributes
 ----------
@@ -56,21 +57,25 @@ Attributes
 
 Usage
 -----
-The cookbook will manage the `mms.cfg` config file. You can find the available configs on Adobe's [Administration Guide](https://helpx.adobe.com/flash-player/kb/administration-configure-auto-update-notification.html).
+The cookbook will manage the `mms.cfg` config file. You can find the available
+configs on Adobe's [Administration Guide](https://helpx.adobe.com/flash-player/kb/administration-configure-auto-update-notification.html).
 
 Set `['cpe_adobe_flash']['configure']` to `true` to manage the `mms.cfg` file.
 
-Set `['cpe_adobe_flash']['uninstall']` to `true` to remove Adobe Flash in the event of a zero Day.
+Set `['cpe_adobe_flash']['uninstall']` to `true` to remove Adobe Flash in the
+event of a zero Day.
 
 Example:
 
-  {
-    'configure' => false,
-    'uninstall' => true,
-  }.each { |k, v| node.default['cpe_adobe_flash'][k] = v }
+```
+{
+  'configure' => false,
+  'uninstall' => true,
+}.each { |k, v| node.default['cpe_adobe_flash'][k] = v }
 
-  {
-    'AutoUpdateDisable' => 0,
-    'SilentAutoUpdateEnable' => 1,
-    'SilentAutoUpdateVerboseLogging' => 1,
-  }.each { |k, v| node.default['cpe_adobe_flash']['configs'][k] = v }
+{
+  'AutoUpdateDisable' => 0,
+  'SilentAutoUpdateEnable' => 1,
+  'SilentAutoUpdateVerboseLogging' => 1,
+}.each { |k, v| node.default['cpe_adobe_flash']['configs'][k] = v }
+```

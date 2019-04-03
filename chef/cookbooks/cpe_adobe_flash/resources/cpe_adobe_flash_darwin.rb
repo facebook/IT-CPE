@@ -51,7 +51,7 @@ action_class do
     node.default['cpe_munki']['local']['managed_uninstalls'] <<
       'AdobeFlashPlayer'
 
-    home_dir = node.attr_lookup('cpe/person/home_dir')
+    home_dir = node.person['home_dir']
     return unless home_dir
     internet_plugins = '/Library/Internet Plug-Ins'
     user_internet_plugins = ::File.join(home_dir, 'Library/Internet Plug-Ins')

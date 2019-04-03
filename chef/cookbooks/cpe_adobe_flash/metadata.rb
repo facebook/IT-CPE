@@ -11,4 +11,3 @@ depends 'cpe_choco'
 depends 'cpe_launchd'
 depends 'cpe_munki'
 depends 'cpe_utils'
-

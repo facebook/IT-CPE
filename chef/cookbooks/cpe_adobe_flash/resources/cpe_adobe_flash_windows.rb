@@ -35,12 +35,42 @@ action_class do
     return unless node['cpe_adobe_flash']['uninstall']
 
     node.default['cpe_choco']['uninstall']['flashplayerplugin'] = {
-      'version' => 'any',
+      'version' => 'all',
     }
 
     file ::File.join(config_dir, 'mms.cfg') do
       action :delete
     end
+  end
+
+  def flash_version
+    return unless ::File.exist?("#{ENV['ProgramData']}\\osquery\\osqueryi.exe")
+    # query to get version data
+    query = <<-SQL
+      SELECT
+        name, version
+      FROM programs
+      WHERE
+        name LIKE 'Adobe Flash Player%'
+    SQL
+    # grabbing osquery data
+    osquery_data = Osquery.query(query, node['os'])
+    flash_data = osquery_data.fetch(0, {})
+    flash_data.fetch('version', nil)
+  end
+
+  def upgrade
+    flash_v = flash_version
+    return unless flash_v
+
+    muv = node['cpe_adobe_flash']['MinimumUpgradeVersion']
+    return unless muv
+
+    return unless Gem::Version.new(flash_v) < Gem::Version.new(muv)
+
+    node.default['cpe_choco']['install']['flashplayerplugin'] = {
+      'version' => 'latest',
+    }
   end
 
   def config_dir
@@ -54,4 +84,5 @@ end
 action :config do
   configure
   uninstall
+  upgrade
 end
