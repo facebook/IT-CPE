@@ -59,7 +59,7 @@ action :config do
   # Set the basic identifier
   ident = "com.apple.EnergySaver.#{machine_type}"
   # Apply all settings to the profile - AC and/or Battery
-  pm_prefs.keys.each do |type|
+  pm_prefs.each_key do |type|
     next if pm_prefs[type].empty?
     energy_profile['PayloadContent'][0]["#{ident}.#{type}-ProfileNumber"] = -1
     energy_profile['PayloadContent'][0]["#{ident}.#{type}"] = pm_prefs[type]
