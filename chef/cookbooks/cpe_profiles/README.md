@@ -5,7 +5,7 @@ chef.
 
 Requirements
 ------------
-* macOS (10.9.0 and higher)
+* macOS (10.9 and higher)
 * cpe_utils
 
 
