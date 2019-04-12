@@ -5,7 +5,8 @@ chef.
 
 Requirements
 ------------
-Mac OS X
+* macOS (10.9.0 and higher)
+* cpe_utils
 
 
 Attributes
@@ -18,23 +19,23 @@ Usage
 Include this recipe and add any configuration profiles matching the format in the
 example below.
 
-**Note:** Ensure that you override the default value of `node['cpe_profiles']['prefix']`. 
+**Note:** Ensure that you override the default value of `node['cpe_profiles']['prefix']`.
 If you do not do this, it will assume a PayloadIdentifier prefix of `com.facebook.chef`. This
 should be configued in your company_init.rb file, found in the cpe_init cookbook.
 
 **THIS MUST GO IN A RECIPE. DO NOT PUT THIS IN ATTRIBUTES, OR IT MAY CAUSE PAIN
 AND SUFFERING FOR YOUR FLEET!**
 
-To add a new config profile, in your recipe, add a key matching the 
+To add a new config profile, in your recipe, add a key matching the
 profile PayloadIdentifier with a value that contains the hash of the profile
 to `node.default['cpe_profiles']`
 
 
-**If you already have profiles installed using an existing prefix, be sure to 
+**If you already have profiles installed using an existing prefix, be sure to
 convert all of them over to the new prefix. There will be pain and suffering if this
 is not done.**
 
-**Note: This is an example. If you wish to manage the screensaver, use the 
+**Note: This is an example. If you wish to manage the screensaver, use the
 cpe_screensaver cookbook.**
 
 If you want to use the default prefix, add a profile hash to manage the screensaver using
@@ -116,6 +117,4 @@ cpe_profiles attr:
           }
         }
       ]
-    } 
-
-
+    }
