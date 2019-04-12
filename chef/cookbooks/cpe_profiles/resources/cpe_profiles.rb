@@ -61,7 +61,11 @@ def find_managed_profile_identifiers
     end
   end
   current_identifiers = []
-  profiles_string = shell_out!('profiles -P -o stdout-xml')
+  if node.os_at_least?('10.13')
+    profiles_string = shell_out!('/usr/bin/profiles list -output stdout-xml')
+  else
+    profiles_string = shell_out!('/usr/bin/profiles -P -o stdout-xml')
+  end
   profiles = Plist.parse_xml(profiles_string.stdout)
   if profiles['_computerlevel']
     profiles['_computerlevel'].each do |profile|

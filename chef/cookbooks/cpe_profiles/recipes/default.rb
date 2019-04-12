@@ -12,6 +12,8 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 #
 
+return unless node.macos? && node.os_at_least?('10.9')
+
 cpe_profiles 'Managing all of Configuration Profiles'
 
 cpe_profiles 'Cleaning up un-needed Configuration Profiles' do
