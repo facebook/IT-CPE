@@ -100,39 +100,64 @@ class Chef
     end
 
     def serial
-      @serial ||=
-        if self.macos?
+      @serial ||= begin
+        serial = nil
+        if self.debian_family?
+          # Should probably stop using anything but system-serial-number
+          # Try really hard to set the serial number.
+          # Please keep these in this order unless you have a good reason to
+          # change the ordering. Regardless, keep system-uuid last, it's the
+          # last resort option.
+          %w{
+            system-serial-number
+            chassis-serial-number
+            baseboard-serial-number
+            system-uuid
+          }.each do |dmistr|
+            system_serial = shell_out(
+              "/usr/sbin/dmidecode -s #{dmistr}",
+            ).stdout.lines.map(&:chomp)[0]
+            unless system_serial.nil? ||
+              /\s/.match(system_serial) ||
+              /^0?$/.match(system_serial)
+              serial = system_serial
+              break
+            end
+          end
+          # Make sure the serial has no dashes
+          serial.delete!('-')
+        elsif self.macos?
           ioreg_xml = shell_out!(
             '/usr/sbin/ioreg -c IOPlatformExpertDevice -d 2 -a',
           ).stdout
-          Plist.parse_xml(
+          serial = Plist.parse_xml(
             ioreg_xml,
           )['IORegistryEntryChildren'][0]['IOPlatformSerialNumber']
-        elsif self.debian_family?
-          cmd = '/usr/sbin/dmidecode -s system-serial-number'
-          s_n = shell_out!(cmd).stdout.chomp
-          s_n.split("\n").reject { |line| line.include?('#') }.join.chomp
         elsif self.windows?
           require 'chef/mixin/powershell_out'
-          serial_cmd = 'Get-CimInstance Win32_ComputerSystemProduct |' +
-          ' Select-Object IdentifyingNumber | ConvertTo-Json'
+          serial_cmd = <<-'EOF'
+  Get-CimInstance Win32_ComputerSystemProduct | Select-Object IdentifyingNumber | ConvertTo-Json
+EOF
           id_json = powershell_out!(serial_cmd).stdout
           begin
             serial_json = JSON.parse(id_json)
-            serial_json['IdentifyingNumber']
+            serial = serial_json['IdentifyingNumber']
           rescue JSON::ParserError => e
             Chef::Log.error(
               "node/uuid_serial: Error: #{e.message}",
             )
-            nil
+            serial = nil
           end
         else
           Chef::Log.warn(
             "#{node['platform']} is not yet supported by node.serial",
           )
+          serial = nil
         end
+      serial
     rescue StandardError => e
       Chef::Log.warn("Unable to get serial: #{e}")
+      nil
     end
 
     def uuid
