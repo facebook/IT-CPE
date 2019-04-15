@@ -155,7 +155,8 @@ EOF
           )
           serial = nil
         end
-      serial
+        serial
+      end
     rescue StandardError => e
       Chef::Log.warn("Unable to get serial: #{e}")
       nil
