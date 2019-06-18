@@ -396,6 +396,10 @@ class Chef
       self.ubuntu? && node['platform_version'].start_with?('16.')
     end
 
+    def ubuntu18?
+      self.ubuntu? && node['platform_version'].start_with?('18.')
+    end
+    
     def fedora27?
       self.fedora? && node['platform_version'].eql?('27')
     end
