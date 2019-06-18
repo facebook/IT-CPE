@@ -62,6 +62,7 @@ node.ubuntu?
 node.ubuntu14?
 node.ubuntu15?
 node.ubuntu16?
+node.ubuntu18?
 node.windows?
 node.windows8?
 node.windows8_1?
