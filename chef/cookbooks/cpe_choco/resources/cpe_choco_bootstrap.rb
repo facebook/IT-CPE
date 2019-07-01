@@ -37,19 +37,19 @@ action :install do
   bootstrap_choco
   @new_resource.version = node['cpe_choco']['bootstrap']['version']
   converge_if_changed :version do
-    upgrade_to_version
+    upgrade_to_version(node['cpe_choco']['bootstrap']['version'])
   end
 end
 
 action_class do
-  def upgrade_to_version
+  def upgrade_to_version(new_version)
     choco_exe = 'C:\ProgramData\chocolatey\choco.exe'
     upgrade_source = node['cpe_choco']['bootstrap']['upgrade_source']
     pkg = 'chocolatey'
     # rubocop:disable Metric/LineLength
     powershell_script 'upgrade_choco' do
       code <<-EOF
-& #{choco_exe} upgrade --allow-downgrade --version=#{version} -y -s #{upgrade_source} #{pkg}
+& #{choco_exe} upgrade --allow-downgrade --version=#{new_version} -y -s #{upgrade_source} #{pkg}
 EOF
       action :run
     end
