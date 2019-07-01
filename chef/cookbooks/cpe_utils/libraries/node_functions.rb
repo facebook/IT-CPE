@@ -101,7 +101,7 @@ class Chef
 
     def serial
       unless macos?
-        Chef::Log.warn('node.serial called on non-OS X!')
+        Chef::Log.warn('node.serial called on non-macOS!')
         return
       end
       return node['serial'] if node['serial']
@@ -115,7 +115,7 @@ class Chef
 
     def uuid
       unless macos?
-        Chef::Log.warn('node.serial called on non-OS X!')
+        Chef::Log.warn('node.uuid called on non-macOS!')
         return
       end
       return node['uuid'] if node['uuid']
@@ -396,6 +396,10 @@ class Chef
       self.ubuntu? && node['platform_version'].start_with?('16.')
     end
 
+    def ubuntu18?
+      self.ubuntu? && node['platform_version'].start_with?('18.')
+    end
+
     def fedora27?
       self.fedora? && node['platform_version'].eql?('27')
     end
@@ -641,7 +645,7 @@ class Chef
 
     def app_paths_deprecated(bundle_identifier)
       unless macos?
-        Chef::Log.warn('node.app_paths_deprecated called on non-OS X!')
+        Chef::Log.warn('node.app_paths_deprecated called on non-macOS!')
         []
       end
       # Search Spotlight for matching identifier, strip newlines
@@ -652,7 +656,7 @@ class Chef
 
     def installed?(bundle_identifier)
       unless macos?
-        Chef::Log.warn('node.installed? called on non-OS X!')
+        Chef::Log.warn('node.installed? called on non-macOS!')
         false
       end
       paths = app_paths_deprecated(bundle_identifier)
@@ -692,7 +696,7 @@ class Chef
 
     def min_package_installed?(pkg_identifier, min_pkg)
       unless macos?
-        Chef::Log.warn('node.min_package_installed? called on non-OS X!')
+        Chef::Log.warn('node.min_package_installed? called on non-macOS!')
         false
       end
       installed_pkg_version = shell_out(
@@ -708,7 +712,7 @@ class Chef
 
     def max_package_installed?(pkg_identifier, max_pkg)
       unless macos?
-        Chef::Log.warn('node.max_package_installed? called on non-OS X!')
+        Chef::Log.warn('node.max_package_installed? called on non-macOS!')
         false
       end
       installed_pkg_version = shell_out(
