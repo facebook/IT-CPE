@@ -1,5 +1,11 @@
 # Contributing to IT-CPE
 
+**note**
+Our refactored cookbooks in `itchef/` depend on `fb_` cookbooks maintained by
+a different Facebook team. We include them in this repository for convenience,
+but to contribute to cookbooks prefixed with `fb_` please check out
+[this repo](https://github.com/facebook/chef-cookbooks/).
+
 ## Contributor License Agreement ("CLA")
 
 In order to accept your pull request, we need you to submit a CLA. You
@@ -16,4 +22,5 @@ e-mail or create a new github issue to request the CLA in PDF format.
 ## License
 
 By contributing to IT-CPE, you agree that your contributions will be
-licensed under the [BSD License](LICENSE).
+licensed under the [BSD License](LICENSE) and the
+[Apache 2.0 license](itchef/LICENSE).

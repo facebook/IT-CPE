@@ -14,4 +14,7 @@ systems we manage.
 * [Facebook group] (https://fb.com/groups/TheITThinkTank)
 
 ## License
-IT-CPE tools is BSD-licensed. We also provide an additional patent grant.
+Old IT-CPE tools are BSD-licensed with an additional patent grant; see `LICENSE`
+and `PATENTS`.
+
+New Chef cookbooks in the `itchef` directory are under the Apache 2.0 license.
