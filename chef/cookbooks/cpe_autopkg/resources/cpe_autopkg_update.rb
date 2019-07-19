@@ -33,6 +33,7 @@ action :update do
   # Add or update all the existing repos
   node['cpe_autopkg']['repos'].each do |repo|
     execute "add_#{repo}" do
+      only_if { ::File.exist?(AUTOPKG_BIN) }
       not_if { repo_list.any? { |s| s.include?(repo) } }
       user node['cpe_autopkg']['user']
       command "#{AUTOPKG_BIN} repo-add #{repo}"
