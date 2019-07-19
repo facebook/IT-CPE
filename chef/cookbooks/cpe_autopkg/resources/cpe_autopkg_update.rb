@@ -25,6 +25,8 @@ AUTOPKG_BIN = '/usr/local/bin/autopkg'.freeze
 
 action :update do
   return unless node['cpe_autopkg']['update']
+  return unless ::File.exist?(AUTOPKG_BIN)
+
   # Get list of existing repos first
   repo_list = Mixlib::ShellOut.new(
     'autopkg repo-list',
@@ -33,7 +35,6 @@ action :update do
   # Add or update all the existing repos
   node['cpe_autopkg']['repos'].each do |repo|
     execute "add_#{repo}" do
-      only_if { ::File.exist?(AUTOPKG_BIN) }
       not_if { repo_list.any? { |s| s.include?(repo) } }
       user node['cpe_autopkg']['user']
       command "#{AUTOPKG_BIN} repo-add #{repo}"
