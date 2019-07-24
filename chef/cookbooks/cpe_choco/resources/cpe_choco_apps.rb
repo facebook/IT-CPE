@@ -94,15 +94,17 @@ action_class do
   def action_guard(option)
     if option['version'].casecmp('latest').zero?
       :upgrade
+    else
+      :install
     end
-    :install
   end
 
   def version_guard(option)
     if option['version'].casecmp('latest').zero?
       nil
+    else
+      option['version']
     end
-    option['version']
   end
 
   def process_lists
