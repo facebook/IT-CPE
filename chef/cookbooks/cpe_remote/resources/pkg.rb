@@ -21,6 +21,7 @@ resource_name :cpe_remote_pkg
 default_action :install
 
 provides :cpe_remote_pkg, :os => 'darwin'
+property :allow_downgrade, [TrueClass, FalseClass], :default => true
 property :app, String, :name_property => true
 property :checksum, String
 property :backup, [FalseClass, Integer], :default => false
@@ -33,6 +34,16 @@ property :version, String
 
 action_class do
   include CPE::Remote
+  def log_info(msg)
+    CPE::Log.log(
+      msg,
+      :level => :info,
+      :type => 'cpe_remote_pkg',
+      :action => 'install',
+      :status => 'success',
+    )
+  end
+
   def log_warn(msg)
     CPE::Log.log(
       msg,
@@ -55,13 +66,27 @@ load_current_value do
   version shell_out(cmd).stdout.to_s[/version: (.*)/, 1]
 end
 
-action :install do
+action :install do # rubocop:disable Metrics/BlockLength
   return unless log_unless(
     'Distro server inaccessible',
   ) { node['cpe_remote']['server_accessible'] }
+
+  desired_pkg_version = new_resource.version
+  installed_pkg_version = current_resource.version
+
+  unless new_resource.allow_downgrade
+    if Gem::Version.new(installed_pkg_version) > Gem::Version.new(desired_pkg_version) # rubocop:disable Metrics/LineLength
+      log_info(
+        "Installed version (#{installed_pkg_version}) is higher than desired "\
+        "version (#{desired_pkg_version}), but allow_downgrade is false.",
+      )
+      return
+    end
+  end
+
   converge_if_changed :version do
     pkg_name = new_resource.app
-    pkg_version_str = "-#{new_resource.version}"
+    pkg_version_str = "-#{pkg_version}"
     if new_resource.pkg_name
       pkg_name = new_resource.pkg_name
       pkg_version_str = ''
