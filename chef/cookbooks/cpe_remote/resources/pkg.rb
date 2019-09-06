@@ -71,14 +71,14 @@ action :install do # rubocop:disable Metrics/BlockLength
     'Distro server inaccessible',
   ) { node['cpe_remote']['server_accessible'] }
 
-  desired_pkg_version = new_resource.version
-  installed_pkg_version = current_resource.version
+  desired_version = new_resource.version
+  installed_version = current_resource.version
 
   unless new_resource.allow_downgrade
-    if Gem::Version.new(installed_pkg_version) > Gem::Version.new(desired_pkg_version) # rubocop:disable Metrics/LineLength
+    if Gem::Version.new(installed_version) > Gem::Version.new(desired_version)
       log_info(
-        "Installed version (#{installed_pkg_version}) is higher than desired "\
-        "version (#{desired_pkg_version}), but allow_downgrade is false.",
+        "Installed version (#{installed_version}) is higher than desired "\
+        "version (#{desired_version}), but allow_downgrade is false.",
       )
       return
     end
@@ -86,7 +86,7 @@ action :install do # rubocop:disable Metrics/BlockLength
 
   converge_if_changed :version do
     pkg_name = new_resource.app
-    pkg_version_str = "-#{pkg_version}"
+    pkg_version_str = "-#{desired_version}"
     if new_resource.pkg_name
       pkg_name = new_resource.pkg_name
       pkg_version_str = ''
