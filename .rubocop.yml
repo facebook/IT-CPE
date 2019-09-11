@@ -87,7 +87,7 @@ FileName:
 PerceivedComplexity:
   Enabled: false
 
-UnneededDisable:
+Lint/UnneededDisable:
   Enabled: false
 
 # Seems buggy - https://github.com/bbatsov/rubocop/issues/2690
@@ -120,6 +120,9 @@ Style/ConditionalAssignment:
 Metrics/LineLength:
   Max: 80
 
+Metrics/BlockLength:
+  Enabled: false
+
 Layout/DotPosition:
   EnforcedStyle: trailing
 
@@ -143,3 +146,7 @@ Layout/IndentFirstArrayElement:
 
 Style/SignalException:
   EnforcedStyle: semantic
+
+Style/FrozenStringLiteralComment:
+  EnforcedStyle: never
+
