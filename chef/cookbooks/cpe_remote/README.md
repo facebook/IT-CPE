@@ -38,6 +38,8 @@ This resource will install a Apple package (`.pkg` file). It will retrieve the p
 - :install - Install the package.
 
 #### Parameter attributes:
+- `allow_downgrade` - BOOL - Downgrade a package to satisfy requested version
+          requirements.
 - `app` - [name] This is the name of the app that the pkg will be installing,
           and the location of the pkg on the server: `base_url/app/app-version.pkg`
 - `checksum` - sha256 checksum of the pkg to download.
