@@ -120,9 +120,6 @@ Style/ConditionalAssignment:
 Metrics/LineLength:
   Max: 80
 
-Metrics/BlockLength:
-  Enabled: false
-
 Layout/DotPosition:
   EnforcedStyle: trailing
 
