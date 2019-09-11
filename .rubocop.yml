@@ -87,7 +87,7 @@ FileName:
 PerceivedComplexity:
   Enabled: false
 
-Lint/UnneededDisable:
+Lint/UnneededCopDisableDirective:
   Enabled: false
 
 # Seems buggy - https://github.com/bbatsov/rubocop/issues/2690
