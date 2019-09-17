@@ -1,6 +1,4 @@
-# vim: syntax=ruby.eruby.chef:expandtab:shiftwidth=2:softtabstop=2:tabstop=2
-#
-# Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved.
+# Copyright (c) Facebook, Inc. and its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.

@@ -1,4 +1,4 @@
-# Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved.
+# Copyright (c) Facebook, Inc. and its affiliates.
 name 'cpe_helpers'
 maintainer 'Facebook'
 maintainer_email 'noreply@facebook.com'
