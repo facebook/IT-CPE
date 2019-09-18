@@ -18,10 +18,6 @@ require_relative '../../fb_helpers/libraries/node_methods'
 class Chef
   # Our extensions of the node object
   class Node
-    def arch?
-      return node['platform'] == 'arch'
-    end
-
     def chef_greater_than?(version)
       Chef::Version.new(Chef::VERSION) > Chef::Version.new(version)
     end
@@ -32,10 +28,6 @@ class Chef
 
     def chef_less_than?(version)
       Chef::Version.new(Chef::VERSION) < Chef::Version.new(version)
-    end
-
-    def debian_sid?
-      return self.debian? && self['platform_version'].include?('sid')
     end
 
     def os_at_least?(version)
