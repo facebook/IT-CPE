@@ -15,7 +15,7 @@
 module CPE
   module Nomad
     def console_user
-      @console_user ||= CPE::Utils.console_user
+      @console_user ||= CPE::Helpers.console_user
     end
 
     def demobilize
