@@ -212,5 +212,22 @@ class Chef
 
       res.stdout.lines.map(&:strip)
     end
+
+    def rpm_cmpver(verstr1, verstr2, compare_epoch = false)
+      CPE::Helpers.rpm_cmpver(verstr1, verstr2, compare_epoch)
+    end
+
+    def rpm_installed?(name, verstr = nil,
+                       compare_epoch = false, exact = true)
+      CPE::Helpers.rpm_installed?(name, verstr, compare_epoch, exact)
+    end
+
+    def rpm_parsever(verstr)
+      CPE::Helpers.rpm_parsever(verstr)
+    end
+
+    def rpm_parserel(relstr)
+      CPE::Helpers.rpm_parserel(relstr)
+    end
   end
 end

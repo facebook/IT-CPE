@@ -177,5 +177,97 @@ EOF
       Chef::Log.warn("could not lookup ldap user info for #{username}: #{e}")
       data
     end
+
+    def self.rpm_cmpver(verstr1, verstr2, compare_epoch = false)
+      e1, v1, r1 = rpm_parsever(verstr1)
+      e2, v2, r2 = rpm_parsever(verstr2)
+      if compare_epoch
+        if e1 > e2
+          return 1
+        elsif e1 < e2
+          return -1
+        end
+      end
+      if v1 > v2
+        1
+      elsif v1 < v2
+        -1
+      else
+        parsed_rel1 = rpm_parserel(r1)
+        parsed_rel2 = rpm_parserel(r2)
+        if parsed_rel1[0] > parsed_rel2[0]
+          1
+        elsif parsed_rel1[0] < parsed_rel2[0]
+          -1
+        elsif parsed_rel1[1] > parsed_rel2[1]
+          1
+        elsif parsed_rel1[1] < parsed_rel2[1]
+          -1
+        else
+          0
+        end
+      end
+    end
+
+    def self.rpm_installed?(name, verstr = nil,
+                            compare_epoch = false, exact = true)
+      pkg_to_check =
+        if verstr.nil? || !exact
+          name
+        else
+          "#{name}-#{verstr}"
+        end
+
+      rpm_q = shell_out(
+        "rpm -q --queryformat '%{EPOCH}:%{VERSION}-%{RELEASE}' #{pkg_to_check}",
+      )
+      if rpm_q.error?
+        false
+      elsif verstr.nil?
+        true
+      else
+        cmp = rpm_cmpver(rpm_q.stdout, verstr, compare_epoch)
+        if exact
+          cmp.zero?
+        else
+          cmp >= 0
+        end
+      end
+    end
+
+    def self.rpm_parsever(verstr)
+      epoch_verrel = verstr.split(':')
+      if epoch_verrel.count == 1
+        epoch = 0
+        verrel = verstr
+      else
+        estr, verrel = epoch_verrel
+        if estr == '(none)' # rpm -q returns this if epoch is unset
+          epoch = 0
+        else
+          epoch = estr.to_i
+        end
+      end
+      ver_rel = verrel.split('-')
+      if ver_rel.count == 1
+        ver = verrel
+        rel = '0'
+      else
+        ver, rel = ver_rel
+      end
+      begin
+        gem_ver = Gem::Version.new(ver)
+      rescue ArgumentError
+        # some RPMs might have really weird version strings,
+        # just leave them as strings and do string comparison
+        gem_ver = ver
+      end
+      return [epoch, gem_ver, rel]
+    end
+
+    def self.rpm_parserel(relstr)
+      rel_splits = relstr.split('.')
+      [rel_splits[0].to_i, rel_splits[1..-1].join('.')]
+    end
   end
 end
