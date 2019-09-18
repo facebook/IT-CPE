@@ -15,6 +15,9 @@
 
 module CPE
   class Helpers
+    LOGON_REG_KEY =
+      'SOFTWARE\Microsoft\Windows\CurrentVersion\Authentication\LogonUI'.freeze
+
     def self.loginctl_users
       @loginctl_users ||= begin
         # Standard path in Fedora
@@ -69,6 +72,8 @@ module CPE
           else
             filtered_users[0]['username']
           end
+        elsif windows?
+          logged_on_user_name
         end
     rescue StandardError => e
       Chef::Log.warn("Unable to determine user: #{e}")
@@ -113,6 +118,64 @@ module CPE
 
     def self.windows?
       RUBY_PLATFORM =~ /mswin|mingw32|windows/
+    end
+
+    def self.logged_on_user_registry
+      u = Win32::Registry::HKEY_LOCAL_MACHINE.open(
+        LOGON_REG_KEY, Win32::Registry::KEY_READ
+      ) do |reg|
+        reg.to_a.each_with_object({}).each { |(a, _, c), obj| obj[a] = c }
+      end
+      u.select! { |k, _| k =~ /user/i }
+    end
+
+    def self.logged_on_user_name
+      # Value is either 'AD_DOMAIN\\{username}' or '{username}@domain.com}'
+      last_user = logged_on_user_registry['LastLoggedOnUser']
+      last_user.match(/(?:.*\\)?([\w.-]+)(?:@.*)?/).captures[0]
+    end
+
+    def self.logged_on_user_sid
+      logged_on_user_registry['LastLoggedOnUserSID']
+    end
+
+    def self.ldap_lookup_script(username)
+      script = <<-'EOF'
+$desiredProperties = @(
+  ## We only need UPN and memberof
+  'memberof'
+  'userprincipalname'
+)
+$ADSISearcher = New-Object System.DirectoryServices.DirectorySearcher
+$ADSISearcher.Filter = '(&(sAMAccountName=%s)(objectClass=user))'
+$ADSISearcher.SearchScope = 'Subtree'
+$desiredProperties |
+  ForEach-Object {
+    $ADSISearcher.PropertiesToLoad.Add($_) |
+    Out-Null
+  }
+$ADSISearcher.FindAll() |
+  Select-Object -Expand Properties |
+  ConvertTo-Json -Compress
+EOF
+      @ldap_user_info ||= format(script, username)
+    end
+
+    def self.ldap_user_info(username: logged_on_user_name)
+      data = {}
+      script = ldap_lookup_script(username)
+      raw_data = powershell_out!(script).stdout
+      begin
+        encoded_data = raw_data.encode(Encoding::UTF_8)
+      rescue Encoding::UndefinedConversionError
+        # The culprit is CP850! https://stackoverflow.com/a/50467853/487509
+        raw_data.force_encoding(Encoding::CP850)
+        encoded_data = raw_data.encode(Encoding::UTF_8)
+      end
+      data = JSON.parse(encoded_data)
+    rescue StandardError => e
+      Chef::Log.warn("could not lookup ldap user info for #{username}: #{e}")
+      data
     end
   end
 end
