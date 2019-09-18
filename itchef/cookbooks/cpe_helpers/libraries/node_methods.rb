@@ -172,11 +172,7 @@ class Chef
         table_name = 'programs'
         platform = 'windows'
       when 'linux'
-        table_name = value_for_platform_family(
-          'debian' => 'deb_packages',
-          # Eventually, more Linux distros can go here
-        )
-        platform = 'posix'
+        return linux_app_paths(app_name)
       end
       query = <<-SQL
         SELECT path
@@ -191,6 +187,30 @@ class Chef
     rescue StandardError
       Chef::Log.warn("Unable to query app paths #{app_name}")
       []
+    end
+
+    def linux_app_paths(pkg_name)
+      case node['platform']
+      when 'fedora'
+        cmd = "rpm -ql #{pkg_name}"
+      when 'ubuntu', 'debian'
+        cmd = "dpkg -L #{pkg_name}"
+      when 'arch'
+        cmd = "pacman -Qlq #{pkg_name}"
+      else
+        Chef::Log.warn(
+          "Querying app paths not supported on #{node['platform']}",
+        )
+        return []
+      end
+      res = shell_out(cmd)
+
+      if res.error?
+        Chef::Log.error("Failed to run #{cmd}")
+        return []
+      end
+
+      res.stdout.lines.map(&:strip)
     end
   end
 end
