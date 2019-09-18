@@ -76,5 +76,121 @@ class Chef
     def loginwindow?
       CPE::Helpers.loginwindow?
     end
+
+    def win_choco_pkg_installed?(package_name)
+      unless windows?
+        Chef::Log.warn('node.win_choco_pkg_installed? called on non-Windows!')
+        return false
+      end
+      # bundle_identifiers are case sensitive
+      query = <<-SQL
+        SELECT name
+        FROM chocolatey_packages
+        WHERE
+          LOWER(name) == LOWER('#{package_name}')
+      SQL
+      osquery_data = Osquery.query(query, 'windows')
+      !osquery_data.empty?
+    rescue StandardError
+      Chef::Log.warn("Unable to query Choco package #{package_name}")
+      nil
+    end
+
+    def mac_bundleid_installed?(bundle_identifier)
+      unless macos?
+        Chef::Log.warn('node.mac_bundleid_installed? called on non-macOS!')
+        return false
+      end
+      # bundle_identifiers are case sensitive
+      query = <<-SQL
+        SELECT name
+        FROM apps
+        WHERE
+          LOWER(bundle_identifier) == LOWER('#{bundle_identifier}')
+      SQL
+      osquery_data = Osquery.query(query)
+      !osquery_data.empty?
+    rescue StandardError
+      Chef::Log.warn("Unable to query bundle identifier #{bundle_identifier}")
+      nil
+    end
+
+    def app_installed?(app_name)
+      case node['os']
+      when 'darwin'
+        table_name = 'apps'
+        platform = 'posix'
+      when 'windows'
+        table_name = 'programs'
+        platform = 'windows'
+      when 'linux'
+        table_name = value_for_platform_family(
+          'debian' => 'deb_packages',
+          'fedora' => 'rpm_packages',
+          # Eventually, more Linux distros can go here
+        )
+        platform = 'posix'
+      end
+      query = <<-SQL
+        SELECT name
+        FROM #{table_name}
+        WHERE
+          LOWER(name) LIKE LOWER('%#{app_name}%')
+      SQL
+      osquery_data = Osquery.query(query, platform)
+      matches = osquery_data.map(&:values).flatten
+      Chef::Log.debug("Fuzzy matches: #{matches}")
+      !osquery_data.empty?
+    rescue StandardError
+      Chef::Log.warn("Unable to query app #{app_name}")
+      nil
+    end
+
+    def installed?(name_or_identifier)
+      installed = false
+      case node['os']
+      when 'darwin'
+        # bundle identifiers almost certainly have '.' in the name,
+        # so try that first
+        if name_or_identifier.include?('.')
+          installed = mac_bundleid_installed?(name_or_identifier)
+        end
+      end
+      installed || app_installed?(name_or_identifier)
+    rescue StandardError
+      Chef::Log.warn("Unable to determine installation for:
+                     #{name_or_identifier}")
+      nil
+    end
+
+    def app_paths(app_name)
+      case node['os']
+      when 'darwin'
+        table_name = 'apps'
+        platform = 'posix'
+      when 'windows'
+        table_name = 'programs'
+        platform = 'windows'
+      when 'linux'
+        table_name = value_for_platform_family(
+          'debian' => 'deb_packages',
+          # Eventually, more Linux distros can go here
+        )
+        platform = 'posix'
+      end
+      query = <<-SQL
+        SELECT path
+        FROM #{table_name}
+        WHERE
+          LOWER(name) LIKE LOWER('%#{app_name}%')
+      SQL
+      osquery_data = Osquery.query(query, platform)
+      matches = osquery_data.map(&:values).flatten
+      Chef::Log.debug("Fuzzy matches: #{matches}")
+      matches
+    rescue StandardError
+      Chef::Log.warn("Unable to query app paths #{app_name}")
+      []
+    end
   end
 end
