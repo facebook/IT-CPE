@@ -72,5 +72,17 @@ class Chef
       end
       Gem::Version.new(node['platform_version']) < Gem::Version.new(version)
     end
+
+    def console_user
+      CPE::Helpers.console_user
+    end
+
+    def console_user_home_dir
+      CPE::Helpers.console_user_home_dir
+    end
+
+    def loginwindow?
+      CPE::Helpers.loginwindow?
+    end
   end
 end
