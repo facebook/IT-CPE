@@ -1,4 +1,3 @@
-# vim: syntax=ruby:expandtab:shiftwidth=2:softtabstop=2:tabstop=2
 
 require 'chefspec'
 require_relative '../libraries/cpe_helpers'
