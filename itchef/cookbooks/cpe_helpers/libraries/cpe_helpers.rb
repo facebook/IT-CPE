@@ -18,6 +18,24 @@ module CPE
     LOGON_REG_KEY =
       'SOFTWARE\Microsoft\Windows\CurrentVersion\Authentication\LogonUI'.freeze
 
+    # Method to check for port open on a host.
+    def self.check_port_connectivity(host, port, timeout = 2)
+      if self.valid_uri?(host)
+        uri = URI.parse(host)
+        host = uri.host
+        port = uri.port
+      end
+
+      Socket.tcp(host, port, :connect_timeout => timeout).close
+      true
+    rescue StandardError
+      Chef::Log.debug(
+        'CPE::Helpers.check_port_connectivity: ' +
+        "#{host} not reachable on #{port}",
+      )
+      false
+    end
+
     def self.loginctl_users
       @loginctl_users ||= begin
         # Standard path in Fedora
@@ -268,6 +286,13 @@ EOF
     def self.rpm_parserel(relstr)
       rel_splits = relstr.split('.')
       [rel_splits[0].to_i, rel_splits[1..-1].join('.')]
+    end
+
+    def self.valid_uri?(string)
+      uri = URI.parse(string)
+      %w{http https}.include?(uri.scheme)
+    rescue StandardError
+      false
     end
   end
 end

@@ -18,6 +18,10 @@ require_relative '../../fb_helpers/libraries/node_methods'
 class Chef
   # Our extensions of the node object
   class Node
+    def check_port_connectivity(host, port, timeout = 2)
+      CPE::Helpers.check_port_connectivity(host, port, timeout)
+    end
+
     def chef_greater_than?(version)
       Chef::Version.new(Chef::VERSION) > Chef::Version.new(version)
     end
