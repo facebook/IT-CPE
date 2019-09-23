@@ -1,0 +1,3 @@
+<% node['cpe_pathsd'].sort.uniq.each do |path| %>
+<%="#{path}"%>
+<% end %>

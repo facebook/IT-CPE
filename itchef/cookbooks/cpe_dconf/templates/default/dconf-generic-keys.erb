@@ -1,0 +1,7 @@
+<% @settings.sort.each do |dir, keys| -%>
+[<%= dir %>]
+<% keys.sort.each do |k, v| -%>
+<%= k %>=<%= v %>
+<% end -%>
+
+<% end -%>
