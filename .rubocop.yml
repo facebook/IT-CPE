@@ -87,7 +87,7 @@ FileName:
 PerceivedComplexity:
   Enabled: false
 
-UnneededDisable:
+Lint/UnneededCopDisableDirective:
   Enabled: false
 
 # Seems buggy - https://github.com/bbatsov/rubocop/issues/2690
@@ -143,3 +143,7 @@ Layout/IndentFirstArrayElement:
 
 Style/SignalException:
   EnforcedStyle: semantic
+
+Style/FrozenStringLiteralComment:
+  EnforcedStyle: never
+
