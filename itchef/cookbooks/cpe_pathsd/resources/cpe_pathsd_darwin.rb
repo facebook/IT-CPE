@@ -33,13 +33,4 @@ action :manage do
     group 'wheel'
     mode 0644
   end
-
-  # No one should have the ability to update /etc/paths except via API.
-  cookbook_file '/etc/paths' do
-    source 'paths'
-    owner 'root'
-    group 'wheel'
-    mode 0644
-    action :create
-  end
 end

@@ -24,12 +24,3 @@ template '/etc/paths.d/cpe_pathsd' do
   group 'wheel'
   mode 0644
 end
-
-# No one should have the ability to update /etc/paths though an API.
-cookbook_file '/etc/paths' do
-  source 'paths'
-  owner root_owner
-  group root_group
-  mode 0644
-  action :create
-end
