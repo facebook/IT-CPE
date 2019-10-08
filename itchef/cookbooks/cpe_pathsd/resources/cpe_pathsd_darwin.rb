@@ -24,14 +24,14 @@ action :manage do
   directory '/etc/paths.d/' do
     owner 'root'
     group 'wheel'
-    mode 0755
+    mode '0755'
   end
 
   template '/etc/paths.d/cpe_pathsd' do
     source 'cpe_pathsd'
     owner 'root'
     group 'wheel'
-    mode 0644
+    mode '0644'
   end
 
   # No one should have the ability to update /etc/paths except via API.
@@ -39,7 +39,7 @@ action :manage do
     source 'paths'
     owner 'root'
     group 'wheel'
-    mode 0644
+    mode '0644'
     action :create
   end
 end
