@@ -26,12 +26,12 @@ require_relative 'chrome_windows'
 # to the Chef registry_key resource.
 class WindowsChromeSetting
   include CPE::ChromeManagement
-  def initialize(setting, forced = false)
+  def initialize(setting, suffix_reg_path = nil, forced = false)
     @forced = forced
     @name = setting.keys.first
     @data = setting.values.first
 
-    reg_entry = construct_reg_key_path(setting.keys.first)
+    reg_entry = construct_reg_key_path(setting.keys.first, suffix_reg_path)
     @fullpath = reg_entry.keys.first.to_s
     @path = @fullpath.split(@name).first.chop
     @type = reg_entry.values.first
@@ -80,7 +80,7 @@ class WindowsChromeSetting
 
   # Walks the available configuration to determine where the full registry path
   # is.
-  def construct_reg_key_path(key = @name)
+  def construct_reg_key_path(key = @name, suffix_path = nil)
     if ENUM_REG_KEYS.keys.include?(key)
       {
         "#{CPE::ChromeManagement.chrome_reg_root}\\#{key}" =>
@@ -88,6 +88,12 @@ class WindowsChromeSetting
       }
     elsif in_complex_key?
       lookup_complex(key)
+    elsif !suffix_path.nil?
+      # This is only applicable in case of ExtensionSettings. The type is always
+      # string
+      {
+        "#{CPE::ChromeManagement.chrome_reg_root}\\#{suffix_path}" => :string,
+      }
     end
   end
 

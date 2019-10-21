@@ -29,12 +29,35 @@ action :config do
   return unless node.installed?('Google Chrome') || chrome_installed
   return unless node['cpe_chrome']['profile'].values.any?
 
+  # ExtensionSettings has a "dictionary" format and each key must be stored
+  # as a separate sub key inside the ExtensionSettings registry setting
+  # Ref: https://cloud.google.com/docs/chrome-enterprise/policies/?policy=ExtensionSettings
+  extension_settings_key = 'ExtensionSettings'.freeze
   reg_settings = []
-  node['cpe_chrome']['profile'].each do |setting|
-    # For some reason these are enumerated as an array with 2 entries, code
-    # for the custom class anticipates a Hash. Maybe this is hacky?
-    reconstruct_setting = { setting.first => setting.last }
-    reg_settings << WindowsChromeSetting.new(reconstruct_setting, false)
+  node['cpe_chrome']['profile'].each do |setting_key, setting_value|
+    # ExtensionSettings must have a different registry structure
+    if (setting_value.is_a? Hash) && (setting_key == extension_settings_key)
+      setting_value.each do |extension_key, extension_value|
+        if extension_value.is_a? Hash
+          extension_value.each do |inner_key, inner_value|
+            reg_settings <<
+              WindowsChromeSetting.new(
+                { inner_key => inner_value },
+                "#{setting_key}\\#{extension_key}",
+              )
+          end
+        else
+          reg_settings <<
+            WindowsChromeSetting.new(
+              { extension_key => extension_value },
+              setting_key.to_s,
+            )
+        end
+      end
+    else
+      reconstruct_setting = { setting_key => setting_value }
+      reg_settings << WindowsChromeSetting.new(reconstruct_setting)
+    end
   end
 
   # Set all the keys we care about. If there's any mismatch of data, just

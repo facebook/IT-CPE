@@ -31,6 +31,17 @@ RSpec.describe WindowsChromeSetting do
       { 'AlternateErrorPagesEnabled' => [true] },
   }
 
+  extension_setting = {
+    'suffix_path' => 'ExtensionSettings\\ncfpggehkhmjpdjpefomjchjafhmbnai',
+    'setting' => { 'installation_mode' => 'removed' },
+    'expected' => {
+      'name' => 'installation_mode',
+      'type' => :string,
+      'fullpath' => 'HKLM\Software\Policies\Google\Chrome\ExtensionSettings' +
+                '\ncfpggehkhmjpdjpefomjchjafhmbnai',
+    },
+  }
+
   expected_results = {
     'empty_setting' => {
       'header' => 'A simple setting that has no value',
@@ -83,7 +94,7 @@ RSpec.describe WindowsChromeSetting do
         '\ExtensionInstallForcelist'
       end
       subject do
-        WindowsChromeSetting.new(settings['example_setting'], true)
+        WindowsChromeSetting.new(settings['example_setting'], nil, true)
       end
       it { should eq result }
     end
@@ -93,7 +104,7 @@ RSpec.describe WindowsChromeSetting do
         '\ExtensionInstallForcelist'
       end
       subject do
-        WindowsChromeSetting.new(settings['example_setting'], false)
+        WindowsChromeSetting.new(settings['example_setting'], nil, false)
       end
       it { should eq result }
     end
@@ -107,6 +118,35 @@ RSpec.describe WindowsChromeSetting do
     context 'is the setting marked as empty?' do
       subject { WindowsChromeSetting.new(settings['empty_setting']).empty? }
       it { should be true }
+    end
+  end
+  context 'A setting with a suffix path' do
+    context 'registry key name' do
+      subject do
+        WindowsChromeSetting.new(
+          extension_setting['setting'],
+          extension_setting['suffix_path'],
+        ).name
+      end
+      it { should eq extension_setting['expected']['name'] }
+    end
+    context 'registry key fullpath' do
+      subject do
+        WindowsChromeSetting.new(
+          extension_setting['setting'],
+          extension_setting['suffix_path'],
+        ).fullpath
+      end
+      it { should eq extension_setting['expected']['fullpath'] }
+    end
+    context 'registry key type' do
+      subject do
+        WindowsChromeSetting.new(
+          extension_setting['setting'],
+          extension_setting['suffix_path'],
+        ).type
+      end
+      it { should eq extension_setting['expected']['type'] }
     end
   end
   settings.each_key do |setting|
@@ -124,7 +164,9 @@ RSpec.describe WindowsChromeSetting do
         it { should eq expected_results[setting]['fullpath'] }
       end
       context 'registry key fullpath forced' do
-        subject { WindowsChromeSetting.new(settings[setting], true).fullpath }
+        subject do
+          WindowsChromeSetting.new(settings[setting], nil, true).fullpath
+        end
         it { should eq expected_results[setting]['fullpath_forced'] }
       end
       context 'registry key type' do
