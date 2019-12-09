@@ -114,7 +114,6 @@ module CPE
           'ImportSavedPasswords' => :dword,
           'ImportSearchEngine' => :dword,
           'IncognitoModeAvailability' => :dword,
-          'ManagedBookmarks' => :multi_string,
           'MaxConnectionsPerProxy' => :dword,
           'MaxInvalidationFetchDelay' => :dword,
           'MediaCacheSize' => :dword,
@@ -238,6 +237,15 @@ module CPE
         'URLBlacklist' => :string,
         'URLWhitelist' => :string,
         'VideoCaptureAllowedUrls' => :string,
+      }.freeze
+
+      # These keys can be passed in an array of dictionaries and the resource
+      # will call `.to_json` on them so that they actually work. Please confirm
+      # in the documentation that you are creating the necessary data structure.
+      JSONIFY_REG_KEYS = {
+        'Chrome' => {
+          'ManagedBookmarks' => :string,
+        },
       }.freeze
     end
   end

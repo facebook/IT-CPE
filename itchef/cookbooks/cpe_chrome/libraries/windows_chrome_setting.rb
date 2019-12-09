@@ -33,8 +33,14 @@ class WindowsChromeSetting
 
     reg_entry = construct_reg_key_path(setting.keys.first, suffix_reg_path)
     @fullpath = reg_entry.keys.first.to_s
-    @path = @fullpath.split(@name).first.chop
     @type = reg_entry.values.first
+
+    p = @fullpath.split(@name)
+    @path = if p.size == 1
+              p.first.split('\\')[0..-1].join('\\')
+            else
+              p.first.chop
+            end
   end
 
   attr_reader :path, :fullpath, :type, :data, :name, :scope, :forced
@@ -42,6 +48,10 @@ class WindowsChromeSetting
   # This method will output a hash that can be consumed by the chef registry_key
   # resource.
   def to_chef_reg_provider
+    if in_json_key?
+      return { :name => @name, :type => @type, :data => @data.to_json }
+    end
+
     # Chrome settings in the registry with multiple entries are laid out
     # sequentially from [1...N]
     if data_has_multiple_entries?
@@ -86,6 +96,11 @@ class WindowsChromeSetting
         "#{CPE::ChromeManagement.chrome_reg_root}\\#{key}" =>
           ENUM_REG_KEYS[key],
       }
+    elsif in_json_key?
+      {
+        CPE::ChromeManagement.chrome_reg_root =>
+          JSONIFY_REG_KEYS[which_json_key][key],
+      }
     elsif in_complex_key?
       lookup_complex(key)
     elsif !suffix_path.nil?
@@ -123,5 +138,17 @@ class WindowsChromeSetting
   def which_complex_key
     return 'Chrome' if COMPLEX_REG_KEYS['Chrome'].include?(@name)
     return 'Recommended' if COMPLEX_REG_KEYS['Recommended'].include?(@name)
+  end
+
+  # Returns true if the setting is located in a registry key hash that should be
+  # a JSON value, false otherwise.
+  def in_json_key?(key = @name)
+    return true if JSONIFY_REG_KEYS['Chrome'].include?(key)
+    false
+  end
+
+  # Returns which JSON key the setting is located under.
+  def which_json_key
+    return 'Chrome' if JSONIFY_REG_KEYS['Chrome'].include?(@name)
   end
 end

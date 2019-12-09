@@ -17,22 +17,47 @@
 # limitations under the License.
 #
 
+require 'json'
 require_relative 'spec_helper'
 
 RSpec.describe WindowsChromeSetting do
-  settings = {
-    'empty_setting' =>
-      { 'ExtensionInstallBlacklist' => [] },
-    'example_setting' => {
-      'ExtensionInstallForcelist' =>
-      ['ncfpggehkhmjpdjpefomjchjafhmbnai;bacon'],
+  JSON_EXAMPLE_DATA = [
+    {
+      :toplevel_name => 'My managed bookmarks folder',
     },
-    'doc_setting' =>
-      { 'AlternateErrorPagesEnabled' => [true] },
+    {
+      :url => 'google.com',
+      :name => 'Google',
+    },
+    {
+      :url => 'youtube.com',
+      :name => 'Youtube',
+    },
+    {
+      :name => 'Chrome links',
+      :children => [
+        {
+          :url => 'chromium.org',
+          :name => 'Chromium',
+        },
+        {
+          :url => 'dev.chromium.org',
+          :name => 'Chromium Developers',
+        },
+      ],
+    },
+  ].freeze
+  settings = {
+    'empty_setting' => { 'ExtensionInstallBlacklist' => [] },
+    'doc_setting' => { 'AlternateErrorPagesEnabled' => [true] },
+    'json_setting' => { 'ManagedBookmarks' => JSON_EXAMPLE_DATA },
+    'example_setting' => {
+      'ExtensionInstallForcelist' => ['ncfpggehkhmjpdjpefomjchjafhmbnai;bacon'],
+    },
   }
 
   extension_setting = {
-    'suffix_path' => 'ExtensionSettings\\ncfpggehkhmjpdjpefomjchjafhmbnai',
+    'suffix_path' => 'ExtensionSettings\ncfpggehkhmjpdjpefomjchjafhmbnai',
     'setting' => { 'installation_mode' => 'removed' },
     'expected' => {
       'name' => 'installation_mode',
@@ -84,6 +109,17 @@ RSpec.describe WindowsChromeSetting do
         'HKLM\Software\Policies\Google\Chrome' +
         '\AlternateErrorPagesEnabled',
       'path' => 'HKLM\Software\Policies\Google\Chrome',
+    },
+    'json_setting' => {
+      'header' => 'gh-issue-224 - A value that needs to be a JSON string',
+      'name' => 'ManagedBookmarks',
+      'type' => :string,
+      'data' => JSON_EXAMPLE_DATA,
+      'expected_class' => 'Array',
+      'fullpath' => 'HKLM\Software\Policies\Google\Chrome',
+      'fullpath_forced' => 'HKLM\Software\Policies\Google\Chrome',
+      'path' => 'HKLM\Software\Policies\Google\Chrome',
+      'output' => JSON_EXAMPLE_DATA.to_json,
     },
   }
 
@@ -179,6 +215,15 @@ RSpec.describe WindowsChromeSetting do
         it do
           should be_a Kernel.
             const_get(expected_results[setting]['expected_class'])
+        end
+      end
+      if expected_results[setting]['output']
+        subject do
+          WindowsChromeSetting.new(settings[setting]).
+            to_chef_reg_provider[:data]
+        end
+        context 'chef_to_reg_provider data output should equal' do
+          it { should eql expected_results[setting]['output'] }
         end
       end
     end
