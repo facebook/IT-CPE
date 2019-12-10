@@ -14,7 +14,7 @@ Attributes
 
 Usage
 -----
-Include this recipe and add any launchd items in the format shdown in the
+Include this recipe and add any launchd items in the format shown in the
 example below.
 
 **Note:** Ensure that you override the default value of `node['cpe_launchd']['prefix']`
@@ -35,6 +35,17 @@ node.default['cpe_launchd']['com.facebook.chef.CPE.chefctl'] = {
   'run_at_load' => true,
   'start_interval' => 1800,
   'time_out' => 600
+}
+```
+
+To make the launchd service definition conditional, add the optional 'only_if'
+attribute, and set it to a proc that will be evaluated by the resource at
+runtime:
+
+```
+node.default['cpe_launchd']['com.facebook.chef.CPE.chefctl'] = {
+  'only_if' => proc { boolean_expression },
+  ...
 }
 ```
 

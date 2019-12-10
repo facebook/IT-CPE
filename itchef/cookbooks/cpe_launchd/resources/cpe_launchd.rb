@@ -81,7 +81,18 @@ def launchd_resource(label, action, plist, ld_type)
   return unless label
   res = Chef::Resource::Launchd.new(label, run_context)
   unless plist.nil?
+    if plist.key?('only_if')
+      unless plist['only_if'].class == Proc
+        fail 'cpe_launchd\'s only_if requires a Proc'
+      end
+      unless plist['only_if'].call
+        Chef::Log.debug("cpe_launchd: Not including #{label}" +
+                        'due to only_if')
+        return
+      end
+    end
     plist.to_hash.each do |key, val|
+      next if key == 'only_if'
       res.send(key.to_sym, val)
     end
   end
