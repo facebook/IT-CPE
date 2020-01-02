@@ -33,6 +33,8 @@ default['cpe_chrome'] = {
     'DefaultPluginsSetting' => nil,
     'ExtensionInstallSources' => [],
     'PluginsAllowedForUrls' => [],
+    'RelaunchNotification' => nil,
+    'RelaunchNotificationPeriod' => nil,
   },
   'mp' => {
     'UseMasterPreferencesFile' => false,
