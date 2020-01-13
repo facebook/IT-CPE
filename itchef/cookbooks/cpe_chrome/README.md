@@ -15,6 +15,7 @@ Attributes
 ----------
 * node['cpe_chrome']['profile']
 * node['cpe_chrome']['mp']
+* node['cpe_chrome']['canary_ignored_prefs']
 
 Usage
 -----
@@ -39,6 +40,17 @@ above to this hash:
   'SitePerProcess' => true
 }.each do |k, v|
   node.default['cpe_chrome']['profile'][k] = v
+end
+```
+
+To exclude a managed setting from Chrome Canary, add the key to the array:
+
+```
+{
+  'RelaunchNotification',
+  'RelaunchNotificationPeriod',
+}.each do |setting|
+  node.default['cpe_chrome']['canary_ignored_prefs'] << setting
 end
 ```
 

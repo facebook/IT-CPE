@@ -128,6 +128,8 @@ module CPE
           'ProxyPacUrl' => :string,
           'ProxyServer' => :string,
           'QuicAllowed' => :dword,
+          'RelaunchNotification' => :dword,
+          'RelaunchNotificationPeriod' => :dword,
           'RemoteAccessHostAllowClientPairing' => :dword,
           'RemoteAccessHostAllowGnubbyAuth' => :dword,
           'RemoteAccessHostAllowRelayedConnection' => :dword,

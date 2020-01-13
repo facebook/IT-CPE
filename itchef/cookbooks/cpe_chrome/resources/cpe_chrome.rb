@@ -172,7 +172,9 @@ action_class do
         }],
       }
       prefs.each do |k, v|
-        canary_profile['PayloadContent'][0][k] = v
+        unless node['cpe_chrome']['canary_ignored_prefs'].include?(k)
+          canary_profile['PayloadContent'][0][k] = v
+        end
       end
       profile_domain = "#{node['cpe_profiles']['prefix']}.browsers.chromecanary"
       node.default['cpe_profiles'][profile_domain] = canary_profile
