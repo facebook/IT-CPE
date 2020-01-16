@@ -55,7 +55,7 @@ describe CPE::Helpers do
           CPE::Helpers.instance_variable_set :@console_user, nil
           CPE::Helpers.instance_variable_set :@loginctl_users, nil
           allow(CPE::Helpers).to receive(:shell_out).
-            with('/usr/bin/loginctl list-users').and_return(
+            with('/usr/bin/loginctl --no-legend list-users').and_return(
               double(
                 :error? => true,
               ),
@@ -75,18 +75,17 @@ describe CPE::Helpers do
           CPE::Helpers.instance_variable_set :@console_user, nil
           CPE::Helpers.instance_variable_set :@loginctl_users, nil
           allow(CPE::Helpers).to receive(:shell_out).
-            with('/usr/bin/loginctl list-users').and_return(
+            with('/usr/bin/loginctl --no-legend list-users').and_return(
               double(
                 :error? => false,
-                :stdout => "UID USER\n" +
-                  " 42 gdm \n\n1 users listed.\n",
+                :stdout => " 42 gdm \n",
               ),
             )
         end
 
         it 'loginctl_users should return a list with gdm' do
           expect(CPE::Helpers.loginctl_users).to eq(
-            [{ 'uid' => 42, 'username' => 'gdm' }],
+            [{ 'uid' => 42, 'user' => 'gdm' }],
           )
         end
 
@@ -100,18 +99,17 @@ describe CPE::Helpers do
           CPE::Helpers.instance_variable_set :@console_user, nil
           CPE::Helpers.instance_variable_set :@loginctl_users, nil
           allow(CPE::Helpers).to receive(:shell_out).
-            with('/usr/bin/loginctl list-users').and_return(
+            with('/usr/bin/loginctl --no-legend list-users').and_return(
               double(
                 :error? => false,
-                :stdout => " UID USER  \n" +
-                  "1001 endusr\n\n1 users listed.\n",
+                :stdout => "1001 endusr\n",
               ),
             )
         end
 
         it 'loginctl_users should return a list with endusr' do
           expect(CPE::Helpers.loginctl_users).to eq(
-            [{ 'uid' => 1001, 'username' => 'endusr' }],
+            [{ 'uid' => 1001, 'user' => 'endusr' }],
           )
         end
 
@@ -125,12 +123,12 @@ describe CPE::Helpers do
           CPE::Helpers.instance_variable_set :@console_user, nil
           CPE::Helpers.instance_variable_set :@loginctl_users, nil
           allow(CPE::Helpers).to receive(:shell_out).
-            with('/usr/bin/loginctl list-users').and_return(
+            with('/usr/bin/loginctl --no-legend list-users').and_return(
               double(
                 :error? => false,
-                :stdout => "       UID USER            \n" +
+                :stdout =>
                   "      1001 endusr          \n" +
-                  "        42 gdm             \n\n2 users listed.\n",
+                  "        42 gdm             \n",
               ),
             )
         end
@@ -138,8 +136,8 @@ describe CPE::Helpers do
         it 'loginctl_users should return a list with gdm and endusr' do
           require 'set'
           expect(CPE::Helpers.loginctl_users.to_set).to eq(
-            [{ 'uid' => 42, 'username' => 'gdm' },
-             { 'uid' => 1001, 'username' => 'endusr' }].to_set,
+            [{ 'uid' => 42, 'user' => 'gdm' },
+             { 'uid' => 1001, 'user' => 'endusr' }].to_set,
           )
         end
 

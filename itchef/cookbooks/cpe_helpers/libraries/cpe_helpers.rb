@@ -41,15 +41,14 @@ module CPE
         # Standard path in Fedora
         loginctl_path = '/usr/bin/loginctl'
         if linux? && ::File.exist?(loginctl_path)
-          res = shell_out("#{loginctl_path} list-users")
+          # don't use loginctl -o json as that's only supported in very recent
+          # systemd (e.g. not in vanilla CentOS 8 and Ubuntu 18.04)
+          res = shell_out("#{loginctl_path} --no-legend list-users")
           return [] if res.error?
 
-          # first line is header
-          # last two lines are empty line and user count
-          user_lines = res.stdout.lines[1..-3]
-          user_lines.map do |u|
+          res.stdout.lines.map do |u|
             uid, uname = u.split
-            { 'uid' => Integer(uid), 'username' => uname }
+            { 'uid' => Integer(uid), 'user' => uname }
           end
         else []
         end
@@ -61,7 +60,7 @@ module CPE
         ['root', '_mbsetupuser'].include?(console_user)
       elsif linux?
         loginctl_users.any? do |u|
-          u['username'] == 'gdm'
+          u['user'] == 'gdm'
         end && loginctl_users.none? do |u|
           u['uid'] >= 1000
         end
@@ -77,7 +76,7 @@ module CPE
           Etc.getpwuid(::File.stat('/dev/console').uid).name
         elsif linux?
           filtered_users = loginctl_users.select do |u|
-            u['username'] != 'gdm' && u['uid'] >= 1000
+            u['user'] != 'gdm' && u['uid'] >= 1000
           end
           if filtered_users.empty? && ::File.exist?('/etc/fb-machine-owner')
             # TODO T54156500: Evaluate whether this is still necessary
@@ -88,7 +87,7 @@ module CPE
             )
             IO.read('/etc/fb-machine-owner').chomp
           else
-            filtered_users[0]['username']
+            filtered_users[0]['user']
           end
         elsif windows?
           logged_on_user_name
