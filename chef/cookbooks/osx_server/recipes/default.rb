@@ -12,7 +12,7 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 #
 
-return unless node.macosx?
+return unless node.macos?
 
 # Configure service directories, account
 include_recipe 'osx_server::setup'

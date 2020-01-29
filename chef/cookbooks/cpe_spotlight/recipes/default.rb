@@ -11,7 +11,8 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 #
 
-return unless node.macosx?
+return unless node.macos?
+
 # Abort if Spotlight indexing is disabled
 spotlight_data =
   Mixlib::ShellOut.new('/usr/bin/mdutil -s /').run_command.stdout

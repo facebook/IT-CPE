@@ -11,6 +11,8 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 #
 
+return unless node.macos?
+
 # You must install Server.app first
 unless File.exist?('/Applications/Server.app')
   Chef::Log.info("#{cookbook_name}: Server.app is not installed.")
