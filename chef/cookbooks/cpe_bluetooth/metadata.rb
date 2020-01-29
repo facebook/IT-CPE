@@ -10,3 +10,4 @@ version '0.1.0'
 supports 'mac_os_x'
 
 depends 'cpe_profiles'
+depends 'cpe_utils'
