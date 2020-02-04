@@ -13,4 +13,5 @@
 #
 
 return unless node.macos?
+
 cpe_screensaver 'Configure Screen Saver Profile'

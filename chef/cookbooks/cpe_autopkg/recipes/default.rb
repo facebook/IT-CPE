@@ -29,5 +29,7 @@
 #   receipt 'com.github.autopkg.autopkg'
 # end
 
+return unless node.macos?
+
 cpe_autopkg_setup 'Set up AutoPkg'
 cpe_autopkg_update 'Add/Update AutoPkg repos'

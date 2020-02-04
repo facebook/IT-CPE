@@ -87,7 +87,7 @@ FileName:
 PerceivedComplexity:
   Enabled: false
 
-Lint/UnneededCopDisableDirective:
+Lint/RedundantCopDisableDirective:
   Enabled: false
 
 # Seems buggy - https://github.com/bbatsov/rubocop/issues/2690
@@ -117,7 +117,7 @@ Style/ConditionalAssignment:
 #
 # Modified rules
 #
-Metrics/LineLength:
+Layout/LineLength:
   Max: 80
 
 Layout/DotPosition:
@@ -138,7 +138,7 @@ Style/TrailingCommaInHashLiteral:
 Style/TrailingCommaInArguments:
   EnforcedStyleForMultiline: comma
 
-Layout/IndentFirstArrayElement:
+Layout/FirstArrayElementIndentation:
   EnforcedStyle: consistent
 
 Style/SignalException:
