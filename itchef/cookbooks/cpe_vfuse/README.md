@@ -33,6 +33,9 @@ You can add any arbitrary templates to have them available to `vfuse`.
 As long as the values are not nil and create valid templates, this cookbook
 will create and manage them.
 
+Add `'static' => true,` if you don't want the template to be overwritten after
+initially created.
+
 ```
   # Add custom template
   [
@@ -45,6 +48,7 @@ will create and manage them.
       'cache' => true,
       'snapshot' => true,
       'serial_number' => 'VMbootstrap',
+      'static' => false,
     },
   ].each { |template| node.default['cpe_vfuse']['templates'] << template }
 ```

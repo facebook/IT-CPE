@@ -60,7 +60,11 @@ action_class do
         owner 'root'
         group 'admin'
         mode '0644'
-        action :create
+        if template['static']
+          action :create_if_missing
+        else
+          action :create
+        end
       end
     end
 
