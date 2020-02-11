@@ -1,11 +1,22 @@
+# Copyright (c) Facebook, Inc. and its affiliates.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
 module CPE
   module Flatpak
     def manage
       @manage ||= node['cpe_flatpak']['manage']
-    end
-
-    def console_user
-      @console_user ||= node.person['username']
     end
 
     def chef_cache
@@ -35,7 +46,7 @@ module CPE
     end
 
     def as_user(cmd)
-      "/usr/bin/su #{console_user} -l -c '#{cmd}'"
+      "/usr/bin/su #{CPE::Helpers.console_user} -l -c '#{cmd}'"
     end
 
     def flatpak_remote_add(remote, url)

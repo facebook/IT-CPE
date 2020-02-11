@@ -4,7 +4,7 @@ This cookbook creates resources to manage flatpaks
 
 Requirements
 ------------
-* cpe_utils
+* cpe_helpers
 
 Attributes
 ----------
@@ -52,7 +52,7 @@ is the name used in the remotes hash.
 e.g. To add the Spotify client
 
 ```
-node.default['cpe_flatpak']['pkgs']['com.spofity.Client'] = 'flathub'
+node.default['cpe_flatpak']['pkgs']['com.spotify.Client'] = 'flathub'
 ```
 
 By default any failure invoking the `flatpak` tool will cause `cpe_flatpak` to
