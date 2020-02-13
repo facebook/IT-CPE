@@ -1,7 +1,7 @@
 # Cookbook Name:: cpe_remote
 # Resource:: cpe_remote_file
 #
-# Copyright 2014, Mike Dodge
+# Copyright (c) Facebook, Inc. and its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -52,13 +52,13 @@ load_current_value do |desired| # ~FC006
     checksum checksum_ondisk
     unless platform?('windows')
       begin
-        current_user = Etc.getpwuid(f_stat.uid).name
+        current_user = ::Etc.getpwuid(f_stat.uid).name
       rescue ArgumentError
         current_user = f_stat.uid
       end
       owner current_user
       begin
-        current_group = Etc.getgrgid(f_stat.gid).name
+        current_group = ::Etc.getgrgid(f_stat.gid).name
       rescue ArgumentError
         current_group = f_stat.gid
       end

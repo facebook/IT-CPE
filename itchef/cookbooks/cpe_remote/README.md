@@ -1,5 +1,5 @@
 cpe_remote cookbook
-============
+===================
 This cookbook has two different providers - remote Apple packages (macOS only),
 and remote files (macOS and Windows), from web URLs.
 
@@ -8,6 +8,7 @@ Files or pkgs must be stored at the server you provided to base_url.
 Requirements
 ------------
 ### Platform
+* Fedora (file provider only)
 * macOS (pkg, file providers)
 * Windows (file provider only)
 
@@ -19,10 +20,10 @@ Attributes
 * node['cpe_remote']['additional_headers']
 
 Usage
--------------------
+-----
 You must set `base_url`
 * node['cpe_remote']['base_url']
-where are your remote pkgs and files stored - "https://chang.me/chef"
+where are your remote pkgs and files stored - "https://change.me/chef"
 
 * node['cpe_remote']['server_accessible']
 is your server accessible? write your own check and set value to true or false.

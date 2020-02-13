@@ -1,7 +1,7 @@
 # Cookbook Name:: cpe_remote
 # Resource:: cpe_remote_zip
 #
-# Copyright 2017, Julie Wetherwax
+# Copyright (c) Facebook, Inc. and its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -53,8 +53,8 @@ load_current_value do |desired| # ~FC006
   if ::File.exists?(extract_path)
     f_stat = ::File.stat(extract_path)
     unless platform?('windows')
-      owner Etc.getpwuid(f_stat.uid).name
-      group Etc.getgrgid(f_stat.gid).name
+      owner ::Etc.getpwuid(f_stat.uid).name
+      group ::Etc.getgrgid(f_stat.gid).name
       m = f_stat.mode
       mode "0#{(m & 07777).to_s(8)}"
     end
@@ -77,7 +77,7 @@ action :create do
     end
 
     if node.windows?
-      zip_cmd = ::CPE::Utils.sevenzip_cmd
+      zip_cmd = CPE::Utils.sevenzip_cmd
       return if CPE::Log.if(
         "#{cookbook_name}: No local 7zip command found",
         :level => :warn,
