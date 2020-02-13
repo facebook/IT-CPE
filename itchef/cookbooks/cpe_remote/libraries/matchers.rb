@@ -1,4 +1,3 @@
-# Encoding: utf-8
 # Cookbook Name:: remote
 # Library:: matchers
 #
