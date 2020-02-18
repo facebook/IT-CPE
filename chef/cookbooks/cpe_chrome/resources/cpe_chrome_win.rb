@@ -21,7 +21,7 @@ action :config do
   chrome_installed = ::File.file?(
     "#{ENV['ProgramFiles(x86)']}\\Google\\Chrome\\Application\\chrome.exe",
   )
-  return unless node.installed?('Google Chrome') || chrome_installed
+  return unless chrome_installed
   return unless node['cpe_chrome']['profile'].values.any?
 
   reg_settings = []
