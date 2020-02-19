@@ -51,6 +51,8 @@ package from a remote URL. The package file will be stored in the
 * :install - Install the package.
 
 #### pkg Parameter attributes
+* `allow_downgrade` - BOOL - Downgrade a package to satisfy required version
+                      requirements
 * `app` - [name] This is the name of the app that the pkg will be installing,
           and the location of the pkg on the server:
           `base_url/app/app-version.pkg`
