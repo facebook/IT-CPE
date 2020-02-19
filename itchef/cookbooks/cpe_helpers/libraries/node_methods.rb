@@ -139,7 +139,7 @@ class Chef
         SELECT name
         FROM #{table_name}
         WHERE
-          LOWER(name) LIKE LOWER('%#{app_name}%')
+          LOWER(name) LIKE LOWER('#{app_name}')
       SQL
       osquery_data = Osquery.query(query, platform)
       matches = osquery_data.map(&:values).flatten
