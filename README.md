@@ -18,3 +18,14 @@ Old IT-CPE tools are BSD-licensed with an additional patent grant; see `LICENSE`
 and `PATENTS`.
 
 New Chef cookbooks in the `itchef` directory are under the Apache 2.0 license.
+
+# Old "chef" vs. New "itchef" folder
+
+We are working on improving the way our Chef cookbooks get published on GitHub,
+and the way we review and merge pull requests.
+
+Cookbooks that are currently in `chef/cookbooks` will gradually be replaced by
+those in `itchef/cookbooks` as they get reviewed and refactored.
+
+*We will not consider any issues or PRs against anything in the "chef" folder - it's
+purely for legacy only until we migrate everything over.*
