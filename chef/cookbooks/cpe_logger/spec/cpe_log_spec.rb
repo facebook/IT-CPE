@@ -1,4 +1,5 @@
-# vim: syntax=ruby:expandtab:shiftwidth=2:softtabstop=2:tabstop=2
+# Copyright (c) Facebook, Inc. and its affiliates.
+
 require './spec/spec_helper'
 require_relative '../libraries/cpe_log'
 

@@ -1,3 +1,5 @@
+# Copyright (c) Facebook, Inc. and its affiliates.
+
 RSpec.describe 'Check that the files changed have correct syntax' do
   before do
     current_sha = 'origin/master..HEAD'

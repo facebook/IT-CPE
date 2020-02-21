@@ -1,3 +1,5 @@
+# Copyright (c) Facebook, Inc. and its affiliates.
+
 module CPE
   class Log
     def self.log(msg, level: :info, type: 'chef', action: nil, status: nil)

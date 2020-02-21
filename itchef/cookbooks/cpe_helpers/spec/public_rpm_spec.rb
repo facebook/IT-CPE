@@ -1,4 +1,5 @@
-
+# Copyright (c) Facebook, Inc. and its affiliates.
+#
 require 'chefspec'
 require_relative '../libraries/cpe_helpers'
 

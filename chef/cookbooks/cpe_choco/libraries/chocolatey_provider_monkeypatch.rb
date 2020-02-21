@@ -1,3 +1,5 @@
+# Copyright (c) Facebook, Inc. and its affiliates.
+#
 # Some explanation behind the motivation for this monkeypatch:
 # * Need to support pre-release versions for the osquery team so they can shard
 #   out new versions to the fleet.

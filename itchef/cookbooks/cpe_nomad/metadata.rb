@@ -1,3 +1,4 @@
+# Copyright (c) Facebook, Inc. and its affiliates.
 name 'cpe_nomad'
 maintainer 'Facebook'
 maintainer_email 'noreply@fb.com'

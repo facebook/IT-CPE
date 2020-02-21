@@ -1,4 +1,4 @@
-# vim: syntax=ruby:expandtab:shiftwidth=2:softtabstop=2:tabstop=2
+# Copyright (c) Facebook, Inc. and its affiliates.
 name 'cpe_example'
 maintainer 'your team name goes here'
 maintainer_email 'oncall+your_oncall_name_here@xmail.facebook.com'

@@ -1,3 +1,5 @@
+# Copyright (c) Facebook, Inc. and its affiliates.
+
 module CPE
   module Example
     # This should only be functions that contain raw Ruby. No Chef resources

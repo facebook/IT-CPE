@@ -1,3 +1,5 @@
+# Copyright (c) Facebook, Inc. and its affiliates.
+#
 # rubocop:disable Metrics/BlockLength
 RSpec.describe 'Check that the cookbooks changed pass foodcritic.' do
   before do

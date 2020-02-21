@@ -1,3 +1,5 @@
+# Copyright (c) Facebook, Inc. and its affiliates.
+
 require_relative 'spec_helper'
 require_relative '../libraries/chocolatey_provider_monkeypatch'
 

@@ -1,3 +1,4 @@
+# Copyright (c) Facebook, Inc. and its affiliates.
 module CPE
   module Remote
     def gen_url(path, file)

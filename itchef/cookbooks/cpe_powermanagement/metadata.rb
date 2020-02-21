@@ -1,3 +1,4 @@
+# Copyright (c) Facebook, Inc. and its affiliates.
 name 'cpe_powermanagement'
 maintainer 'Facebook'
 maintainer_email 'noreply@facebook.com'
