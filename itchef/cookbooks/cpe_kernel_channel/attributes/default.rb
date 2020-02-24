@@ -18,6 +18,7 @@
 
 default['cpe_kernel_channel'] = {
   'enable' => false,
+  'kernel_version' => nil,
   'release' => nil,
   'repo' => 'fedora',
 }

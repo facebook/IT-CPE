@@ -9,6 +9,7 @@ Requirements
 Attributes
 ----------
 * node['cpe_kernel_channel']['enable']
+* node['cpe_kernel_channel']['kernel_version']
 * node['cpe_kernel_channel']['release']
 * node['cpe_kernel_channel']['repo']
 
@@ -16,6 +17,8 @@ Usage
 -----
 
 * `enable`: boolean. Set to `true` to enable this cookbook
+* `kernel_version`: string. If set, will ensure this kernel is installed.
+   Can be either the version or the version and release e.g. '4.18.0'
 * `repo`: string. Currently either 'fedora' or 'centos'
 * `release`: string. e.g. '8-stream' to get the CentOS 8 stream,
    or '8.1.1911' for a specific release. On Fedora this is ignored

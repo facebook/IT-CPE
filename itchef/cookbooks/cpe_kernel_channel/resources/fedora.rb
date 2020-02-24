@@ -51,4 +51,13 @@ action :update do
     includepkgs 'kernel*'
     skip_if_unavailable true
   end
+
+  # make sure we have a CentOS kernel installed
+  kernel_ver = node['cpe_kernel_channel']['kernel_version']
+  if kernel_ver
+    package ['kernel', 'kernel-devel'] do
+      only_if { ::Dir.glob("/boot/vmlinuz-#{kernel_ver}*.el*.x86_64").empty? }
+      version [kernel_ver, kernel_ver]
+    end
+  end
 end
