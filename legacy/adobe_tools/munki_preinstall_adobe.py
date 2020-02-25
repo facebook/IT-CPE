@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# Copyright (c) Facebook, Inc. and its affiliates.
 """Check to see whether an Adobe entitlement has been added to the user."""
 
 from __future__ import print_function

@@ -1,3 +1,5 @@
+# Copyright (c) Facebook, Inc. and its affiliates.
+#
 # Modified from source https://chocolatey.org/install.ps1
 $url = ''
 

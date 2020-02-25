@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# Copyright (c) Facebook, Inc. and its affiliates.
 """These are the org-specific AutoDMG package building tools."""
 
 import os

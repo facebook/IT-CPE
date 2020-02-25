@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# Copyright (c) Facebook, Inc. and its affiliates.
 """Build thick images with AutoDMG and Munki.
 
 With a given manifest and set of catalogs, parse all managed_installs and

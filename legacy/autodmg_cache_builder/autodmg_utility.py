@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# Copyright (c) Facebook, Inc. and its affiliates.
 """Utility functions used by other parts of the AutoDMG build tools."""
 
 import subprocess

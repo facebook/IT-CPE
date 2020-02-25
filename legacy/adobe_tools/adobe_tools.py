@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# Copyright (c) Facebook, Inc. and its affiliates.
 """Adobe API tools."""
 
 import adobe_api

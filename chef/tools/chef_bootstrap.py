@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# Copyright (c) Facebook, Inc. and its affiliates.
 """Bootstrap Chef with no other dependencies."""
 
 import glob

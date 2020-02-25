@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# Copyright (c) Facebook, Inc. and its affiliates.
 """Module to interact with the Adobe User Management API."""
 
 from __future__ import print_function
