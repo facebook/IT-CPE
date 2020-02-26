@@ -64,6 +64,7 @@ action :config do
   # delete the entire key and re-establish it, because we can't atomically
   # change individual subkeys in one single registry_key resource invocation
   reg_settings.uniq.each do |setting|
+    next if setting.fullpath.empty?
     new_values = setting.to_chef_reg_provider
     current_values = nil
     if registry_key_exists?(setting.fullpath)

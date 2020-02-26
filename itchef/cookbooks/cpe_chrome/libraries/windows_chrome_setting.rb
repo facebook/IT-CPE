@@ -39,7 +39,7 @@ class WindowsChromeSetting
     @path = if p.size == 1
               p.first.split('\\')[0..-1].join('\\')
             else
-              p.first.chop
+              p.first&.chop
             end
   end
 
@@ -109,6 +109,9 @@ class WindowsChromeSetting
       {
         "#{CPE::ChromeManagement.chrome_reg_root}\\#{suffix_path}" => :string,
       }
+    else
+      Chef::Log.warn("#{key} is not a supported setting")
+      {}
     end
   end
 
