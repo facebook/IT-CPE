@@ -48,7 +48,7 @@ action :update do
       "?release=#{release}&arch=$basearch&repo=BaseOS"
     fastestmirror_enabled true
     gpgkey 'file:///etc/pki/rpm-gpg/RPM-GPG-KEY-centosofficial'
-    includepkgs 'kernel*'
+    includepkgs 'kernel*,kexec-tools'
     skip_if_unavailable true
   end
 
