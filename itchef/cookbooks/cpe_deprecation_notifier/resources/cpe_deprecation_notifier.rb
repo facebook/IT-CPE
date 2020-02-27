@@ -24,8 +24,9 @@ default_action :prompt
 action :prompt do
   dpn = node['cpe_deprecation_notifier'].to_h
   la_path = '/Library/LaunchAgents'
-  domain = "#{node['cpe_launchd']['prefix']}.deprecationnotifier"
-  launchagent_path = "#{la_path}/#{domain}.plist"
+  domain = 'deprecationnotifier'
+  fname = "#{node['fb_launchd']['prefix']}.#{domain}"
+  launchagent_path = "#{la_path}/#{fname}.plist"
 
   if dpn['install']
     # Force a re-install if someone has removed the binary
@@ -39,7 +40,7 @@ action :prompt do
       version dpn['version']
       checksum dpn['checksum']
       receipt dpn['pkg_reciept']
-      notifies :restart, "launchd[#{domain}]" if dpn['enable']
+      notifies :restart, "launchd[#{fname}]" if dpn['enable']
     end
   end
 
@@ -52,7 +53,7 @@ action :prompt do
       owner 'root'
       group 'wheel'
       mode '0755'
-      notifies :restart, "launchd[#{domain}]"
+      notifies :restart, "launchd[#{fname}]"
       notifies :write, 'mac_os_x_userdefaults[Reset Timeout]'
     end
 
@@ -98,7 +99,7 @@ action :prompt do
     log_vars('expected_version', 'fail')
     if log_if(dpn['conf']['expectedVersion'].to_s) { should_launch }
       dp_bin = "#{dpn['path']}/Contents/MacOS/DeprecationNotifier"
-      node.default['cpe_launchd'][domain] = {
+      node.default['fb_launchd']['jobs'][domain] = {
         'program_arguments' => [dp_bin],
         'run_at_load' => true,
         'type' => 'agent',
@@ -106,7 +107,7 @@ action :prompt do
     end
 
     # To be used only for restarting
-    launchd domain do # ~FC009
+    launchd fname do # ~FC009
       only_if { ::File.exist?(launchagent_path) }
       type 'agent'
       action :nothing
