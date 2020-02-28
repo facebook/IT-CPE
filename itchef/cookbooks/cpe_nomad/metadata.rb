@@ -7,6 +7,6 @@ description 'Installs/configures NoMAD'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
 version '0.1.0'
 
-depends 'fb_launchd'
+depends 'cpe_launchd'
 depends 'cpe_logger'
 depends 'cpe_profiles'
