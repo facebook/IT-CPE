@@ -32,7 +32,7 @@ action_class do
     return unless node['cpe_chrome']['manage_repo']
 
     yum_repository 'google-chrome' do
-      only_if { node.fedora? }
+      only_if { node.fedora? || node.centos? }
       description 'Google Chrome repo'
       baseurl 'http://dl.google.com/linux/chrome/rpm/stable/x86_64'
       enabled true
@@ -57,7 +57,9 @@ action_class do
     return unless node['cpe_chrome']['install_package']
 
     package 'google-chrome-stable' do
-      only_if { node.fedora? || node.debian_family? }
+      only_if do
+        node.fedora? || node.centos? || node.debian_family?
+      end
       action :upgrade
     end
   end
