@@ -18,7 +18,7 @@
 #
 
 # Google Chrome & Chrome Canary attributes
-# See https://www.chromium.org/administrators/policy-list-3
+# See https://cloud.google.com/docs/chrome-enterprise/policies
 
 default['cpe_chrome'] = {
   'validate_installed' => false,
@@ -41,4 +41,5 @@ default['cpe_chrome'] = {
     'FileContents' => {},
   },
   'canary_ignored_prefs' => [],
+  '_use_new_windows_provider' => false,
 }
