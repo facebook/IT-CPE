@@ -110,6 +110,32 @@ action :update do
     end
   end
 
+  # clean up settings that no longer exist
+  stale_dbs = ::Dir.entries(dconf_db_dir).select do |f|
+    ::File.file?(::File.join(dconf_db_dir, f)) &&
+    !node['cpe_dconf']['settings'].keys.include?(f)
+  end
+
+  stale_dbs.each do |db|
+    file ::File.join(dconf_db_dir, db) do
+      action :delete
+      notifies :run, 'execute[update dconf]', :delayed
+    end
+  end
+
+  locks_dir = ::File.join(dconf_db_dir, 'locks')
+  stale_locks = ::Dir.entries(locks_dir).select do |f|
+    ::File.file?(::File.join(locks_dir, f)) &&
+    !node['cpe_dconf']['settings'].keys.include?(f)
+  end
+
+  stale_locks.each do |lock|
+    file ::File.join(locks_dir, lock) do
+      action :delete
+      notifies :run, 'execute[update dconf]', :delayed
+    end
+  end
+
   # Finally, notify dconf to rebuild its binary database from our files
   execute 'update dconf' do
     command '/usr/bin/dconf update'
