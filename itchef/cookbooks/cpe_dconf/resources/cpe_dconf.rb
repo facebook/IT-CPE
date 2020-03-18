@@ -111,28 +111,34 @@ action :update do
   end
 
   # clean up settings that no longer exist
-  stale_dbs = ::Dir.entries(dconf_db_dir).select do |f|
-    ::File.file?(::File.join(dconf_db_dir, f)) &&
-    !node['cpe_dconf']['settings'].keys.include?(f)
-  end
+  # gate on the directory existing, since this code runs
+  # earlier than the resources actually creating the directories
+  if ::Dir.exist?(dconf_db_dir)
+    stale_dbs = ::Dir.entries(dconf_db_dir).select do |f|
+      ::File.file?(::File.join(dconf_db_dir, f)) &&
+      !node['cpe_dconf']['settings'].keys.include?(f)
+    end
 
-  stale_dbs.each do |db|
-    file ::File.join(dconf_db_dir, db) do
-      action :delete
-      notifies :run, 'execute[update dconf]', :delayed
+    stale_dbs.each do |db|
+      file ::File.join(dconf_db_dir, db) do
+        action :delete
+        notifies :run, 'execute[update dconf]', :delayed
+      end
     end
   end
 
   locks_dir = ::File.join(dconf_db_dir, 'locks')
-  stale_locks = ::Dir.entries(locks_dir).select do |f|
-    ::File.file?(::File.join(locks_dir, f)) &&
-    !node['cpe_dconf']['settings'].keys.include?(f)
-  end
+  if ::Dir.exist?(locks_dir)
+    stale_locks = ::Dir.entries(locks_dir).select do |f|
+      ::File.file?(::File.join(locks_dir, f)) &&
+      !node['cpe_dconf']['settings'].keys.include?(f)
+    end
 
-  stale_locks.each do |lock|
-    file ::File.join(locks_dir, lock) do
-      action :delete
-      notifies :run, 'execute[update dconf]', :delayed
+    stale_locks.each do |lock|
+      file ::File.join(locks_dir, lock) do
+        action :delete
+        notifies :run, 'execute[update dconf]', :delayed
+      end
     end
   end
 
