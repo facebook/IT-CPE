@@ -157,7 +157,7 @@ action_class do
       type 'agent'
       action :nothing
     end
-    node.default['fb_launchd']['jobs'][lddomain.split('.')[-1]] =
+    node.default['cpe_launchd'][lddomain] =
       node.default['cpe_nomad']['launchagent']
   end
 
@@ -166,7 +166,7 @@ action_class do
   end
 
   def lddomain
-    "#{node['fb_launchd']['prefix']}.nomad"
+    "#{node['cpe_launchd']['prefix']}.nomad"
   end
 
   def log_vars(action, status)
