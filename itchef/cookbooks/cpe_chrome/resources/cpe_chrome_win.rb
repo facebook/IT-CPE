@@ -53,30 +53,31 @@ action :config do
     # Set all the keys we care about. If there's any mismatch of data, just
     # delete the entire key and re-establish it, because we can't atomically
     # change individual subkeys in one single registry_key resource invocation
-    reg_settings.uniq.each do |setting|
-      fullpath = setting.registry_location
-      next if fullpath.empty?
-      new_values = setting.to_chef_reg_provider
-      current_values = nil
-      if registry_key_exists?(fullpath)
-        current_values = registry_get_values(fullpath)
+    CPE::ChromeManagement::KnownSettings::GENERATED.each do |name, obj|
+      if obj.is_a?(WindowsChromeFlatSetting)
+        current_values = registry_get_values(obj.registry_location).
+                         select { |k, _| name == k[:name] }
+        next unless current_values.any?
+        next unless obj.value.nil?
+        next if current_values == obj.to_chef_reg_provider
+
+        registry_key obj.registry_location do
+          values current_values
+          action :delete
+        end
+      elsif obj.is_a?(WindowsChromeIterableSetting)
+        if registry_key_exists?(obj.registry_location) && obj.value.nil?
+          registry_key obj.registry_location do
+            recursive true
+            action :delete_key
+          end
+        end
       end
-      # Make sure we're comparing apples to apples, as registry_get_values()
-      # always returns an array, even if the data itself only contains one value
-      unless new_values.is_a?(Array)
-        new_values = [new_values]
-      end
-      if new_values.empty? || new_values != current_values
-        # This should run ahead of actually creating the resource so the values
-        # are retained.
-        registry_key fullpath do
-          recursive true
-          action :nothing
-        end.run_action(:delete_key)
-      end
-      registry_key fullpath do
-        not_if { new_values.empty? }
-        values new_values
+    end
+
+    reg_settings.each do |setting|
+      registry_key setting.registry_location do
+        values setting.to_chef_reg_provider
         recursive true
         action :create
       end
@@ -146,22 +147,22 @@ action :config do
         action :create
       end
     end
-  end
 
-  # Look at all the subkeys total of the root Chrome key.
-  all_chrome_keys = []
-  if registry_key_exists?(CPE::ChromeManagement.chrome_reg_root) &&
-    registry_has_subkeys?(CPE::ChromeManagement.chrome_reg_root)
-    all_chrome_keys =
-      registry_get_subkeys(CPE::ChromeManagement.chrome_reg_root)
-  end
-  # This variable should be a superset (or a match) to the list of keys
-  # in the node attribute.
-  extra_chrome_keys = all_chrome_keys - node['cpe_chrome']['profile'].keys
-  extra_chrome_keys.each do |rip_key|
-    registry_key "#{CPE::ChromeManagement.chrome_reg_root}\\#{rip_key}" do
-      action :delete_key
-      recursive true
+    # Look at all the subkeys total of the root Chrome key.
+    all_chrome_keys = []
+    if registry_key_exists?(CPE::ChromeManagement.chrome_reg_root) &&
+      registry_has_subkeys?(CPE::ChromeManagement.chrome_reg_root)
+      all_chrome_keys =
+        registry_get_subkeys(CPE::ChromeManagement.chrome_reg_root)
+    end
+    # This variable should be a superset (or a match) to the list of keys
+    # in the node attribute.
+    extra_chrome_keys = all_chrome_keys - node['cpe_chrome']['profile'].keys
+    extra_chrome_keys.each do |rip_key|
+      registry_key "#{CPE::ChromeManagement.chrome_reg_root}\\#{rip_key}" do
+        action :delete_key
+        recursive true
+      end
     end
   end
 

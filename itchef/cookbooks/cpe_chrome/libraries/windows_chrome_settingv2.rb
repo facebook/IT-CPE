@@ -76,6 +76,6 @@ class WindowsChromeFlatSetting < WindowsChromeSettingV2
       @value = 0
     end
 
-    { :name => @subkey, :type => @type, :data => @value }
+    [{ :name => @subkey, :type => @type, :data => @value }]
   end
 end
