@@ -55,8 +55,12 @@ action :config do
     # change individual subkeys in one single registry_key resource invocation
     CPE::ChromeManagement::KnownSettings::GENERATED.each do |name, obj|
       if obj.is_a?(WindowsChromeFlatSetting)
-        current_values = registry_get_values(obj.registry_location).
-                         select { |k, _| name == k[:name] }
+        begin
+          current_values = registry_get_values(obj.registry_location).
+                           select { |k, _| name == k[:name] }
+        rescue Chef::Exceptions::Win32RegKeyMissing
+          next
+        end
         next unless current_values.any?
         next unless obj.value.nil?
         next if current_values == obj.to_chef_reg_provider
