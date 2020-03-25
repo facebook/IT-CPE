@@ -18,6 +18,7 @@
 #
 
 default['cpe_vfuse'] = {
+  'configure' => false,
   'install' => false,
   'uninstall' => false,
   'template_dir' => nil,

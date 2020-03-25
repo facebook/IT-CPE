@@ -44,7 +44,7 @@ action_class do
     templates_on_disk = ::Dir.glob("#{template_dir}/*.json")
 
     directory template_dir do
-      only_if { node['cpe_vfuse']['install'] }
+      only_if { node['cpe_vfuse']['configure'] }
       owner 'root'
       group 'admin'
       mode '0755'
@@ -55,7 +55,7 @@ action_class do
       path = "#{template_dir}/#{template['output_name']}.json"
       templates << path
       file path do
-        only_if { node['cpe_vfuse']['install'] }
+        only_if { node['cpe_vfuse']['configure'] }
         content Chef::JSONCompat.to_json_pretty(template)
         owner 'root'
         group 'admin'

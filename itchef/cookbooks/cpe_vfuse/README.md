@@ -9,6 +9,7 @@ macOS
 Attributes
 ----------
 * node['cpe_vfuse']
+* node['cpe_vfuse']['configure']
 * node['cpe_vfuse']['install']
 * node['cpe_vfuse']['uninstall']
 * node['cpe_vfuse']['templates']
@@ -25,6 +26,9 @@ Usage
 
 `node['cpe_vfuse']['install']` declares whether to install `vfuse`. The default
 setting is `false`.
+
+`node['cpe_vfuse']['configure']` declares whether to confiture `vfuse` templates.
+The default setting is `false`.
 
 `node['cpe_vfuse']['templates']` is an array which will create and manage
 template[s].
