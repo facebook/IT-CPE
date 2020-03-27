@@ -1542,6 +1542,12 @@ module CPE
           :string,
           false,
         ),
+        'TotalMemoryLimitMb' => WindowsChromeFlatSetting.new(
+          'HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome',
+          'TotalMemoryLimitMb',
+          :dword,
+          false,
+        ),
       }.freeze
     end
   end

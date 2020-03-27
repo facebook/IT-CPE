@@ -20,40 +20,45 @@ require 'inifile'
 require 'json'
 require_relative '../libraries/windows_chrome_settingv2'
 
-reference_file = IniFile.load(File.join(__dir__, 'win_chrome_policy.reg'))
-known_settings = {}
+def process_sections(settings, ini)
+  ini.sections.each do |s|
+    is_iterable_setting = ini[s].
+                          keys.
+                          map { |x| /^"\d+"$/.match?(x) }.
+                          all?
 
-reference_file.sections.each do |s|
-  is_iterable_setting = reference_file[s].
-                        keys.
-                        map { |x| /^"\d+"$/.match?(x) }.
-                        all?
+    if is_iterable_setting
+      setting = s.split('\\').last
+      settings[setting] = WindowsChromeIterableSetting.new(
+        s,
+        nil,
+        :string,
+        true,
+      )
+      next
+    end
 
-  if is_iterable_setting
-    setting = s.split('\\').last
-    known_settings[setting] = WindowsChromeIterableSetting.new(
-      s,
-      nil,
-      :string,
-      true,
-    )
-    next
-  end
-
-  reference_file[s].map do |k, v|
-    # TODO: In Ruby 2.7 change this to use pattern matching when it is
-    # supported.
-    type = if v =~ /dword:.*/
-             :dword
-           else
-             :string
-           end
-    setting = k.tr('"', '')
-    known_settings[setting] = WindowsChromeFlatSetting.new(
-      s, setting, type, false
-    )
+    ini[s].map do |k, v|
+      # TODO: In Ruby 2.7 change this to use pattern matching when it is
+      # supported.
+      type = if v =~ /dword:.*/
+               :dword
+             else
+               :string
+             end
+      setting = k.tr('"', '')
+      settings[setting] = WindowsChromeFlatSetting.new(
+        s, setting, type, false
+      )
+    end
   end
 end
+
+reference_file = IniFile.load(File.join(__dir__, 'win_chrome_policy.reg'))
+manual_file = IniFile.load(File.join(__dir__, 'win_chrome_manual_policy.reg'))
+known_settings = {}
+
+[reference_file, manual_file].map { |f| process_sections(known_settings, f) }
 
 template = <<-'EOF'
 #

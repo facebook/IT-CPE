@@ -27,7 +27,7 @@ settings that will be applied in Master Preferences.
 ### Managed Policies
 
 For Chrome and Chrome Canary the list of managed polices can be found here:
-https://www.chromium.org/administrators/policy-list-3
+https://cloud.google.com/docs/chrome-enterprise/policies
 
 All policy-managed settings are stored in the node['cpe_chrome']['profile'] hash.
 
@@ -97,7 +97,7 @@ end
 
 `node['cpe_chrome']['profile']['ExtensionInstallSources']` is a list of URL
 sources where extensions may be installed from.
-See https://www.chromium.org/administrators/policy-list-3#ExtensionInstallSources
+See https://cloud.google.com/docs/chrome-enterprise/policies/?policy=ExtensionInstallSources
 for details.
 
 ### Master Preferences
@@ -174,3 +174,26 @@ compatibility.
 
 This cookbook will automatically cleanup subkeys that are stored in the policy
 registry key but are not found in the node attribute.
+
+#### New Windows Provider
+
+We are dogfooding generating settings directly from a reference file provided
+in the Chrome ADMX template. This does not cover *every* setting, so we also
+will generate policies from a separate reference file that is manually
+maintained. All reference files are `.reg` files.
+
+To manually add a registry setting you can add it to
+`win_chrome_manual_policy.reg`.
+
+To generate settings run the script `windows_policy_gen.rb`. This assumes you
+have the chefdk installed locally.
+
+All generated settings are placed
+into `libraries/gen_windows_chrome_known_settings.rb`.
+
+To use the provider in your environment you need to enable it:
+
+  node.default['cpe_chrome']['_use_new_windows_provider'] = true
+
+The new provider is a drop-in replacement, you don't need to take any further
+action aside from enabling it to use it.

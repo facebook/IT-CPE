@@ -1,0 +1,5 @@
+; Copyright (c) Facebook, Inc. and its affiliates.
+; Windows Registry Editor Version 5.00
+
+[HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome]
+"TotalMemoryLimitMb"=dword:00000400
