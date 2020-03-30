@@ -33,6 +33,7 @@ default['cpe_chrome'] = {
     'PluginsAllowedForUrls' => [],
     'RelaunchNotification' => nil,
     'RelaunchNotificationPeriod' => nil,
+    'TotalMemoryLimitMb' => nil,
   },
   'mp' => {
     'UseMasterPreferencesFile' => false,
