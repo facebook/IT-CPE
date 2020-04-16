@@ -1,7 +1,3 @@
-#
-# Cookbook Name:: cpe_browsers
-# Library:: chrome_windows
-#
 # Copyright (c) Facebook, Inc. and its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,7 +11,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
+
+# Cookbook Name:: cpe_browsers
+# Library:: chrome_windows
 
 # This addition to the FB namespace is specific to managing Chrome enterprise
 # settings on Windows.
