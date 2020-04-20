@@ -15,5 +15,4 @@
 # Cookbook Name:: cpe_hosts
 # Recipe:: default
 
-
 cpe_hosts 'Managing hosts file'
