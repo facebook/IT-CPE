@@ -15,7 +15,6 @@
 # Cookbook Name:: cpe_adobe_flash
 # Attributes:: default
 
-
 default['cpe_adobe_flash'] = {
   'configure' => false,
   'uninstall' => false,
