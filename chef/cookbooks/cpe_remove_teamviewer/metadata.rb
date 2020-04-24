@@ -1,8 +1,0 @@
-# Copyright (c) Facebook, Inc. and its affiliates.
-name             'cpe_remove_teamviewer'
-maintainer       'Facebook Inc'
-maintainer_email 'noreply@facebook.com'
-license          'BSD'
-description      'Removes Teamviewer from OS X'
-long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
-version          '0.1.0'

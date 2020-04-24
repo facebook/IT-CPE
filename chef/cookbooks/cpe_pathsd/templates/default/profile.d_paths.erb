@@ -1,8 +1,0 @@
-# Copyright (c) Facebook, Inc. and its affiliates.
-<% node['cpe_pathsd'].sort.uniq.each do |path| -%>
-[ -d "<%= path %>" ] && PATH="${PATH}:<%= path %>"
-<% end -%>
-
-<%- unless node['cpe_pathsd'].empty? -%>
-export PATH
-<%- end -%>
