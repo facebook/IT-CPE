@@ -4,6 +4,7 @@ Node helper methods for Facebook IT-CPE open-source cookbooks.
 
 Requirements
 ------------
+This cookbook requires that Facebook's `fb_helpers` cookbook (found [here](https://github.com/facebook/chef-cookbooks/tree/master/cookbooks/fb_helpers)) exists within your Chef repository.
 
 Attributes
 ----------
