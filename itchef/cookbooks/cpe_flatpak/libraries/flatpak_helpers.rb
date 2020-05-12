@@ -28,7 +28,7 @@ module CPE
     end
 
     def flatpak_remotes_receipt
-      return [] unless ::File.exists?(flatpak_remotes_receipt_path)
+      return [] unless ::File.exist?(flatpak_remotes_receipt_path)
       Chef::JSONCompat.from_json(::File.read(flatpak_remotes_receipt_path))
     rescue StandardError
       []
@@ -39,7 +39,7 @@ module CPE
     end
 
     def flatpak_packages_receipt
-      return [] unless ::File.exists?(flatpak_packages_receipt_path)
+      return [] unless ::File.exist?(flatpak_packages_receipt_path)
       Chef::JSONCompat.from_json(::File.read(flatpak_packages_receipt_path))
     rescue StandardError
       []

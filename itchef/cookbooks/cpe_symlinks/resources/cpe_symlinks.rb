@@ -30,7 +30,7 @@ action :create do
   # Create symlinks on disk
   node['cpe_symlinks'].to_h.map.each do |target_dir, symlinks|
     symlinks.each do |target, source|
-      next unless ::File.exists?(source)
+      next unless ::File.exist?(source)
       link ::File.join(target_dir, target) do
         to source
       end

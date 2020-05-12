@@ -44,13 +44,13 @@ load_current_value do |desired| # ~FC006
   extra_loco = extract_location.delete(':')
   zip_path = ::File.join(chef_cache, 'remote_zip', extra_loco, zip_name)
 
-  if ::File.exists?(zip_path)
+  if ::File.exist?(zip_path)
     checksum_ondisk = Chef::Digester.checksum_for_file(zip_path)
     zip_checksum checksum_ondisk
   end
 
   extract_path = desired.extract_location
-  if ::File.exists?(extract_path)
+  if ::File.exist?(extract_path)
     f_stat = ::File.stat(extract_path)
     unless platform?('windows')
       owner ::Etc.getpwuid(f_stat.uid).name

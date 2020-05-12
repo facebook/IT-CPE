@@ -46,7 +46,7 @@ end
 
 load_current_value do |desired| # ~FC006
   path = desired.path
-  if ::File.exists?(path)
+  if ::File.exist?(path)
     f_stat = ::File.stat(path)
     checksum_ondisk = Chef::Digester.checksum_for_file(path)
     checksum checksum_ondisk
