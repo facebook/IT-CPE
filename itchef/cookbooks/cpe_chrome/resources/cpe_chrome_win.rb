@@ -14,7 +14,8 @@
 
 # Cookbook Name:: cpe_chrome
 # Resources:: cpe_chrome_win
-resource_name :cpe_chrome
+
+resource_name :cpe_chrome_win
 provides :cpe_chrome, :os => 'windows'
 default_action :config
 
