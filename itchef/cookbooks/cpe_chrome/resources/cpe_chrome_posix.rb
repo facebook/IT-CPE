@@ -13,9 +13,10 @@
 # limitations under the License.
 
 # Cookbook Name:: cpe_chrome
-# Resources:: cpe_chrome
+# Resources:: cpe_chrome_posix
 
-resource_name :cpe_chrome
+resource_name :cpe_chrome_posix
+provides :cpe_chrome, :os => ['darwin', 'linux']
 default_action :config
 
 action :config do
