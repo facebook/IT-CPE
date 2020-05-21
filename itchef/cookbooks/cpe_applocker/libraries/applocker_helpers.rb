@@ -36,6 +36,9 @@ module CPE
 
     def set_applocker_policy
       powershell_script 'Apply updated Applocker configuration' do
+        # not all data being passed in via the API is valid so this can fail.
+        # skipping over errors for this until a proper maintainer is found
+        ignore_failure true
         code <<-EOH
           # Ensure that the assemblies for managing Applocker are loaded, without
           # this we cannot load the AppLockerPolicy rendering functions used below
