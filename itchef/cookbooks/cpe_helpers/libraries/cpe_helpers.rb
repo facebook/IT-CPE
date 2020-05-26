@@ -36,6 +36,23 @@ module CPE
       false
     end
 
+    def self.dmi_ram_total(node)
+      # for Linux
+      # try to get the data from DMI first, and fallback to node['memory']
+      # which gets it from meminfo
+      mem_devs = node.dig('dmi', 'memory_device', 'all_records') || []
+
+      # 'Size' is a string e.g. '32 GB'. convert to int, add up all the sizes
+      # for all filled RAM slots then convert to KBs
+      total = mem_devs.map { |rec| self.parse_ram(rec['Size']) }.reduce(:+)
+
+      if total.nil? || total.zero?
+        node.dig('memory', 'total').to_i
+      else
+        total
+      end
+    end
+
     def self.loginctl_users
       @loginctl_users ||= begin
         # Standard path in Fedora
@@ -193,6 +210,18 @@ EOF
     rescue StandardError => e
       Chef::Log.warn("could not lookup ldap user info for #{username}: #{e}")
       data
+    end
+
+    def self.parse_ram(ramstr)
+      if ramstr.upcase.end_with?('GB') # newer dmidecode e.g. on Fedora >= 32
+        ramstr.to_i * 1024 * 1024
+      elsif ramstr.upcase.end_with?('MB') # older dmidecode
+        ramstr.to_i * 1024
+      elsif ramstr.upcase.end_with?('KB') # for completeness
+        ramstr.to_i
+      else
+        return 0 # give up, don't use this data
+      end
     end
 
     def self.rpm_cmpver(verstr1, verstr2, compare_epoch = false)

@@ -34,6 +34,10 @@ class Chef
       Chef::Version.new(Chef::VERSION) < Chef::Version.new(version)
     end
 
+    def dmi_ram_total
+      CPE::Helpers.dmi_ram_total(node)
+    end
+
     def os_at_least?(version)
       if arch? || debian_sid?
         # Arch and debian/sid is a rolling release so it's always at a
