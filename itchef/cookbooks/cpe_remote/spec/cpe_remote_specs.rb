@@ -16,15 +16,11 @@
 require 'rspec'
 require 'chef/http/simple'
 require_relative '../libraries/helpers'
-require_relative '../../cpe_utils/libraries/cpe_distro'
+require_relative '../../cpe_helpers/libraries/cpe_helpers'
 
 describe CPE::Remote do
   let(:remote) { Class.new { extend CPE::Remote } }
   context 'valid_url?' do
-    before do
-      allow(CPE::Distro).to receive('auth_headers').and_return({})
-    end
-
     url = 'https://cpespace.thefacebook.com/chef/test/test.pkg'
     [
       nil,

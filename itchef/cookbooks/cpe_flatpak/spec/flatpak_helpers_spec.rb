@@ -15,7 +15,7 @@
 
 require 'chefspec'
 require_relative '../libraries/flatpak_helpers'
-require_relative '../../cpe_utils/libraries/cpe_utils'
+require_relative '../../cpe_helpers/libraries/cpe_helpers'
 
 describe CPE::Flatpak do
   let(:flatpak) { Class.new { extend CPE::Flatpak } }
@@ -23,7 +23,7 @@ describe CPE::Flatpak do
     before do
       allow(Chef::Log).to receive(:debug)
       allow(flatpak).to receive(:chef_cache).and_return('/var/chef/cache')
-      allow(CPE::Utils).to receive(:linux?).and_return(true)
+      allow(CPE::Helpers).to receive(:linux?).and_return(true)
     end
     it 'chef_cache should be /var/chef/cache' do
       expect(flatpak.chef_cache).to eq('/var/chef/cache')
