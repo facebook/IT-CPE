@@ -79,18 +79,58 @@ module CPE
         loginctl_users.any? do |u|
           u['user'] == 'gdm'
         end && loginctl_users.none? do |u|
-          u['uid'] >= 1000
+          u['uid'] > sys_uid_max
         end
       else
         false
       end
     end
 
+    def self.admin_groups
+      @admin_groups ||=
+        if linux?
+          @os_release ||= begin
+            entries = ::File.readlines('/etc/os-release').map do |line|
+              line.chomp.split('=')
+            end
+            # handle the case where os-release contains blank lines
+            # looking at you, CentOS 8
+            entries.select { |ent| ent.length == 2 }.to_h
+          end
+          # again, CentOS' os-release unnecessarily quotes single words
+          case @os_release['ID'].gsub(/\"|\'/, '')
+          when 'fedora', 'centos', 'arch'
+            ['wheel']
+          when 'debian'
+            ['sudo']
+          when 'ubuntu'
+            ['admin', 'sudo']
+          else
+            []
+          end
+        elsif macos?
+          ['admin']
+        else
+          []
+        end
+    end
+
+    def self.admin_users
+      @admin_users ||=
+        admin_groups.flat_map do |g|
+          begin
+            ::Etc.getgrnam(g).mem
+          rescue
+            []
+          end
+        end
+    end
+
     def self.console_user
       # memoize the value so it isn't executed multiple times per run
       @console_user ||=
         if macos?
-          Etc.getpwuid(::File.stat('/dev/console').uid).name
+          ::Etc.getpwuid(::File.stat('/dev/console').uid).name
         elsif linux?
           filtered_users = loginctl_users.select do |u|
             u['user'] != 'gdm' && u['uid'] >= 1000
@@ -212,6 +252,23 @@ EOF
       data
     end
 
+    def self.machine_owner
+      @machine_owner ||=
+        if linux? || macos?
+          admin_account_entries = admin_users.map do |u|
+            ::Etc.getpwnam(u)
+          end
+          user_account_entries = admin_account_entries.select do |ent|
+            ent.uid > sys_uid_max && ent.name != 'admin'
+          end
+          if user_account_entries.empty?
+            nil
+          else
+            user_account_entries.sort_by(&:uid).first['name']
+          end
+        end
+    end
+
     def self.parse_ram(ramstr)
       if ramstr.upcase.end_with?('GB') # newer dmidecode e.g. on Fedora >= 32
         ramstr.to_i * 1024 * 1024
@@ -314,6 +371,15 @@ EOF
     def self.rpm_parserel(relstr)
       rel_splits = relstr.split('.')
       [rel_splits[0].to_i, rel_splits[1..-1].join('.')]
+    end
+
+    def self.sys_uid_max
+      @sys_uid_max ||=
+        if macos?
+          499
+        elsif linux?
+          999
+        end
     end
 
     def self.valid_uri?(string)
