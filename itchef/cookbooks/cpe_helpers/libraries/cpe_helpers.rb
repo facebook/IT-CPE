@@ -135,14 +135,14 @@ module CPE
           filtered_users = loginctl_users.select do |u|
             u['user'] != 'gdm' && u['uid'] >= 1000
           end
-          if filtered_users.empty? && ::File.exist?('/etc/fb-machine-owner')
+          if filtered_users.empty?
             # TODO T54156500: Evaluate whether this is still necessary
             CPE::Log.log(
-              'Reading fb-machine-owner',
+              'No console user detected, falling back to machine owner',
               :type => 'cpe::helpers.console_user',
-              :action => 'read_from_fb-machine-owner',
+              :action => 'read_from_machine_owner',
             )
-            IO.read('/etc/fb-machine-owner').chomp
+            machine_owner
           else
             filtered_users[0]['user']
           end

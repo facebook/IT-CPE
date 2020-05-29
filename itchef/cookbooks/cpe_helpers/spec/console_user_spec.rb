@@ -24,7 +24,7 @@ describe CPE::Helpers do
       allow(CPE::Helpers).to receive(:linux?).and_return(true)
       allow(CPE::Helpers).to receive(:windows?).and_return(false)
       allow(CPE::Log).to receive(:log)
-      allow(::IO).to receive(:read).with('/etc/fb-machine-owner').
+      allow(CPE::Helpers).to receive(:machine_owner).
         and_return('from_machine_owner')
     end
 
@@ -34,10 +34,8 @@ describe CPE::Helpers do
         CPE::Helpers.instance_variable_set :@loginctl_users, nil
         allow(::File).to receive(:exist?).with('/usr/bin/loginctl').
           and_return(false)
-        allow(::File).to receive(:exist?).with('/etc/fb-machine-owner').
-          and_return(true)
       end
-      it 'console_user returns the content of fb-machine-owner' do
+      it 'console_user returns machine owner' do
         expect(CPE::Helpers.console_user).to eq('from_machine_owner')
       end
     end
@@ -45,8 +43,6 @@ describe CPE::Helpers do
     context 'When loginctl returns no end-user' do
       before do
         allow(::File).to receive(:exist?).with('/usr/bin/loginctl').
-          and_return(true)
-        allow(::File).to receive(:exist?).with('/etc/fb-machine-owner').
           and_return(true)
       end
 
@@ -65,7 +61,7 @@ describe CPE::Helpers do
           expect(CPE::Helpers.loginctl_users).to eq([])
         end
 
-        it 'console_user should return from_machine_owner' do
+        it 'console_user should return machine owner' do
           expect(CPE::Helpers.console_user).to eq('from_machine_owner')
         end
       end
@@ -89,7 +85,7 @@ describe CPE::Helpers do
           )
         end
 
-        it 'console_user should return from_machine_owner' do
+        it 'console_user should return machine owner' do
           expect(CPE::Helpers.console_user).to eq('from_machine_owner')
         end
       end
