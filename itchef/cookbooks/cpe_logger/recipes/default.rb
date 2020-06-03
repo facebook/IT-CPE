@@ -33,8 +33,8 @@ end
 
 template logrotate_conf do
   source "logrotate.#{node['os']}.erb"
-  owner root_owner
-  group root_group
+  owner node.root_user
+  group node.root_group
   mode '0644'
   variables(
     :logfile => logfile,

@@ -42,16 +42,16 @@ action :run do
     # The defaults for `file` will only write the file if the contents has
     # changed, and will do so atomically.
     file HOSTS_FILE do
-      owner root_owner
-      group root_group
+      owner node.root_user
+      group node.root_group
       mode '0644'
       content lines.join
     end
   else
     template HOSTS_FILE do
       source 'hosts.erb'
-      owner root_owner
-      group root_group
+      owner node.root_user
+      group node.root_group
       mode '0644'
     end
   end

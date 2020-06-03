@@ -42,8 +42,8 @@ action :create do
   file cached_path do
     content Chef::JSONCompat.to_json_pretty(symlink_list.uniq)
     action :create
-    owner root_owner
-    group root_group
+    owner node.root_user
+    group node.root_group
     mode '755'
   end
 

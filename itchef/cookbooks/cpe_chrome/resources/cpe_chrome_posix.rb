@@ -93,15 +93,15 @@ action_class do
     }.each do |path|
       directory path do
         mode '0755'
-        owner root_owner
-        group root_group
+        owner node.root_user
+        group node.root_group
       end
     end
     migrate_chromium_settings_linux
     link '/etc/chromium' do
       to '/etc/opt/chrome'
-      owner root_owner
-      group root_group
+      owner node.root_user
+      group node.root_group
     end
     {
       '/etc/opt/chrome/policies/managed/test_policy.json' => prefs,
@@ -114,8 +114,8 @@ action_class do
       else
         file path do
           mode '0644'
-          owner root_owner
-          group root_group
+          owner node.root_user
+          group node.root_group
           action :create
           content Chef::JSONCompat.to_json_pretty(preferences)
         end
@@ -215,7 +215,7 @@ action_class do
       code <<-EOH
         find /etc/chromium -type d -exec chmod 0755 {} \\;
         find /etc/chromium -type f -exec chmod 0644 {} \\;
-        chown -R #{root_owner}:#{root_group} /etc/chromium
+        chown -R #{node.root_user}:# node.root_group} /etc/chromium
         cp -R /etc/chromium/* /etc/opt/chrome/
         rm -rf /etc/chromium
       EOH
