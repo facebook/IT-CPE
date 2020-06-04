@@ -3,9 +3,9 @@ cpe_applocker Cookbook
 About
 --------------------
 This cookbook includes recipes and resources to install, configure, and manage
-Windows AppLocker. AppLocker is a binary application whitelisting and
+Windows AppLocker. AppLocker is a binary application allowlisting and
 blacklisting service built natively into Windows. AppLocker allows for
-Blacklisting or Whitelisting via signing certificate, binary path, and binary
+Blacklisting or allowlisting via signing certificate, binary path, and binary
 hash.
 
 Supported Platforms

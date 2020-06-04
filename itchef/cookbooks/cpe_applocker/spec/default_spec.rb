@@ -187,8 +187,8 @@ EOF
 
   # This is an explicit test to ensure that publishers with foreign
   # character sets are rendered and represented correctly by our helper
-  # functions. This is important, as if we mess this up certificate black/
-  # whitelisting will break, thus I feel it merrits its own test.
+  # functions. This is important, as if we mess this up certificate deny/
+  # allowlisting will break, thus I feel it merits its own test.
   context 'When processing data with non-EN charsets' do
     include CPE::Applocker
     it 'should properly render publisher information' do
