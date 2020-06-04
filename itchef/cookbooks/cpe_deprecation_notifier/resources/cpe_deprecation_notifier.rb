@@ -59,7 +59,7 @@ action :prompt do
     mac_os_x_userdefaults 'Reset Timeout' do
       action :nothing
       domain 'com.megacorp.DeprecationNotifier'
-      user node.person['username']
+      user node.person['username'] # ~FB039
       key 'WindowTimeOut'
       value dpn['conf']['initialTimeout']
       type 'int'
@@ -67,7 +67,7 @@ action :prompt do
 
     # We're gonna try to do some logic here so that we don't
     # unnecessarily load the LaunchDaemon when we don't need to
-    os_build = node.attr_lookup('platform_build', :default => nil)
+    os_build = node.attr_lookup('platform_build', :default => nil) # ~FB039
     ev = dpn['conf']['expectedVersion']
     eb = dpn['conf']['expectedBuilds']
     should_launch = false
@@ -83,10 +83,10 @@ action :prompt do
         # We didn't specify a build, so we're in compliance
         should_launch = false
       else
-        # We did specify whitelisted builds and we're on
+        # We did specify allowlisted builds and we're on
         # an equal OS version, so let's check them
         if eb.include?(os_build)
-          # Our build is in the whitelist, nothing to do
+          # Our build is in the allowlist, nothing to do
           should_launch = false
         else
           # Builds are specified and we're not in them
