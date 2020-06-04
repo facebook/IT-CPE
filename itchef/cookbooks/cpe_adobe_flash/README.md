@@ -37,7 +37,7 @@ Attributes
 * node['cpe_adobe_flash']['configs']['OverrideGPUValidation']
 * node['cpe_adobe_flash']['configs']['ProductDisabled']
 * node['cpe_adobe_flash']['configs']['ProtectedMode']
-* node['cpe_adobe_flash']['configs']['ProtectedModeBrokerWhitelistConfigFile']
+* node['cpe_adobe_flash']['configs']['ProtectedModeBrokerAllowlistConfigFile']
 * node['cpe_adobe_flash']['configs']['ProtectedModeBrokerLogfilePath']
 * node['cpe_adobe_flash']['configs']['RTMFPP2PDisable']
 * node['cpe_adobe_flash']['configs']['RTMFPTURNProxy']

@@ -28,6 +28,14 @@ action_class do
     return unless node['cpe_adobe_flash']['configure']
 
     configs = node['cpe_adobe_flash']['configs'].reject { |_k, v| v.nil? }
+    # Until adobe removes this problematic naming convention,
+    # we still have to use it.
+    {
+      'ProtectedModeBrokerAllowlistConfigFile' =>
+        'ProtectedModeBrokerWhitelistConfigFile',
+    }.each do |k, v|
+      configs[v] = configs.delete(k) if configs.keys.include?(k)
+    end
     node.default['cpe_adobe_flash']['_applied_configs'] = configs
 
     launchd 'com.adobe.fpsaud' do
