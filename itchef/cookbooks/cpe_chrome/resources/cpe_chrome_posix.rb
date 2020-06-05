@@ -215,7 +215,7 @@ action_class do
       code <<-EOH
         find /etc/chromium -type d -exec chmod 0755 {} \\;
         find /etc/chromium -type f -exec chmod 0644 {} \\;
-        chown -R #{node.root_user}:# node.root_group} /etc/chromium
+        chown -R #{node.root_user}:#{node.root_group} /etc/chromium
         cp -R /etc/chromium/* /etc/opt/chrome/
         rm -rf /etc/chromium
       EOH
