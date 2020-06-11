@@ -17,4 +17,6 @@
 
 return if node.windows?
 
-cpe_pathsd 'Manage paths'
+cpe_pathsd 'Manage paths' do
+  only_if { node['cpe_pathsd'].any? }
+end
