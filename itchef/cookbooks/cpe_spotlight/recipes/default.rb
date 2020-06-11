@@ -23,14 +23,9 @@ spotlight_data =
 return if spotlight_data.include?('No index.') ||
           spotlight_data.include?('Spotlight server is disabled.')
 
-directory '/private/var/chef' do
-  owner 'root'
-  group 'wheel'
-  mode '0755'
-  action :create
+cpe_spotlight 'Add Spotlight exclusions' do
+  only_if { node['cpe_spotlight']['exclusions'].any? }
 end
-
-cpe_spotlight 'Manage Spotlight exclusions'
 
 cpe_spotlight 'Clean up removed Spotlight exclusions' do
   action :clean_up
