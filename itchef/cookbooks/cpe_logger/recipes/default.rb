@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+#
 # Cookbook Name:: cpe_logger
 # Recipes:: default
 
@@ -27,11 +27,13 @@ logrotate_conf = if node.macos?
 return if logrotate_conf.nil?
 
 package 'logrotate' do
+  only_if { node['cpe_logger']['enable'] }
   only_if { node.linux? }
   action :upgrade
 end
 
 template logrotate_conf do
+  only_if { node['cpe_logger']['enable'] }
   source "logrotate.#{node['os']}.erb"
   owner node.root_user
   group node.root_group
