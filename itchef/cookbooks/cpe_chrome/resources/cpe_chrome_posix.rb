@@ -72,7 +72,9 @@ action_class do
     else
       mprefs = {}
     end
-    prefs = node['cpe_chrome']['profile'].reject { |_k, v| v.nil? }
+    prefs = node['cpe_chrome']['profile'].reject do |_k, v|
+      v.nil? || (v.respond_to?(:empty?) && v.empty?)
+    end
     return if prefs.empty? && mprefs.empty?
     case node['os']
     when 'darwin'

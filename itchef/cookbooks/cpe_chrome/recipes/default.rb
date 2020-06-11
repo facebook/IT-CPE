@@ -15,4 +15,9 @@
 # Cookbook Name:: cpe_chrome
 # Recipe:: default
 
-cpe_chrome 'Configure Google Chrome'
+cpe_chrome 'Configure Google Chrome' do
+  only_if do
+    node['cpe_chrome']['profile'].any? ||
+    node['cpe_chrome']['mp']['UseMasterPreferencesFile']
+  end
+end
