@@ -22,12 +22,14 @@ default_action :manage
 action :manage do
   install if node['cpe_vfuse']['install']
   templates unless node['cpe_vfuse']['templates'].empty?
+  configure if node['cpe_vfuse']['configure']
 end
 
 action_class do
   def install
     pkg = node['cpe_vfuse']['pkg']
     cpe_remote_pkg pkg['name'] do
+      allow_downgrade pkg['allow_downgrade']
       version pkg['version']
       receipt pkg['receipt']
       checksum pkg['checksum']
@@ -39,6 +41,7 @@ action_class do
   def templates
     templates = []
     template_dir = node['cpe_vfuse']['template_dir']
+    return if template_dir.nil?
     templates_on_disk = ::Dir.glob("#{template_dir}/*.json")
 
     directory template_dir do
@@ -49,12 +52,14 @@ action_class do
       action :create
     end
 
-    node['cpe_vfuse']['templates'].each do |template|
+    node['cpe_vfuse']['templates'].to_h.each do |template_name, template|
+      template['output_name'] = template_name # force output_name for vfuse use
       path = "#{template_dir}/#{template['output_name']}.json"
       templates << path
+
       file path do
         only_if { node['cpe_vfuse']['configure'] }
-        content Chef::JSONCompat.to_json_pretty(template)
+        content Chef::JSONCompat.to_json_pretty(template.sort.to_h)
         owner 'root'
         group 'admin'
         mode '0644'
@@ -72,6 +77,21 @@ action_class do
           action :delete
         end
       end
+    end
+  end
+
+  def configure
+    template_dir = node['cpe_vfuse']['template_dir']
+    return if template_dir.nil?
+    config = {
+      'template_dir' => template_dir,
+    }
+    file '/usr/local/vfuse/bin/config.json' do
+      content Chef::JSONCompat.to_json_pretty(config)
+      owner 'root'
+      group 'admin'
+      mode '0644'
+      action :create
     end
   end
 end
