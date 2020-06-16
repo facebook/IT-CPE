@@ -16,6 +16,7 @@
 # Attributes:: default
 
 default['cpe_vfuse'] = {
+  'base_path' => '/usr/local/vfuse',
   'configure' => false,
   'install' => false,
   'uninstall' => false,

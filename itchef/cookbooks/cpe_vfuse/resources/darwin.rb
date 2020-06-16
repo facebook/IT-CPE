@@ -82,11 +82,26 @@ action_class do
 
   def configure
     template_dir = node['cpe_vfuse']['template_dir']
+    base_path = node['cpe_vfuse']['base_path']
+    bin_path = ::File.join(base_path, 'bin')
     return if template_dir.nil?
+
+    [
+      base_path,
+      bin_path,
+    ].each do |dir|
+      directory dir do
+        owner 'root'
+        group 'admin'
+        mode '0755'
+      end
+    end
+
     config = {
       'template_dir' => template_dir,
     }
-    file '/usr/local/vfuse/bin/config.json' do
+
+    file ::File.join(bin_path, 'config.json') do
       content Chef::JSONCompat.to_json_pretty(config)
       owner 'root'
       group 'admin'
