@@ -44,19 +44,16 @@ initially created.
 
 ```
   # Add custom template
-  [
-    {
-      'output_name' => 'bootstrap',
-      'source_dmg' =>
-        "https://#{node['distro_server']}/restor/images/bootstrap.dmg",
-      'checksum' =>
-        'a8d8b26ed3d0bc45bf7993e1a25f4e6fe89ae95c5818f8470b4803f0bee74b2a',
-      'cache' => true,
-      'snapshot' => true,
-      'serial_number' => 'VMbootstrap',
-      'static' => false,
-    },
-  ].each { |template| node.default['cpe_vfuse']['templates'] << template }
+  node.default['cpe_vfuse']['templates']['bootstrap'] = {
+    'cache' => true,
+    'checksum' =>
+      'a8d8b26ed3d0bc45bf7993e1a25f4e6fe89ae95c5818f8470b4803f0bee74b2a',
+    'serial_number' => 'VMbootstrap'
+    'source_dmg' =>
+      'https://#{node['distro_server']}/restor/images/bootstrap.dmg',
+    'snapshot' => true,
+    'static' => false,
+  }
 ```
 
 If you want to override the serial number (say for DEP testing), you can then
