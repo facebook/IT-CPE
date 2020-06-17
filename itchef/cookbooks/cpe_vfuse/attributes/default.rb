@@ -16,13 +16,15 @@
 # Attributes:: default
 
 default['cpe_vfuse'] = {
+  'base_path' => '/usr/local/vfuse',
   'configure' => false,
   'install' => false,
   'uninstall' => false,
   'template_dir' => nil,
-  'templates' => [],
+  'templates' => {},
   'pkg' => {
     'name' => 'vfuse',
+    'allow_downgrade' => true,
     'checksum' => nil,
     'receipt' => 'com.github.vfuse',
     'version' => nil,
