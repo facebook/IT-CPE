@@ -16,6 +16,7 @@
 # Resource:: cpe_munki_install
 
 resource_name :cpe_munki_install
+provides :cpe_munki_install
 default_action :install
 
 action_class do

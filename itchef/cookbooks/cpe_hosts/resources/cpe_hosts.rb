@@ -16,7 +16,9 @@
 # Resource:: cpe_hosts
 
 resource_name :cpe_hosts
+provides :cpe_hosts
 default_action :run
+
 action :run do
   HOSTS_FILE = value_for_platform_family(
     'windows' => "#{ENV['WINDIR']}\\System32\\drivers\\etc\\hosts".freeze,

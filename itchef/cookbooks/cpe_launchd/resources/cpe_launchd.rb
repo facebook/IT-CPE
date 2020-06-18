@@ -16,6 +16,7 @@
 # Resources:: default
 
 resource_name :cpe_launchd
+provides :cpe_launchd
 default_action :run
 
 action :run do

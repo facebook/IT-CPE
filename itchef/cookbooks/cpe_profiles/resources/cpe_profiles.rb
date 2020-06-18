@@ -16,6 +16,7 @@
 # Resource:: cpe_profiles
 
 resource_name :cpe_profiles
+provides :cpe_profiles
 default_action :run
 
 action :run do

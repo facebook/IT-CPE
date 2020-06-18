@@ -16,6 +16,7 @@
 # Resource:: cpe_gnome_software
 
 resource_name :cpe_gnome_software
+provides :cpe_gnome_software
 default_action :manage
 
 action :manage do

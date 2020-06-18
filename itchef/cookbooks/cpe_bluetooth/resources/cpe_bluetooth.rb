@@ -16,6 +16,7 @@
 # Resource:: cpe_bluetooth
 
 resource_name :cpe_bluetooth
+provides :cpe_bluetooth
 default_action :config
 
 action :config do

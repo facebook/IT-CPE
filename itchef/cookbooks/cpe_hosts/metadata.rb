@@ -12,3 +12,5 @@ supports 'ubuntu'
 supports 'debian'
 supports 'mac_os_x'
 supports 'windows'
+
+depends 'cpe_helpers'

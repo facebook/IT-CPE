@@ -16,6 +16,7 @@
 # Resource:: cpe_spotlight
 
 resource_name :cpe_spotlight
+provides :cpe_spotlight
 default_action :run
 
 action_class do
