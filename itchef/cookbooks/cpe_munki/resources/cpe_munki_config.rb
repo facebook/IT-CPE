@@ -16,7 +16,7 @@
 # Resource:: cpe_munki_config
 
 resource_name :cpe_munki_config
-provides :cpe_munki_config
+provides :cpe_munki_config, :os => 'darwin'
 default_action :config
 
 action :config do

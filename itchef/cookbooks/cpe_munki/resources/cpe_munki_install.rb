@@ -16,7 +16,7 @@
 # Resource:: cpe_munki_install
 
 resource_name :cpe_munki_install
-provides :cpe_munki_install
+provides :cpe_munki_install, :os => 'darwin'
 default_action :install
 
 action_class do

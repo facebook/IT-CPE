@@ -16,7 +16,7 @@
 # Resources:: default
 
 resource_name :cpe_launchd
-provides :cpe_launchd
+provides :cpe_launchd, :os => 'darwin'
 default_action :run
 
 action :run do

@@ -16,7 +16,7 @@
 # Resource:: cpe_bluetooth
 
 resource_name :cpe_bluetooth
-provides :cpe_bluetooth
+provides :cpe_bluetooth, :os => 'darwin'
 default_action :config
 
 action :config do

@@ -19,7 +19,7 @@ require 'plist'
 require 'json'
 
 resource_name :cpe_munki_local
-provides :cpe_munki_local
+provides :cpe_munki_local, :os => 'darwin'
 default_action :run
 
 action :run do
