@@ -1,9 +1,12 @@
+#!/usr/bin/env python3
 # Copyright (c) Facebook, Inc. and its affiliates. All rights reserved.
+
 # Utility functions.
 import getpass
 import glob
 import hashlib
 import json
+import logging
 import os
 import platform
 import re
@@ -21,11 +24,12 @@ def run(cmd, cwd=None, sanitize=True):
   TODO: Improve error handling
   """
 
+    # TODO Determine if there is a better way to do this.
     # Setting cwd within the repo
     if not cwd:
-        cwd = os.path.dirname(os.path.realpath(__file__))
+        cwd = os.path.dirname(get_paths()["repo_root"])
 
-    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, cwd=cwd)
+    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, cwd=cwd, universal_newlines=True)
     stdout, stderr = p.communicate()
     status_code = p.wait()
 
@@ -64,7 +68,7 @@ def create_parent_directory_if_necessary(filename):
         folders = os.path.split(file_path)[0]
         try:
             os.makedirs(folders)
-        except:
+        except Exception:
             pass
 
 
@@ -96,11 +100,14 @@ def get_sha1(file_path):
   get_sha1(file_path)
 
   Returns the sha1 of the file_path
+  copied from fs_tools
   """
     if os.path.exists(file_path):
         hash = hashlib.sha1()
         with open(file_path, "rb") as f:
-            for chunk in iter(lambda: f.read(4096), ""):
+            chunk = 0
+            while chunk != b"":
+                chunk = f.read(4096)
                 hash.update(chunk)
             return hash.hexdigest()
     else:
@@ -139,17 +146,33 @@ def get_username():
     else:
         default_username = getpass.getuser()
 
-    username = raw_input("Username [%s]: " % default_username)
+    username = input("Username [%s]: " % default_username)
     if not username:
         username = default_username
 
     return username
 
 
+def get_user_home_dir() -> str:
+    """
+    Grabs the home directory of the user's system
+    We store our 'pantri_config.json' file here
+    """
+    standard_home = os.path.expanduser("~")
+
+    if os.path.exists(standard_home):
+        return standard_home
+
+    logging.getLogger("pantri").error(
+        "Error: home path not found. Try running Pantri again."
+    )
+    exit()
+
+
 def get_paths():
     """ Return dict of paths based on it-bin git repo path """
 
-    repo = git.cmd.Git(os.path.dirname(__file__))
+    repo = git.cmd.Git(get_itbin_dir())
     repo_root = repo.rev_parse(show_toplevel=True)
     return {
         "repo_root": repo_root,
@@ -162,6 +185,87 @@ def get_paths():
         "git_ignore": os.path.join(repo_root, ".gitignore"),
         "auth_token": os.path.join(repo_root, ".pantri_auth_token"),
     }
+
+
+def get_itbin_dir() -> str:
+    """
+    Checks to see if 'pantri_config.json' exists
+    - Yes -> check it-bin path inside config if valid
+    - No -> ask for it-bin path and create conf for future use
+
+    Order of precedence:
+    CWD -> config/flag -> prompt
+    """
+    # CWD
+    if verify_git_repo(os.getcwd()):
+        return os.getcwd()
+
+    # config file
+    home = get_user_home_dir()
+    config_path = os.path.join(home, ".pantri_config.json")
+
+    if os.path.exists(config_path):
+        with open(config_path, "r") as f:
+            config = json.load(f)
+
+        if verify_git_repo(config["itbin_path"]):
+            return config["itbin_path"]
+
+    # prompt
+    it_bin_dir = prompt_for_itbin_dir()
+    if verify_git_repo(it_bin_dir):
+        create_conf(it_bin_dir)
+        return it_bin_dir
+
+    logging.getLogger("pantri").error("Error: not a Git repository")
+    raise git.exc.GitError("Path is not a git repository.")
+
+
+def prompt_for_itbin_dir() -> str:
+    """
+    Ask for the users it-bin path on their devserver
+    Verifies path, if valid then create config file
+    """
+    repo = input("Please enter your it-bin filepath: ") or ""
+    repo = repo.strip()
+    path = os.path.expanduser(repo)
+    if not os.path.exists(path):
+        logging.getLogger("pantri").error("Error: path not found")
+        exit()
+
+    return path
+
+
+def create_conf(path):
+    """
+    Create configuration file
+    store it-bin path so can be used on later Pantri uses
+    """
+    home = get_user_home_dir()
+    path_to_config = os.path.join(home, ".pantri_config.json")
+
+    git_root = get_top_level_git(path)
+    config = {"itbin_path": str(git_root)}
+    with open(path_to_config, "w") as f:
+        json.dump(config, f)
+
+
+def get_top_level_git(path):
+    """
+    Grab the top level git path to store in our config file
+    Used incase user types in something like it-bin/scripts, still returns it-bin
+    so we have correct paths. (it-bin/dest-sync instead of it-bin/scripts/dest-sync)
+    """
+
+    git_root = path
+    try:
+        git_repo = git.Repo(path, search_parent_directories=True)
+        git_root = git_repo.git.rev_parse("--show-toplevel")
+    except git.exc.GitError:
+        logging.getLogger("pantri").error("Path is not in a git repository")
+        raise git.exc.GitError("Path is not a git repository.")
+
+    return git_root
 
 
 def get_shelf_directory(object_path):
@@ -177,12 +281,21 @@ def get_shelf_directory(object_path):
     return shelf_dir.split(os.sep)[0]
 
 
-def verify_git_repo():
+def verify_git_repo(repo_path):
     """ Verify script ran within the it-bin git repo"""
 
-    git_remote = git.cmd.Git(get_paths()["repo_root"]).remote(verbose=True)
-    # TODO add repo name
-    if re.search("/repo_name", git_remote):
+    if not os.path.exists(repo_path):
+        logging.getLogger("pantri").error("Error: path cannot be found.")
+        exit()
+
+    # Check to see if it is a git repository
+    try:
+        git_remote = git.cmd.Git(repo_path).remote(verbose=True)
+    except git.exc.GitError:
+        return False
+
+    # If git repository, make sure it is it-bin git repository
+    if re.search("/it-bin", git_remote):
         return True
 
     return False
@@ -213,6 +326,7 @@ def changed_files():
   changed_files()
 
   Returns (added, modified, deleted) files between git pulls.
+  Code copied from: fbcode/scm/lib/gitrepo.py and changed to use GitPython
   """
     added = []
     modified = []
@@ -292,16 +406,16 @@ def remove(paths):
         if os.path.isdir(file_path):
             try:
                 shutil.rmtree(file_path)
-            except:
-                print("Error: %s not removed" % file_path)
+            except Exception:
+                logging.getLogger("pantri").error("Error: %s not removed" % file_path)
             continue
 
         # Remove files.
         if os.path.isfile(file_path):
             try:
                 os.remove(file_path)
-            except:
-                print("Error: %s not removed" % file_path)
+            except Exception:
+                logging.getLogger("pantri").error("Error: %s not removed" % file_path)
 
 
 def get_modified_time(file_path):
