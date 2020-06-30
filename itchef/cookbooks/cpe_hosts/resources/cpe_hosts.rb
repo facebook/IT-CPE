@@ -21,7 +21,8 @@ default_action :run
 
 action :run do
   HOSTS_FILE = value_for_platform_family(
-    'windows' => "#{ENV['WINDIR']}\\System32\\drivers\\etc\\hosts".freeze,
+    'windows' =>
+      ::File.join(ENV['WINDIR'], 'System32', 'drivers', 'etc', 'hosts'),
     'default' => '/etc/hosts'.freeze,
   )
   lines = ::File.readlines(HOSTS_FILE)
@@ -44,17 +45,25 @@ action :run do
     # The defaults for `file` will only write the file if the contents has
     # changed, and will do so atomically.
     file HOSTS_FILE do
-      owner node.root_user
-      group node.root_group
-      mode '0644'
+      retries 2
+      ignore_failure true
+      unless node.windows?
+        owner node.root_user
+        group node.root_group
+        mode '0644'
+      end
       content lines.join
     end
   else
-    template HOSTS_FILE do
+    template HOSTS_FILE do # ~FB031
+      retries 2
+      ignore_failure true
       source 'hosts.erb'
-      owner node.root_user
-      group node.root_group
-      mode '0644'
+      unless node.windows?
+        owner node.root_user
+        group node.root_group
+        mode '0644'
+      end
     end
   end
 end
