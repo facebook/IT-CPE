@@ -22,7 +22,9 @@ default_action :run
 action :run do
   HOSTS_FILE = value_for_platform_family(
     'windows' =>
-      ::File.join(ENV['WINDIR'], 'System32', 'drivers', 'etc', 'hosts'),
+      ::File.join(
+        (ENV['WINDIR'] || 'C:\\Windows'), 'System32', 'drivers', 'etc', 'hosts'
+      ),
     'default' => '/etc/hosts'.freeze,
   )
   lines = ::File.readlines(HOSTS_FILE)
