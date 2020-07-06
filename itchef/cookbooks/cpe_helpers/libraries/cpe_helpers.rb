@@ -40,14 +40,14 @@ module CPE
       # for Linux
       # try to get the data from DMI first, and fallback to node['memory']
       # which gets it from meminfo
-      mem_devs = node.dig('dmi', 'memory_device', 'all_records') || []
+      mem_devs = node['dmi'].to_h.dig('memory_device', 'all_records') || []
 
       # 'Size' is a string e.g. '32 GB'. convert to int, add up all the sizes
       # for all filled RAM slots then convert to KBs
       total = mem_devs.map { |rec| self.parse_ram(rec['Size']) }.reduce(:+)
 
       if total.nil? || total.zero?
-        node.dig('memory', 'total').to_i
+        node['memory'].to_h.dig('total').to_i
       else
         total
       end
