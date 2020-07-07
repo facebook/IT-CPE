@@ -31,6 +31,7 @@ action :config do
   if node['cpe_chrome']['_use_new_windows_provider']
     reg_settings = []
     node['cpe_chrome']['profile'].each do |setting_key, setting_value|
+      next if setting_value.nil?
       setting = CPE::ChromeManagement::KnownSettings::GENERATED.fetch(
         setting_key,
         nil,
@@ -41,6 +42,7 @@ action :config do
       end
 
       if setting_value.is_a?(Hash)
+        next if setting_value.empty?
         setting.value = setting_value.to_json
       else
         setting.value = setting_value
@@ -85,6 +87,34 @@ action :config do
         action :create
       end
     end
+
+    # Manage Extension Settings
+    extprefs = node['cpe_chrome']['extension_profile']
+    if extprefs.empty? || extprefs.nil?
+      registry_key CPE::ChromeManagement.chrome_reg_3rd_party_ext_root do
+        recursive true
+        action :delete_key
+      end
+    else
+      # Loop through the extensions and create registry entries
+      # Key path is HKLM\Software\Policies\Google\Chrome\3rdparty\extensions\EXT_ID\policy
+      # https://www.chromium.org/administrators/configuring-policy-for-extensions
+      extprefs.each do |k, v|
+        ext_values = []
+        v['profile'].each do |k_ext, v_ext|
+          ext_values << {
+            'name' => k_ext,
+            'type' => v_ext['windows_value_type'],
+            'data' => v_ext['value'],
+          }
+        end
+        registry_key "#{CPE::ChromeManagement.chrome_reg_3rd_party_ext_root}\\#{k}\\policy" do
+          values ext_values
+          recursive true
+          action :create
+        end
+      end
+    end
   else
     # ExtensionSettings has a "dictionary" format and each key must be stored
     # as a separate sub key inside the ExtensionSettings registry setting
@@ -92,6 +122,10 @@ action :config do
     extension_settings_key = 'ExtensionSettings'.freeze
     reg_settings = []
     node['cpe_chrome']['profile'].each do |setting_key, setting_value|
+      next if setting_value.nil?
+      if setting_value.is_a?(Hash)
+        next if setting_value.empty?
+      end
       # ExtensionSettings must have a different registry structure
       if (setting_value.is_a? Hash) && (setting_key == extension_settings_key)
         setting_value.each do |extension_key, extension_value|
@@ -151,6 +185,53 @@ action :config do
       end
     end
 
+    extprefs = node['cpe_chrome']['extension_profile']
+    unless extprefs.empty? || extprefs.nil?
+      # Loop through the extensions and create registry entries
+      # Key path is HKLM\Software\Policies\Google\Chrome\3rdparty\extensions\EXT_ID\policy
+      # https://www.chromium.org/administrators/configuring-policy-for-extensions
+      extprefs.each do |k, v|
+        ext_values = []
+        v['profile'].each do |k_ext, v_ext|
+          ext_values << {
+            'name' => k_ext,
+            'type' => v_ext['windows_value_type'],
+            'data' => v_ext['value'],
+          }
+        end
+        registry_key "#{CPE::ChromeManagement.chrome_reg_3rd_party_ext_root}\\#{k}\\policy" do
+          values ext_values
+          recursive true
+          action :create
+        end
+      end
+    end
+
+    # Look at all the subkeys total of the root Chrome extension key.
+    all_chrome_ext_keys = []
+    extension_profile = node['cpe_chrome']['extension_profile']
+    if registry_key_exists?(CPE::ChromeManagement.chrome_reg_3rd_party_ext_root) &&
+      registry_has_subkeys?(CPE::ChromeManagement.chrome_reg_3rd_party_ext_root)
+      all_chrome_ext_keys =
+        registry_get_subkeys(CPE::ChromeManagement.chrome_reg_3rd_party_ext_root)
+    end
+    # This variable should be a superset (or a match) to the list of keys
+    # in the node attribute.
+    extra_chrome_ext_keys = all_chrome_ext_keys - extension_profile.keys
+    Chef::Log.debug("#{cookbook_name}: Extra keys: #{extra_chrome_ext_keys}")
+    extra_chrome_ext_keys.each do |rip_key|
+      registry_key "#{CPE::ChromeManagement.chrome_reg_3rd_party_ext_root}\\#{rip_key}" do
+        action :delete_key
+        recursive true
+      end
+    end
+
+    # Hack - if any extension profile configs, don't delete the root key
+    chrome_profile = node['cpe_chrome']['profile'].to_h
+    if extension_profile.values.any?
+      chrome_profile['3rdparty'] = nil
+    end
+
     # Look at all the subkeys total of the root Chrome key.
     all_chrome_keys = []
     if registry_key_exists?(CPE::ChromeManagement.chrome_reg_root) &&
@@ -160,7 +241,7 @@ action :config do
     end
     # This variable should be a superset (or a match) to the list of keys
     # in the node attribute.
-    extra_chrome_keys = all_chrome_keys - node['cpe_chrome']['profile'].keys
+    extra_chrome_keys = all_chrome_keys - chrome_profile.keys
     extra_chrome_keys.each do |rip_key|
       registry_key "#{CPE::ChromeManagement.chrome_reg_root}\\#{rip_key}" do
         action :delete_key

@@ -33,6 +33,10 @@ module CPE
         'HKLM\\Software\\Policies\\Google\\Chrome'.freeze
       end
 
+      def self.chrome_reg_3rd_party_ext_root
+        'HKLM\\Software\\Policies\\Google\\Chrome\\3rdparty\\extensions'.freeze
+      end
+
       # These are keys that will take some of the more complex data types used
       # in the Windows registry. Values are grabbed from:
       # https://dl.google.com/dl/edgedl/chrome/policy/policy_templates.zip

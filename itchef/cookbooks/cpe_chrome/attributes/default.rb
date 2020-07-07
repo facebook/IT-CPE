@@ -22,6 +22,19 @@ default['cpe_chrome'] = {
   'validate_installed' => false,
   'install_package' => false,
   'manage_repo' => false,
+  'extension_profile' => {
+    # '1234567890qwertyuiop' => {
+    #   'display_name' => 'Example Extension',
+    #   'payload_uuid' => '9D359A7A-EF21-4D02-8186-001974CEB796',
+    #   'profile_uuid' => 'EAA802D2-D139-474A-87CE-1DEEDCCECBAE',
+    #   'profile' => {
+    #     'KeyName' => {
+    #       'windows_value_type' => :string,
+    #       'value' => 'some_string',
+    #     },
+    #   },
+    # },
+  },
   'profile' => {
     'AutoplayWhitelist' => [],
     'ExtensionInstallForcelist' => [],
