@@ -104,8 +104,14 @@ Style/ConditionalAssignment:
 Layout/LineLength:
   Max: 80
 
+Metrics/BlockLength:
+  Max: 250
+
 Layout/DotPosition:
   EnforcedStyle: trailing
+
+Layout/EmptyLineAfterGuardClause:
+  Enabled: false
 
 Style/HashSyntax:
   EnforcedStyle: hash_rockets
