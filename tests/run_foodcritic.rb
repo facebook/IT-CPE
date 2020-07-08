@@ -22,7 +22,7 @@ RSpec.describe 'Check that the cookbooks changed pass foodcritic.' do
     # Diff-tree of only files in cookbooks
     current_sha = 'origin/master..HEAD'
     options = '--no-commit-id --diff-filter=ACMRT --name-only'
-    grep_cookbooks = 'grep chef/cookbooks'
+    grep_cookbooks = 'grep itchef/cookbooks'
     @files =
       `git diff-tree #{options} -r #{current_sha} | #{grep_cookbooks}`
 
@@ -30,7 +30,7 @@ RSpec.describe 'Check that the cookbooks changed pass foodcritic.' do
 
     @cookbooks = []
     @files.each do |file|
-      dir = 'chef/cookbooks/' + file.split('/')[2]
+      dir = 'itchef/cookbooks/' + file.split('/')[2]
       @cookbooks << dir
     end
     @cookbooks = @cookbooks.uniq.join(' ')
