@@ -47,10 +47,6 @@ PerlBackrefs:
 BlockNesting:
   Enabled: false
 
-# Disabled because of the way 'variables' works.
-BracesAroundHashParameters:
-  Enabled: false
-
 WordArray:
   Enabled: false
 
