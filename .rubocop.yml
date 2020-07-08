@@ -47,10 +47,6 @@ PerlBackrefs:
 BlockNesting:
   Enabled: false
 
-# Disabled because of the way 'variables' works.
-BracesAroundHashParameters:
-  Enabled: false
-
 WordArray:
   Enabled: false
 
@@ -94,20 +90,8 @@ Lint/RedundantCopDisableDirective:
 MultilineOperationIndentation:
   Enabled: false
 
-# buggy: https://github.com/bbatsov/rubocop/issues/2639
-Performance/RedundantMatch:
-  Enabled: false
-
 # We don't use CAPS just for constants.
 Style/MutableConstant:
-  Enabled: false
-
-# We'll .times.map all we want.
-Performance/TimesMap:
-  Enabled: false
-
-# https://github.com/bbatsov/rubocop/issues/2676
-Performance/RedundantMerge:
   Enabled: false
 
 # Bug with constants? https://phabricator.fb.com/P56108678
@@ -120,8 +104,14 @@ Style/ConditionalAssignment:
 Layout/LineLength:
   Max: 80
 
+Metrics/BlockLength:
+  Max: 250
+
 Layout/DotPosition:
   EnforcedStyle: trailing
+
+Layout/EmptyLineAfterGuardClause:
+  Enabled: false
 
 Style/HashSyntax:
   EnforcedStyle: hash_rockets
