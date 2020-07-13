@@ -23,6 +23,7 @@ action :config do
   install_repos
   install_chrome
   manage_chrome
+  manage_chrome_extensions
 end
 
 action_class do
@@ -81,6 +82,20 @@ action_class do
       manage_chrome_macos(mprefs, prefs)
     when 'linux'
       manage_chrome_linux(mprefs, prefs)
+    end
+  end
+
+  def manage_chrome_extensions
+    return if node['cpe_chrome']['validate_installed'] &&
+      !node.installed?('com.google.Chrome')
+    extprefs = node['cpe_chrome']['extension_profile'].reject do |_k, v|
+      v.nil? || (v.respond_to?(:empty?) && v.empty?)
+    end
+    case node['os']
+    when 'darwin'
+      manage_chrome_extensions_macos(extprefs)
+    when 'linux'
+      manage_chrome_extensions_linux(extprefs)
     end
   end
 
@@ -202,6 +217,95 @@ action_class do
         group 'wheel'
         action :create
         content Chef::JSONCompat.to_json_pretty(mprefs)
+      end
+    end
+  end
+
+  def manage_chrome_extensions_macos(extprefs)
+    return if extprefs.empty?
+    prefix = node['cpe_profiles']['prefix']
+    organization = node['organization'] ? node['organization'] : 'Facebook'
+    extprefs.each do |k, v|
+      chrome_ext_profile = {
+        'PayloadIdentifier' => "#{prefix}.browsers.chrome.extension.#{k}",
+        'PayloadRemovalDisallowed' => true,
+        'PayloadScope' => 'System',
+        'PayloadType' => 'Configuration',
+        'PayloadUUID' => v['profile_uuid'],
+        'PayloadOrganization' => organization,
+        'PayloadVersion' => 1,
+        'PayloadDisplayName' => "Chrome Extension (#{v['display_name']})",
+        'PayloadContent' => [{
+          'PayloadType' => "com.google.Chrome.extensions.#{k}",
+          'PayloadVersion' => 1,
+          'PayloadIdentifier' => "#{prefix}.browsers.chrome.extension.settings.#{k}",
+          'PayloadUUID' => v['payload_uuid'],
+          'PayloadEnabled' => true,
+          'PayloadDisplayName' => "Chrome Extension (#{v['display_name']})",
+        }],
+      }
+      v['profile'].each do |k_ext, v_ext|
+        chrome_ext_profile['PayloadContent'][0][k_ext] = v_ext['value']
+      end
+      node.default['cpe_profiles']["#{prefix}.browsers.chrome.extension.#{k}"] = chrome_ext_profile
+    end
+
+    # Check for Chrome Canary
+    if node.installed?('com.google.Chrome.canary')
+      prefix = node['cpe_profiles']['prefix']
+      organization = node['organization'] ? node['organization'] : 'Facebook'
+      extprefs.each do |k, v|
+        canary_ext_profile = {
+          'PayloadIdentifier' => "#{prefix}.browsers.chromecanary.extension.#{k}",
+          'PayloadRemovalDisallowed' => true,
+          'PayloadScope' => 'System',
+          'PayloadType' => 'Configuration',
+          'PayloadUUID' => v['profile_uuid'],
+          'PayloadOrganization' => organization,
+          'PayloadVersion' => 1,
+          'PayloadDisplayName' => "Chrome Extension (#{v['display_name']})",
+          'PayloadContent' => [{
+            'PayloadType' => "com.google.Chrome.canary.extensions.#{k}",
+            'PayloadVersion' => 1,
+            'PayloadIdentifier' => "#{prefix}.browsers.chromecanary.extension.settings.#{k}",
+            'PayloadUUID' => v['payload_uuid'],
+            'PayloadEnabled' => true,
+            'PayloadDisplayName' => "Chrome Canary Extension (#{v['display_name']})",
+          }],
+        }
+        v['profile'].each do |k_ext, v_ext|
+          canary_ext_profile['PayloadContent'][0][k_ext] = v_ext['value']
+        end
+        node.default['cpe_profiles']["#{prefix}.browsers.chromecanary.extension.#{k}"] = canary_ext_profile
+      end
+    end
+  end
+
+  def manage_chrome_extensions_linux(extprefs)
+    extension_hash = {
+      '3rdparty' => {
+        'extensions' => {},
+      },
+    }
+    path = '/etc/opt/chrome/policies/managed/cpe_extension_policy.json'
+    if extprefs.empty?
+      file path do
+        action :delete
+      end
+    else
+      extprefs.each do |k, v|
+        extprefs_hash = {}
+        v['profile'].each do |k_ext, v_ext|
+          extprefs_hash[k_ext] = v_ext['value']
+        end
+        extension_hash['3rdparty']['extensions'][k] = extprefs_hash
+      end
+      file path do
+        mode '0644'
+        owner node.root_user
+        group node.root_group
+        action :create
+        content Chef::JSONCompat.to_json_pretty(extension_hash)
       end
     end
   end
