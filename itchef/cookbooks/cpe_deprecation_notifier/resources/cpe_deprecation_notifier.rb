@@ -53,10 +53,10 @@ action :prompt do
       group 'wheel'
       mode '0755'
       notifies :restart, "launchd[#{domain}]"
-      notifies :write, 'mac_os_x_userdefaults[Reset Timeout]'
+      notifies :write, 'macos_userdefaults[Reset Timeout]'
     end
 
-    mac_os_x_userdefaults 'Reset Timeout' do
+    macos_userdefaults 'Reset Timeout' do
       action :nothing
       domain 'com.megacorp.DeprecationNotifier'
       user node.person['username'] # ~FB039
