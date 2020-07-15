@@ -62,6 +62,14 @@ action_class do
   end
 
   def payload_prefix_sub(payload, cb_prefix)
+    unless payload.key?('PayloadIdentifier')
+      Chef::Log.warn(
+        "#{cookbook_name}: payload does not contain"\
+        " a ProfileIdentifier key: #{payload}",
+      )
+      return payload
+    end
+
     prefix = node['cpe_profiles']['prefix']
     new_payload = payload.clone
 
