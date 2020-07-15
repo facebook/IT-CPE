@@ -26,6 +26,13 @@ module CPE
       'FilePublisherRule' => 'certificate',
     }.freeze
 
+    def self.gen_deterministic_uuid(seed)
+      uuid = (Digest::SHA256.hexdigest seed).split(//).last(32).join
+      pos = [8, 13, 18, 23]
+      uuid = pos.map { |n| uuid = uuid.insert(n, '-') }[-1]
+      uuid
+    end
+
     def get_applocker_rules
       @applocker_rules ||= node['cpe_applocker']['applocker_rules'].dup
     end
