@@ -11,7 +11,7 @@ systems we manage.
 
 ## Join the CPE community
 * [Facebook IT Website](https://fb.com/it)
-* [Facebook group] (https://fb.com/groups/TheITThinkTank)
+* [Facebook group](https://fb.com/groups/TheITThinkTank)
 
 ## License
 Old IT-CPE tools are BSD-licensed with an additional patent grant; see `LICENSE`
