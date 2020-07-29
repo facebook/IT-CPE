@@ -56,8 +56,20 @@ module CPE
     def self.loginctl_users
       @loginctl_users ||= begin
         # Standard path in Fedora
-        loginctl_path = '/usr/bin/loginctl'
-        if linux? && ::File.exist?(loginctl_path)
+        loginctl_path = nil
+        [
+          # Fedora and most distros
+          '/usr/bin/loginctl',
+          # Ubuntu, and probably Debian too
+          '/bin/loginctl',
+        ].each do |p|
+          if ::File.exist?(p)
+            loginctl_path = p
+            break
+          end
+        end
+
+        if linux? && !loginctl_path.nil?
           # don't use loginctl -o json as that's only supported in very recent
           # systemd (e.g. not in vanilla CentOS 8 and Ubuntu 18.04)
           res = shell_out("#{loginctl_path} --no-legend list-users")
@@ -120,7 +132,7 @@ module CPE
         admin_groups.flat_map do |g|
           begin
             ::Etc.getgrnam(g).mem
-          rescue
+          rescue StandardError
             []
           end
         end
@@ -232,7 +244,7 @@ $ADSISearcher.FindAll() |
   Select-Object -Expand Properties |
   ConvertTo-Json -Compress
 EOF
-      @ldap_user_info ||= format(script, username)
+      @ldap_lookup_script ||= format(script, username)
     end
 
     def self.ldap_user_info(username: logged_on_user_name)
@@ -259,12 +271,12 @@ EOF
             ::Etc.getpwnam(u)
           end
           user_account_entries = admin_account_entries.select do |ent|
-            ent.uid > sys_uid_max && ent.name != 'admin'
+            ent.uid > sys_uid_max && !%w{admin ubuntu fedora}.include?(ent.name)
           end
           if user_account_entries.empty?
             nil
           else
-            user_account_entries.sort_by(&:uid).first['name']
+            user_account_entries.min_by(&:uid)['name']
           end
         end
     end

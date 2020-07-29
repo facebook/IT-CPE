@@ -26,6 +26,10 @@ describe CPE::Helpers do
       allow(CPE::Log).to receive(:log)
       allow(CPE::Helpers).to receive(:machine_owner).
         and_return('from_machine_owner')
+      allow(::File).to receive(:exist?).with('/usr/bin/loginctl').
+        and_return(true)
+      allow(::File).to receive(:exist?).with('/bin/loginctl').
+        and_return(false)
     end
 
     context 'When loginctl does not exist' do
@@ -41,11 +45,6 @@ describe CPE::Helpers do
     end
 
     context 'When loginctl returns no end-user' do
-      before do
-        allow(::File).to receive(:exist?).with('/usr/bin/loginctl').
-          and_return(true)
-      end
-
       context 'When shell_out fails' do
         before do
           CPE::Helpers.instance_variable_set :@console_user, nil
