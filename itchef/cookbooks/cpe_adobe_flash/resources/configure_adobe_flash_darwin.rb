@@ -47,14 +47,14 @@ action_class do
       not_if { configs.empty? }
       owner 'root'
       group 'admin'
-      mode 0755
+      mode '755'
       action :create
     end
     template ::File.join(config_dir, 'mms.cfg') do # ~ FB016
       source 'cpe_adobe_flash.erb'
       owner 'root'
       group 'admin'
-      mode 0644
+      mode '644'
       action configs.empty? ? :delete : :create
       notifies :restart, 'launchd[com.adobe.fpsaud]'
     end

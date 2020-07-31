@@ -71,7 +71,7 @@ action :manage do
 
   cache_dir = "#{chef_cache}/cpe_flatpak"
   directory cache_dir do
-    mode 0755
+    mode '755'
     owner 'root'
     group 'root'
   end

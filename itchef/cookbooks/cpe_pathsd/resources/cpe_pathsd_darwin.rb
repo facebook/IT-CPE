@@ -23,13 +23,13 @@ action :manage do
   directory '/etc/paths.d/' do
     owner 'root'
     group 'wheel'
-    mode 0755
+    mode '755'
   end
 
   template '/etc/paths.d/cpe_pathsd' do
     source 'cpe_pathsd'
     owner 'root'
     group 'wheel'
-    mode 0644
+    mode '644'
   end
 end

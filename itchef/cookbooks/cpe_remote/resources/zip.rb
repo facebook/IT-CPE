@@ -92,7 +92,7 @@ action :create do
         path new_resource.extract_location
         owner 'Administrators'
         group 'Administrators'
-        mode 0755
+        mode '755'
         action :nothing
       end
       # Decompress zip file via shell.
