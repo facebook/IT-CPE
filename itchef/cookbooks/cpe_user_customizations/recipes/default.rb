@@ -25,6 +25,6 @@ rescue Exception => e
   Chef::Log.warn(
     "Error in cpe_user_customizations::#{user.downcase} \n"+
     "#{e.message} \n" +
-    "#{e.backtrace.inspect} \n"
+    "#{e.backtrace.inspect} \n",
   )
 end

@@ -23,6 +23,6 @@ rescue Exception => e
   Chef::Log.warn(
     "Error in cpe_node_customizations::#{node.name} \n" +
     "#{e.message} \n" +
-    "#{e.backtrace.inspect} \n"
+    "#{e.backtrace.inspect} \n",
   )
 end
