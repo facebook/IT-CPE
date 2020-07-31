@@ -23,7 +23,7 @@ provides :cpe_remote_file
 property :folder_name, String, :name_property => true
 # see https://github.com/chef/chef/blob/ +
 # f43371b231d7bb88c01618c90347cbb1fc96a393/lib/chef/resource/file.rb
-property :atomic_update, [TrueClass, FalseClass],
+property :atomic_update, [true, false],
          :default => lazy { Chef::Config[:file_atomic_update] },
          :desired_state => false
 property :checksum, String

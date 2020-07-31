@@ -20,15 +20,15 @@ resource_name :cpe_remote_pkg
 default_action :install
 
 provides :cpe_remote_pkg, :os => 'darwin'
-property :allow_downgrade, [TrueClass, FalseClass], :default => true
+property :allow_downgrade, [true, false], :default => true
 property :app, String, :name_property => true
 property :checksum, String
 property :backup, [FalseClass, Integer], :default => false
-property :mpkg, [TrueClass, FalseClass], :default => false
+property :mpkg, [true, false], :default => false
 property :pkg_name, String
 property :pkg_url, String
 property :receipt, String, :desired_state => false
-property :remote, [TrueClass, FalseClass], :default => true
+property :remote, [true, false], :default => true
 property :version, String
 
 action_class do
