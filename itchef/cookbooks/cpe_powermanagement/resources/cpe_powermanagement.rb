@@ -27,13 +27,9 @@ action :config do
     return
   end
 
-  # Does the node have a battery?
-  machine_type =
-    if node['hardware'] && !node['hardware']['battery'].empty?
-      'portable'
-    else
-      'desktop'
-    end
+  # Is this a portable or desktop?
+  model = node['hardware']['machine_model'].to_s
+  machine_type = model.downcase.include?('book') ? 'portable' : 'desktop'
   # Set the basic identifier
   ident = "com.apple.EnergySaver.#{machine_type}"
 
