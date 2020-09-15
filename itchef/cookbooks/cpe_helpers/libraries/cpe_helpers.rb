@@ -206,6 +206,31 @@ module CPE
       RUBY_PLATFORM =~ /mswin|mingw32|windows/
     end
 
+    def self.logged_on_user_query
+      query = shell_out('%WINDIR%\system32\query.exe user', :timeout => 60)
+      output = query.stdout.split("\n")
+
+      if output.size <= 1
+        Chef::Log.debug('no one is currently logged in')
+        return nil
+      end
+
+      # Drop the header row. Naively return the first active session.
+      output.drop(1).each do |line|
+        row = line.split
+        # The > usually indicates the user that ran the command, which in most
+        # cases is you! Regardless, it should be dropped from what is returned
+        # to chef.
+        return row[0].tr('>', '').strip if row[3].strip.downcase == 'active'
+      end
+    rescue Mixlib::ShellOut::CommandTimeout
+      Chef::Log.warn('command timeout while looking up user')
+    rescue StandardError => e
+      Chef::Log.warn(e.to_s)
+
+      nil
+    end
+
     def self.logged_on_user_registry
       u = Win32::Registry::HKEY_LOCAL_MACHINE.open(
         LOGON_REG_KEY, Win32::Registry::KEY_READ
@@ -216,9 +241,7 @@ module CPE
     end
 
     def self.logged_on_user_name
-      # Value is either 'AD_DOMAIN\\{username}' or '{username}@domain.com}'
-      last_user = logged_on_user_registry['LastLoggedOnUser']
-      last_user.match(/(?:.*\\)?([\w.-]+)(?:@.*)?/).captures[0]
+      logged_on_user_query
     end
 
     def self.logged_on_user_sid

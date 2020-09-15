@@ -142,4 +142,86 @@ describe CPE::Helpers do
       end
     end
   end
+
+  context 'When on Windows' do
+    context '#logged_on_user_query' do
+      subject { CPE::Helpers }
+
+      NO_USER = <<-'EOF'.freeze
+ USERNAME              SESSIONNAME        ID  STATE   IDLE TIME  LOGON TIME
+        EOF
+      ONE_USER = <<-'EOF'.freeze
+ USERNAME              SESSIONNAME        ID  STATE   IDLE TIME  LOGON TIME
+>testdummy             console             1  Active      none   8/31/2020 12:22 PM
+        EOF
+      TWO_USERS = <<-'EOF'.freeze
+ USERNAME              SESSIONNAME        ID  STATE   IDLE TIME  LOGON TIME
+testdummy              console             1  Active      none   8/31/2020 12:22 PM
+testdummy2             console             1  Active      none   8/31/2020 18:00 PM
+        EOF
+      INACTIVE_USERS = <<-'EOF'.freeze
+ USERNAME              SESSIONNAME        ID  STATE   IDLE TIME  LOGON TIME
+testdummy              console             1  Inactive    none   8/31/2020 12:22 PM
+testdummy2             console             1  Active      none   8/31/2020 18:00 PM
+        EOF
+
+      MISSING_FIELD = <<-'EOF'.freeze
+ USERNAME              SESSIONNAME        ID  STATE   IDLE TIME  LOGON TIME
+testdummy              console             1
+        EOF
+
+      before do
+        allow(Chef::Log).to receive(:debug)
+      end
+
+      it 'should return nil if there is an exception' do
+        allow(subject).to receive(:shell_out).and_raise(NoMethodError, 'aieee')
+        expect(subject.logged_on_user_query).to be nil
+      end
+
+      it 'should return nil if the command output is empty' do
+        result = double(:stdout => '')
+        allow(subject).to receive(:shell_out).and_return(result)
+        expect(subject.logged_on_user_query).to be nil
+      end
+
+      it 'should return nil if the output does not contain a user' do
+        result = double(:stdout => NO_USER)
+        allow(subject).to receive(:shell_out).and_return(result)
+        expect(subject.logged_on_user_query).to be nil
+      end
+
+      it 'should return nil if the command times out' do
+        allow(subject).to receive(:shell_out).and_raise(
+          Mixlib::ShellOut::CommandTimeout,
+        )
+        allow(Chef::Log).to receive(:warn)
+        expect(Chef::Log).to receive(:warn).
+          with('command timeout while looking up user').
+          once
+        expect(subject.logged_on_user_query).to be nil
+      end
+
+      it 'should return nil if a field is missing for whatever reason' do
+        result = double(:stdout => MISSING_FIELD)
+        allow(subject).to receive(:shell_out).and_return(result)
+        expect(subject.logged_on_user_query).to be nil
+      end
+
+      {
+        'should return testdummy' =>
+          { 'output' => ONE_USER, 'expected' => 'testdummy' },
+        'should return testdummy when two users are present' =>
+          { 'output' => TWO_USERS, 'expected' => 'testdummy' },
+        'should return testdummy2 when testdummy is inactive' =>
+          { 'output' => INACTIVE_USERS, 'expected' => 'testdummy2' },
+      }.each do |test_name, test_data|
+        it test_name do
+          result = double(:stdout => test_data['output'])
+          allow(subject).to receive(:shell_out).and_return(result)
+          expect(subject.logged_on_user_query).to eql test_data['expected']
+        end
+      end
+    end
+  end
 end
