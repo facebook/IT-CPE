@@ -24,7 +24,8 @@ default_action :prompt
 action :prompt do
   dpn = node['cpe_deprecation_notifier'].to_h
   la_path = '/Library/LaunchAgents'
-  domain = "#{node['cpe_launchd']['prefix']}.deprecationnotifier"
+  launchd_prefix = node['fb_launchd']['prefix']
+  domain = "#{launchd_prefix}.deprecationnotifier"
   launchagent_path = "#{la_path}/#{domain}.plist"
 
   if dpn['install']
@@ -98,7 +99,7 @@ action :prompt do
     log_vars('expected_version', 'fail')
     if log_if(dpn['conf']['expectedVersion'].to_s) { should_launch }
       dp_bin = "#{dpn['path']}/Contents/MacOS/DeprecationNotifier"
-      node.default['cpe_launchd'][domain] = {
+      node.default['fb_launchd']['jobs']['deprecationnotifier'] = {
         'program_arguments' => [dp_bin],
         'run_at_load' => true,
         'type' => 'agent',
