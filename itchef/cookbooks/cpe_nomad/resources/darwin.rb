@@ -1,4 +1,4 @@
-#
+# ~FC074
 # Cookbook Name:: cpe_nomad
 # Resources:: darwin
 #
@@ -124,29 +124,29 @@ action_class do
     prefix = node['cpe_profiles']['prefix']
     organization = node['organization'] ? node['organization'] : 'Facebook'
 
-    profile = {
-      'PayloadEnabled' => true,
-      'PayloadDisplayName' => 'NoMAD',
-      'PayloadScope' => 'System',
-      'PayloadType' => 'Configuration',
-      'PayloadRemovalDisallowed' => true,
-      'PayloadDescription' => '',
-      'PayloadVersion' => 1,
-      'PayloadOrganization' => organization,
-      'PayloadIdentifier' => "#{prefix}.nomad",
-      'PayloadUUID' => '5312D107-393D-493C-A8D2-14D6E02A0967',
-      'PayloadContent' => [],
-    }
+    {
+      'NoMAD' => nomad_prefs,
+      'NoMAD Login' => login_prefs,
+      'NoMAD Actions' => actions_prefs,
+    }.each do |pref_name, prefs|
+      next if prefs.empty?
+      profile_id = "#{prefix}.#{pref_name.downcase.sub(' ', '_')}"
 
-    [
-      nomad_prefs,
-      login_prefs,
-      actions_prefs,
-    ].each do |prefs|
-      profile['PayloadContent'] << prefs unless prefs.empty?
+      profile = {
+        'PayloadEnabled' => true,
+        'PayloadDisplayName' => pref_name,
+        'PayloadScope' => 'System',
+        'PayloadType' => 'Configuration',
+        'PayloadRemovalDisallowed' => true,
+        'PayloadDescription' => '',
+        'PayloadVersion' => 1,
+        'PayloadOrganization' => organization,
+        'PayloadIdentifier' => profile_id,
+        'PayloadUUID' => '5312D107-393D-493C-A8D2-14D6E02A0967',
+        'PayloadContent' => [prefs],
+      }
+      node.default['cpe_profiles'][profile_id] = profile
     end
-
-    node.default['cpe_profiles'][profile_domain] = profile
   end
 
   def configure_launchd
@@ -159,10 +159,6 @@ action_class do
     end
     node.default['fb_launchd']['jobs'][lddomain.split('.')[-1]] =
       node.default['cpe_nomad']['launchagent']
-  end
-
-  def profile_domain
-    "#{node['cpe_profiles']['prefix']}.nomad"
   end
 
   def lddomain
