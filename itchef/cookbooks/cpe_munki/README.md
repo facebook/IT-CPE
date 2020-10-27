@@ -17,6 +17,7 @@ Attributes
 * node['cpe_munki']['local']['managed_uninstalls']
 * node['cpe_munki']['local']['optional_installs']
 * node['cpe_munki']['munki_version_to_install']
+* node['cpe_munki']['defaults_preferences']
 * node['cpe_munki']['preferences']
 
 Usage
@@ -177,6 +178,26 @@ Those values can be overridden in any recipe to be applied as you want:
   node.default['cpe_munki']['preferences'][k] = v
 end
 ```
+
+In addition, the 'cpe_munki_defaults_config' resource will configure settings using
+the `macos_userdefaults` resource. This is useful if you want to consistently manage
+a setting with `defaults` so that other system tools besides Chef can modify it.
+You can set these settings using `node['cpe_munki']['defaults_preferences']`:`
+
+```ruby
+# Munki attribute overrides
+{
+  'SoftwareRepoURL' => "https://#{server}/repo"
+}.each do |k, v|
+  node.default['cpe_munki']['defaults_preferences'][k] = v
+end
+```
+
+**NOTE:** Prefences can *only* be set under either the `preferences` or
+`defaults_preferences` key. The resources will fail if a setting exists in
+both hashes. As such, if you had both of the above code examples somewhere
+in your code, an error would be thrown saying that 'SoftwareRepoURL' is
+configured twice.
 
 ### Local Manifests
 The 'cpe_munki_local' resource will implement a local-only manifest.

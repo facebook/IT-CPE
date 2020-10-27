@@ -50,7 +50,18 @@ action :config do
     }],
   }
   munki_prefs.each do |k, v|
+    # Keys should not exist in both namespaces
+    if node['cpe_munki']['defaults_preferences'].key?(k)
+      fail <<-REASON
+        The preference #{k} is configured both in
+        node['cpe_munki']['preferences' and
+        node['cpe_munki']['defaults_preferences']. Please choose
+        one method to configure this preference
+      REASON
+    end
+
     munki_profile['PayloadContent'][0][k] = v
   end
+
   node.default['cpe_profiles']["#{prefix}.munki"] = munki_profile
 end
