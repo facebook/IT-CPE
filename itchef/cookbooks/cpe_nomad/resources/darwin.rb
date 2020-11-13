@@ -74,11 +74,11 @@ action_class do
 
   def configure_profile
     nomad_prefs =
-      node['cpe_nomad']['prefs'].reject { |_k, v| v.nil? }
+      node['cpe_nomad']['prefs'].compact
     login_prefs =
-      node['cpe_nomad']['login']['prefs'].reject { |_k, v| v.nil? }
+      node['cpe_nomad']['login']['prefs'].compact
     actions_prefs =
-      node['cpe_nomad']['actions']['prefs'].reject { |_k, v| v.nil? }
+      node['cpe_nomad']['actions']['prefs'].compact
     if [
       nomad_prefs,
       login_prefs,

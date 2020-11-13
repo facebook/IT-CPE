@@ -21,7 +21,7 @@ provides :cpe_powermanagement, :os => 'darwin'
 default_action :config
 
 action :config do
-  pw_prefs = node['cpe_powermanagement'].reject { |_k, v| v.nil? }
+  pw_prefs = node['cpe_powermanagement'].compact
   if pw_prefs.empty?
     Chef::Log.debug("#{cookbook_name}: No prefs found.")
     return
@@ -58,9 +58,9 @@ action :config do
 
   pm_prefs = {
     'ACPower' =>
-      node['cpe_powermanagement']['ACPower'].reject { |_k, v| v.nil? },
+      node['cpe_powermanagement']['ACPower'].compact,
     'Battery' =>
-      node['cpe_powermanagement']['Battery'].reject { |_k, v| v.nil? },
+      node['cpe_powermanagement']['Battery'].compact,
   }
 
   # Apply all settings to the profile - AC and/or Battery

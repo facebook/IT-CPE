@@ -27,7 +27,7 @@ action_class do
   def configure
     return unless node['cpe_adobe_flash']['configure']
 
-    configs = node['cpe_adobe_flash']['configs'].reject { |_k, v| v.nil? }
+    configs = node['cpe_adobe_flash']['configs'].compact
     # Until adobe removes this problematic naming convention,
     # we still have to use it.
     {

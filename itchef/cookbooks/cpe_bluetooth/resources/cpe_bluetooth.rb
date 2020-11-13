@@ -20,7 +20,7 @@ provides :cpe_bluetooth, :os => 'darwin'
 default_action :config
 
 action :config do
-  prefs = node['cpe_bluetooth'].reject { |_k, v| v.nil? }
+  prefs = node['cpe_bluetooth'].compact
   if prefs.empty?
     Chef::Log.info("#{cookbook_name}: No prefs found.")
     return

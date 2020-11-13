@@ -69,7 +69,7 @@ action_class do
       !node.installed?('com.google.Chrome')
     if node['cpe_chrome']['mp']['UseMasterPreferencesFile']
       mprefs =
-        node['cpe_chrome']['mp']['FileContents'].reject { |_k, v| v.nil? }
+        node['cpe_chrome']['mp']['FileContents'].compact
     else
       mprefs = {}
     end
