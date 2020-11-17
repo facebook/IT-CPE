@@ -24,7 +24,7 @@ action :config do
   prefs = node['cpe_preferencepanes'].compact
   return if prefs.empty?
   prefix = node['cpe_profiles']['prefix']
-  organization = node['organization'] ? node['organization'] : 'Facebook'
+  organization = node['organization'] ? node['organization'] : 'Facebook' # rubocop:disable Style/RedundantCondition
   pane_profile = {
     'PayloadIdentifier' => "#{prefix}.prefpanes",
     'PayloadRemovalDisallowed' => true,

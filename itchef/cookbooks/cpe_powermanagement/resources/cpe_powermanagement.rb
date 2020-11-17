@@ -34,7 +34,7 @@ action :config do
   ident = "com.apple.EnergySaver.#{machine_type}"
 
   prefix = node['cpe_profiles']['prefix']
-  organization = node['organization'] ? node['organization'] : 'Facebook'
+  organization = node['organization'] ? node['organization'] : 'Facebook' # rubocop:disable Style/RedundantCondition
   energy_profile = {
     'PayloadIdentifier'        => "#{prefix}.powermanagement",
     'PayloadRemovalDisallowed' => true,

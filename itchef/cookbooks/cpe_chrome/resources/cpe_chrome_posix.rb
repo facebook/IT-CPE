@@ -142,7 +142,7 @@ action_class do
 
   def manage_chrome_macos(mprefs, prefs)
     prefix = node['cpe_profiles']['prefix']
-    organization = node['organization'] ? node['organization'] : 'Facebook'
+    organization = node['organization'] ? node['organization'] : 'Facebook' # rubocop:disable Style/RedundantCondition
     chrome_profile = {
       'PayloadIdentifier' => "#{prefix}.browsers.chrome",
       'PayloadRemovalDisallowed' => true,
@@ -170,7 +170,7 @@ action_class do
     # Check for Chrome Canary
     if node.installed?('com.google.Chrome.canary')
       prefix = node['cpe_profiles']['prefix']
-      organization = node['organization'] ? node['organization'] : 'Facebook'
+      organization = node['organization'] ? node['organization'] : 'Facebook' # rubocop:disable Style/RedundantCondition
       canary_profile = {
         'PayloadIdentifier' => "#{prefix}.browsers.chromecanary",
         'PayloadRemovalDisallowed' => true,
@@ -224,7 +224,7 @@ action_class do
   def manage_chrome_extensions_macos(extprefs)
     return if extprefs.empty?
     prefix = node['cpe_profiles']['prefix']
-    organization = node['organization'] ? node['organization'] : 'Facebook'
+    organization = node['organization'] ? node['organization'] : 'Facebook' # rubocop:disable Style/RedundantCondition
     extprefs.each do |k, v|
       chrome_ext_profile = {
         'PayloadIdentifier' => "#{prefix}.browsers.chrome.extension.#{k}",
@@ -253,7 +253,7 @@ action_class do
     # Check for Chrome Canary
     if node.installed?('com.google.Chrome.canary')
       prefix = node['cpe_profiles']['prefix']
-      organization = node['organization'] ? node['organization'] : 'Facebook'
+      organization = node['organization'] ? node['organization'] : 'Facebook' # rubocop:disable Style/RedundantCondition
       extprefs.each do |k, v|
         canary_ext_profile = {
           'PayloadIdentifier' => "#{prefix}.browsers.chromecanary.extension.#{k}",

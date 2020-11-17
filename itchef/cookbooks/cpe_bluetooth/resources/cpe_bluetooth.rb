@@ -27,7 +27,7 @@ action :config do
   end
 
   prefix = node['cpe_profiles']['prefix']
-  organization = node['organization'] ? node['organization'] : 'Facebook'
+  organization = node['organization'] ? node['organization'] : 'Facebook' # rubocop:disable Style/RedundantCondition
 
   profile = {
     'PayloadIdentifier' => "#{prefix}.bluetooth",

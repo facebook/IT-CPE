@@ -122,7 +122,7 @@ action_class do
     end
 
     prefix = node['cpe_profiles']['prefix']
-    organization = node['organization'] ? node['organization'] : 'Facebook'
+    organization = node['organization'] ? node['organization'] : 'Facebook' # rubocop:disable Style/RedundantCondition
 
     {
       'NoMAD' => nomad_prefs,
