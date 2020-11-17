@@ -36,15 +36,15 @@ action :config do
   prefix = node['cpe_profiles']['prefix']
   organization = node['organization'] ? node['organization'] : 'Facebook' # rubocop:disable Style/RedundantCondition
   energy_profile = {
-    'PayloadIdentifier'        => "#{prefix}.powermanagement",
+    'PayloadIdentifier' => "#{prefix}.powermanagement",
     'PayloadRemovalDisallowed' => true,
-    'PayloadScope'             => 'System',
-    'PayloadType'              => 'Configuration',
-    'PayloadUUID'              => 'd1207590-f93a-0133-92e4-4cc760f34b36',
-    'PayloadOrganization'      => organization,
-    'PayloadVersion'           => 1,
-    'PayloadDisplayName'       => 'Power Management',
-    'PayloadContent'           => [
+    'PayloadScope' => 'System',
+    'PayloadType' => 'Configuration',
+    'PayloadUUID' => 'd1207590-f93a-0133-92e4-4cc760f34b36',
+    'PayloadOrganization' => organization,
+    'PayloadVersion' => 1,
+    'PayloadDisplayName' => 'Power Management',
+    'PayloadContent' => [
       {
         'PayloadType' => 'com.apple.MCX',
         'PayloadVersion' => 1,
@@ -64,7 +64,7 @@ action :config do
   }
 
   # Apply all settings to the profile - AC and/or Battery
-  pm_prefs.keys.each do |type|
+  pm_prefs.each_key do |type|
     next if pm_prefs[type].empty?
     energy_profile['PayloadContent'][0]["#{ident}.#{type}-ProfileNumber"] = -1
     energy_profile['PayloadContent'][0]["#{ident}.#{type}"] = pm_prefs[type]
