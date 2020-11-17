@@ -172,7 +172,7 @@ action_class do
   end
 
   def log_if(msg)
-    CPE::Log.if(
+    CPE::Log.if( # rubocop:disable Style/ExplicitBlockArgument
       msg, :type => @type, :action => @action, :status => @status
     ) { yield }
   end
