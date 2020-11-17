@@ -89,7 +89,7 @@ class WindowsChromeSetting
   # Walks the available configuration to determine where the full registry path
   # is.
   def construct_reg_key_path(key = @name, suffix_path = nil)
-    if ENUM_REG_KEYS.key?(key)
+    if ENUM_REG_KEYS.keys.include?(key)
       {
         "#{CPE::ChromeManagement.chrome_reg_root}\\#{key}" =>
           ENUM_REG_KEYS[key],
