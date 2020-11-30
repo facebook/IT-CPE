@@ -310,6 +310,12 @@ module CPE
           :dword,
           false,
         ),
+        'CloudReportingEnabled' => WindowsChromeFlatSetting.new(
+          'HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome',
+          'CloudReportingEnabled',
+          :dword,
+          false,
+        ),
         'CommandLineFlagSecurityWarningsEnabled' => WindowsChromeFlatSetting.new(
           'HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome',
           'CommandLineFlagSecurityWarningsEnabled',
