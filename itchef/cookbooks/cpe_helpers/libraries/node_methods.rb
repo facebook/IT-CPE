@@ -82,6 +82,7 @@ class Chef
     end
 
     def loginwindow?
+      return person.fetch('username').nil? if windows?
       CPE::Helpers.loginwindow?
     end
 
