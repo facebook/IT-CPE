@@ -93,6 +93,8 @@ module CPE
         end && loginctl_users.none? do |u|
           u['uid'] > sys_uid_max
         end
+      elsif windows?
+        console_user.nil?
       else
         false
       end
