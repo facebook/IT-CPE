@@ -62,5 +62,14 @@ module CPE
       Chef::Log.warn("cpe_remote/validate_checksum failed with:#{e.message}")
       false
     end
+
+    # Check to see if the package can be installed on available mountpoint.
+    def pkg_compat(pkg_on_disk, check)
+      if !check
+        return true
+      else
+        return shell_out("/usr/sbin/installer -volinfo -plist -pkg '#{pkg_on_disk}'").stdout.include?('MountPoint')
+      end
+    end
   end
 end
