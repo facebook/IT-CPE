@@ -61,11 +61,21 @@ action :manage do
   end
 
   #  Install any new packages
-  node['cpe_flatpak']['pkgs'].each do |p, r|
+  node['cpe_flatpak']['pkgs'].each do |p, cfg|
+    if cfg.is_a?(String)
+      r = cfg
+    else # assume it's a hash
+      r = cfg['repo']
+      if cfg['ignore_failure'].nil?
+        ign_f = ign_failure
+      else
+        ign_f = cfg['ignore_failure']
+      end
+    end
     cpe_flatpak_pkg p do
       pkg p
       repo_name r
-      ignore_failure ign_failure
+      ignore_failure ign_f
     end
   end
 
