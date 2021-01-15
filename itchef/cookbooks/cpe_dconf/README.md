@@ -34,7 +34,7 @@ node['cpe_dconf']['settings']['screensaver'] = {
       'value' => 'uint32 0',
       'lock' => false,
     },
-  }.
+  },
   'org/gnome/desktop/session' => {
     'idle-delay' => 'uint32 600'
   }
