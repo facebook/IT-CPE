@@ -37,9 +37,9 @@ action_class do
   def uninstall
     return unless node['cpe_adobe_flash']['uninstall']
 
-    node.default['cpe_choco']['uninstall']['flashplayerplugin'] = {
-      'version' => 'all',
-    }
+    chocolatey_package 'flashplayerplugin' do
+      action :remove
+    end
 
     file ::File.join(config_dir, 'mms.cfg') do
       action :delete
