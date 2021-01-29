@@ -318,9 +318,30 @@ EOF
       end
     end
 
+    def self.rpm_sanitize_postrelease_ver(ver)
+      # we only get a string if the version is unparsable, so bail
+      return ver if ver.is_a?(String)
+      # ver is a Gem::Version so take its string rep
+      verstr = ver.version
+      match_data = /[c-z]/.match(verstr)
+      if match_data.nil?
+        ver
+      else
+        m0 = match_data[0]
+        ord = m0.ord - 'a'.ord
+        if verstr.end_with?(m0)
+          Gem::Version.new(verstr.gsub(m0, ".#{ord}"))
+        else
+          Gem::Version.new(verstr.gsub(m0, ".#{ord}."))
+        end
+      end
+    end
+
     def self.rpm_cmpver(verstr1, verstr2, compare_epoch = false)
       e1, v1, r1 = rpm_parsever(verstr1)
       e2, v2, r2 = rpm_parsever(verstr2)
+      v1 = rpm_sanitize_postrelease_ver(v1)
+      v2 = rpm_sanitize_postrelease_ver(v2)
       if compare_epoch
         if e1 > e2
           return 1

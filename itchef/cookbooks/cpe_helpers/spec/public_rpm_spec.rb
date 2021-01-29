@@ -155,4 +155,13 @@ describe CPE::Helpers do
       )).to eq(true)
     end
   end
+
+  context 'When comparing versions with alphabetical letters' do
+    it 'prerelease versions are less than non-prerelease versions' do
+      expect(CPE::Helpers.rpm_cmpver('1.0.0a1-5', '1.0.0-1')).to eq(-1)
+    end
+    it 'postrelease versions are greater than non-prerelease versions' do
+      expect(CPE::Helpers.rpm_cmpver('1.0.2o-1', '1.0.0-5')).to eq(1)
+    end
+  end
 end
