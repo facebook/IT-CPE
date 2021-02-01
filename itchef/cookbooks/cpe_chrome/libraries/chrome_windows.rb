@@ -62,6 +62,7 @@ module CPE
           'BrowserGuestModeEnabled' => :dword,
           'BuiltInDnsClientEnabled' => :dword,
           'ChromeFrameRendererSettings' => :dword,
+          'ChromeVariations' => :dword,
           'CloudPrintProxyEnabled' => :dword,
           'CloudPrintSubmitEnabled' => :dword,
           'DefaultBrowserSettingEnabled' => :dword,

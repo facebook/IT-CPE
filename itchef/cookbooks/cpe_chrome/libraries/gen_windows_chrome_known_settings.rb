@@ -274,6 +274,12 @@ module CPE
           :dword,
           false,
         ),
+        'ChromeVariations' => WindowsChromeFlatSetting.new(
+          'HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome',
+          'ChromeVariations',
+          :dword,
+          false,
+        ),
         'ClickToCallEnabled' => WindowsChromeFlatSetting.new(
           'HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome',
           'ClickToCallEnabled',

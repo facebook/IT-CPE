@@ -39,6 +39,7 @@ default['cpe_chrome'] = {
     'AutoplayWhitelist' => [],
     'ExtensionInstallForcelist' => [],
     'ExtensionInstallBlacklist' => [],
+    'ChromeVariations' => nil,
     'DefaultPluginsSetting' => nil,
     'ExtensionInstallSources' => [],
     'PluginsAllowedForUrls' => [],
