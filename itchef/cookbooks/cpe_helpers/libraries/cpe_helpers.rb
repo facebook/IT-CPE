@@ -329,10 +329,13 @@ EOF
       else
         m0 = match_data[0]
         ord = m0.ord - 'a'.ord
+        # either that letter appear at the end, or there might be a digit
+        # also, on Arch the letter might be prefixed by a dot so
+        # we end up with a double-dot afterwards
         if verstr.end_with?(m0)
-          Gem::Version.new(verstr.gsub(m0, ".#{ord}"))
+          Gem::Version.new(verstr.gsub(m0, ".#{ord}").gsub('..', '.'))
         else
-          Gem::Version.new(verstr.gsub(m0, ".#{ord}."))
+          Gem::Version.new(verstr.gsub(m0, ".#{ord}.").gsub('..', '.'))
         end
       end
     end

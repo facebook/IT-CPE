@@ -163,5 +163,8 @@ describe CPE::Helpers do
     it 'postrelease versions are greater than non-prerelease versions' do
       expect(CPE::Helpers.rpm_cmpver('1.0.2o-1', '1.0.0-5')).to eq(1)
     end
+    it 'can handle dots before the letter like Arch Linux\'s 1.9.5.p2' do
+      expect(CPE::Helpers.rpm_cmpver('1.9.5.p2-1', '1.9.5-2')).to eq(1)
+    end
   end
 end
