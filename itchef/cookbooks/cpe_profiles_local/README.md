@@ -32,7 +32,7 @@ to `node.default['cpe_profiles_local']`
 For instance, add a hash to manage the loginwindow and use the default prefix:
 
 ```
-lw_prefs = node['cpe_loginwindow'].reject { |\_k, v| v.nil? }
+lw_prefs = node['cpe_loginwindow'].compact
 if lw_prefs.empty?
   Chef::Log.debug("#{cookbook_name}: No prefs found.")
   return
@@ -77,7 +77,7 @@ Or, if you want to customize the prefix and then add a profile, you would do:
 # Override the default prefix value of 'com.facebook.chef'
 node.default['cpe_profiles_local']['prefix'] = 'com.company.chef'
 # Use the specified prefix to name the configuration profile
-lw_prefs = node['cpe_loginwindow'].reject { |\_k, v| v.nil? }
+lw_prefs = node['cpe_loginwindow'].compact
 if lw_prefs.empty?
   Chef::Log.debug("#{cookbook_name}: No prefs found.")
   return

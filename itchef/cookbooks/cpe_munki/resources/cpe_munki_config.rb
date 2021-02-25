@@ -22,14 +22,14 @@ default_action :config
 action :config do
   return unless node['cpe_munki']['configure']
 
-  munki_prefs = node['cpe_munki']['preferences'].reject { |_k, v| v.nil? }
+  munki_prefs = node['cpe_munki']['preferences'].compact
   if munki_prefs.empty?
     Chef::Log.info("#{cookbook_name}: No prefs found.")
     return
   end
 
   prefix = node['cpe_profiles']['prefix']
-  organization = node['organization'] ? node['organization'] : 'Facebook'
+  organization = node['organization'] ? node['organization'] : 'Facebook' # rubocop:disable Style/RedundantCondition
 
   munki_profile = {
     'PayloadIdentifier' => "#{prefix}.munki",

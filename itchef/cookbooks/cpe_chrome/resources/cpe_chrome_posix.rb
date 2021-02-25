@@ -26,7 +26,7 @@ action :config do
   manage_chrome_extensions
 end
 
-action_class do
+action_class do # rubocop:disable Metrics/BlockLength
   def install_repos
     return unless node.linux?
     return unless node['cpe_chrome']['manage_repo']
@@ -69,7 +69,7 @@ action_class do
       !node.installed?('com.google.Chrome')
     if node['cpe_chrome']['mp']['UseMasterPreferencesFile']
       mprefs =
-        node['cpe_chrome']['mp']['FileContents'].reject { |_k, v| v.nil? }
+        node['cpe_chrome']['mp']['FileContents'].compact
     else
       mprefs = {}
     end
@@ -142,7 +142,7 @@ action_class do
 
   def manage_chrome_macos(mprefs, prefs)
     prefix = node['cpe_profiles']['prefix']
-    organization = node['organization'] ? node['organization'] : 'Facebook'
+    organization = node['organization'] ? node['organization'] : 'Facebook' # rubocop:disable Style/RedundantCondition
     chrome_profile = {
       'PayloadIdentifier' => "#{prefix}.browsers.chrome",
       'PayloadRemovalDisallowed' => true,
@@ -170,7 +170,7 @@ action_class do
     # Check for Chrome Canary
     if node.installed?('com.google.Chrome.canary')
       prefix = node['cpe_profiles']['prefix']
-      organization = node['organization'] ? node['organization'] : 'Facebook'
+      organization = node['organization'] ? node['organization'] : 'Facebook' # rubocop:disable Style/RedundantCondition
       canary_profile = {
         'PayloadIdentifier' => "#{prefix}.browsers.chromecanary",
         'PayloadRemovalDisallowed' => true,
@@ -224,7 +224,7 @@ action_class do
   def manage_chrome_extensions_macos(extprefs)
     return if extprefs.empty?
     prefix = node['cpe_profiles']['prefix']
-    organization = node['organization'] ? node['organization'] : 'Facebook'
+    organization = node['organization'] ? node['organization'] : 'Facebook' # rubocop:disable Style/RedundantCondition
     extprefs.each do |k, v|
       chrome_ext_profile = {
         'PayloadIdentifier' => "#{prefix}.browsers.chrome.extension.#{k}",
@@ -238,7 +238,7 @@ action_class do
         'PayloadContent' => [{
           'PayloadType' => "com.google.Chrome.extensions.#{k}",
           'PayloadVersion' => 1,
-          'PayloadIdentifier' => "#{prefix}.browsers.chrome.extension.settings.#{k}",
+          'PayloadIdentifier' => "#{prefix}.browsers.chrome.extension.settings.#{k}", # rubocop:disable Layout/LineLength
           'PayloadUUID' => v['payload_uuid'],
           'PayloadEnabled' => true,
           'PayloadDisplayName' => "Chrome Extension (#{v['display_name']})",
@@ -247,16 +247,17 @@ action_class do
       v['profile'].each do |k_ext, v_ext|
         chrome_ext_profile['PayloadContent'][0][k_ext] = v_ext['value']
       end
-      node.default['cpe_profiles']["#{prefix}.browsers.chrome.extension.#{k}"] = chrome_ext_profile
+      node.default['cpe_profiles']["#{prefix}.browsers.chrome.extension.#{k}"] =
+        chrome_ext_profile
     end
 
     # Check for Chrome Canary
     if node.installed?('com.google.Chrome.canary')
       prefix = node['cpe_profiles']['prefix']
-      organization = node['organization'] ? node['organization'] : 'Facebook'
+      organization = node['organization'] ? node['organization'] : 'Facebook' # rubocop:disable Style/RedundantCondition
       extprefs.each do |k, v|
         canary_ext_profile = {
-          'PayloadIdentifier' => "#{prefix}.browsers.chromecanary.extension.#{k}",
+          'PayloadIdentifier' => "#{prefix}.browsers.chromecanary.extension.#{k}", # rubocop:disable Layout/LineLength
           'PayloadRemovalDisallowed' => true,
           'PayloadScope' => 'System',
           'PayloadType' => 'Configuration',
@@ -267,16 +268,16 @@ action_class do
           'PayloadContent' => [{
             'PayloadType' => "com.google.Chrome.canary.extensions.#{k}",
             'PayloadVersion' => 1,
-            'PayloadIdentifier' => "#{prefix}.browsers.chromecanary.extension.settings.#{k}",
+            'PayloadIdentifier' => "#{prefix}.browsers.chromecanary.extension.settings.#{k}", # rubocop:disable Layout/LineLength
             'PayloadUUID' => v['payload_uuid'],
             'PayloadEnabled' => true,
-            'PayloadDisplayName' => "Chrome Canary Extension (#{v['display_name']})",
+            'PayloadDisplayName' => "Chrome Canary Extension (#{v['display_name']})", # rubocop:disable Layout/LineLength
           }],
         }
         v['profile'].each do |k_ext, v_ext|
           canary_ext_profile['PayloadContent'][0][k_ext] = v_ext['value']
         end
-        node.default['cpe_profiles']["#{prefix}.browsers.chromecanary.extension.#{k}"] = canary_ext_profile
+        node.default['cpe_profiles']["#{prefix}.browsers.chromecanary.extension.#{k}"] = canary_ext_profile # rubocop:disable Layout/LineLength
       end
     end
   end
@@ -318,6 +319,7 @@ action_class do
         ::File.directory?('/etc/chromium') &&
         !::File.symlink?('/etc/chromium')
       end
+      # rubocop:disable Naming/HeredocDelimiterNaming
       code <<-EOH
         find /etc/chromium -type d -exec chmod 0755 {} \\;
         find /etc/chromium -type f -exec chmod 0644 {} \\;
@@ -326,5 +328,6 @@ action_class do
         rm -rf /etc/chromium
       EOH
     end
+    # rubocop:enable Naming/HeredocDelimiterNaming
   end
 end

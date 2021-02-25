@@ -23,7 +23,7 @@ action_class do
   def configure
     return unless node['cpe_adobe_flash']['configure']
 
-    configs = node['cpe_adobe_flash']['configs'].reject { |_k, v| v.nil? }
+    configs = node['cpe_adobe_flash']['configs'].compact
     node.default['cpe_adobe_flash']['_applied_configs'] = configs
 
     template ::File.join(config_dir, 'mms.cfg') do # ~FB031

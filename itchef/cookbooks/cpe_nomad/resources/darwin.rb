@@ -74,11 +74,11 @@ action_class do
 
   def configure_profile
     nomad_prefs =
-      node['cpe_nomad']['prefs'].reject { |_k, v| v.nil? }
+      node['cpe_nomad']['prefs'].compact
     login_prefs =
-      node['cpe_nomad']['login']['prefs'].reject { |_k, v| v.nil? }
+      node['cpe_nomad']['login']['prefs'].compact
     actions_prefs =
-      node['cpe_nomad']['actions']['prefs'].reject { |_k, v| v.nil? }
+      node['cpe_nomad']['actions']['prefs'].compact
     if [
       nomad_prefs,
       login_prefs,
@@ -122,7 +122,7 @@ action_class do
     end
 
     prefix = node['cpe_profiles']['prefix']
-    organization = node['organization'] ? node['organization'] : 'Facebook'
+    organization = node['organization'] ? node['organization'] : 'Facebook' # rubocop:disable Style/RedundantCondition
 
     {
       'NoMAD' => nomad_prefs,
@@ -172,7 +172,7 @@ action_class do
   end
 
   def log_if(msg)
-    CPE::Log.if(
+    CPE::Log.if( # rubocop:disable Style/ExplicitBlockArgument
       msg, :type => @type, :action => @action, :status => @status
     ) { yield }
   end

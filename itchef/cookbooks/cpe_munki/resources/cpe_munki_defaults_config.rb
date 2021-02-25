@@ -22,7 +22,7 @@ action :config do
   return unless node['cpe_munki']['configure']
 
   munki_prefs = node['cpe_munki'][
-    'defaults_preferences'].reject { |_k, v| v.nil? }
+    'defaults_preferences'].compact
 
   if munki_prefs.empty?
     Chef::Log.info("#{cookbook_name}: No defaults prefs found.")
