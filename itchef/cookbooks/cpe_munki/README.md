@@ -193,7 +193,7 @@ You can set these settings using `node['cpe_munki']['defaults_preferences']`:`
 end
 ```
 
-**NOTE:** Prefences can *only* be set under either the `preferences` or
+**NOTE:** Preferences can *only* be set under either the `preferences` or
 `defaults_preferences` key. The resources will fail if a setting exists in
 both hashes. As such, if you had both of the above code examples somewhere
 in your code, an error would be thrown saying that 'SoftwareRepoURL' is

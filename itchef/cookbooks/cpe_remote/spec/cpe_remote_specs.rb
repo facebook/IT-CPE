@@ -35,7 +35,7 @@ describe CPE::Remote do
         end
       end
     end
-    context 'When expection is raised' do
+    context 'When exception is raised' do
       it 'should return false' do
         allow(Chef::HTTP::Simple).
           to receive_message_chain(:new, :head).and_raise('boom')

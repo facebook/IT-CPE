@@ -32,14 +32,14 @@ action :prompt do
     # Force a re-install if someone has removed the binary
     unless ::File.exist?("#{dpn['path']}/Contents/MacOS/DeprecationNotifier")
       Chef::Log.info('DeprecationNotifier not present, reinstalling')
-      shell_out("/usr/sbin/pkgutil --forget #{dpn['pkg_reciept']}")
+      shell_out("/usr/sbin/pkgutil --forget #{dpn['pkg_receipt']}")
     end
 
     # Upgrade Version
     cpe_remote_pkg 'DeprecationNotifier' do
       version dpn['version']
       checksum dpn['checksum']
-      receipt dpn['pkg_reciept']
+      receipt dpn['pkg_receipt']
       notifies :restart, "launchd[#{domain}]" if dpn['enable']
     end
   end

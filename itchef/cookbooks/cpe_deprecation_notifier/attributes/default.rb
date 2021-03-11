@@ -21,7 +21,7 @@ default['cpe_deprecation_notifier'] = {
   # Writes prompt time to a json file.
   'log_path' => nil,
   'path' => '/Applications/DeprecationNotifier.app',
-  'pkg_reciept' => 'com.deprecation_notifier',
+  'pkg_receipt' => 'com.deprecation_notifier',
   'checksum' => 'changeme',
   'version' => 'changeme',
   'conf' => {

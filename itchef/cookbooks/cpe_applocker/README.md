@@ -53,7 +53,7 @@ The AppLocker rules are specified by a ruby Hash, which is converted to and
 from an XML blob to be shipped to AppLocker via the `Nokogiri::XML` parser.
 There are 5 total rule sets one can configured,
 [completely detailed in this MSDN article](https://docs.microsoft.com/en-us/windows/security/threat-protection/windows-defender-application-control/applocker/working-with-applocker-rules#rule-collections).
-In short, one can control the exection of the following types of applications
+In short, one can control the execution of the following types of applications
 on a windows host:
 
 * Executable Files: `.exe`, `.com`
