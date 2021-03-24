@@ -37,4 +37,4 @@ node.default['cpe_preferencepanes']['HiddenPreferencePanes'] = [
 ]
 ```
 
-CFBundleIdentifers are [documented on Apple's developer site](https://developer.apple.com/documentation/devicemanagement/systempreferences).
+CFBundleIdentifiers are [documented on Apple's developer site](https://developer.apple.com/documentation/devicemanagement/systempreferences).

@@ -60,7 +60,7 @@ action :update do
   node['cpe_dconf']['settings'].each do |comp, settings_raw|
     # Here, each key can correspond to either a primitive (like a string), where
     # we assume lock=true, or it can be a hash, in order to disable locking.
-    # This step will process settings to determien the lock status for each key.
+    # This step will process settings to determine the lock status for each key.
     settings_processed = {}
     locks = []
     settings_raw.each do |dir, keys|

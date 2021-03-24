@@ -10,7 +10,7 @@ Attributes
 ----------
 * node['cpe_deprecation_notifier']['enable']
 * node['cpe_deprecation_notifier']['path']
-* node['cpe_deprecation_notifier']['pkg_reciept']
+* node['cpe_deprecation_notifier']['pkg_receipt']
 * node['cpe_deprecation_notifier']['checksum']
 * node['cpe_deprecation_notifier']['expected_version']
 * node['cpe_deprecation_notifier']['instruction_url']
@@ -33,7 +33,7 @@ Define version to install:
 
 ```
 {
-  'pkg_reciept' => 'com.CPE.deprecationnotifier',
+  'pkg_receipt' => 'com.CPE.deprecationnotifier',
   'version' => '3.0',
   'checksum' =>
     '80787625f7606113c10f8af55a67c0a2cfbfd2ab34c7e7ccd1789f27785289d4',

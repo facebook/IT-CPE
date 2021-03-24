@@ -193,7 +193,7 @@ module CPE
     def gen_applocker_xml
       require 'nokogiri'
 
-      # Generical XML builder function. When enabled, this produces our
+      # Generic XML builder function. When enabled, this produces our
       # XML for enabling the Applocker service. When disabled, this produces
       # a "clean" XML policy for Applocker configuration
       builder = Nokogiri::XML::Builder.new do |xml|

@@ -55,7 +55,7 @@ means this cookbook should be run first before `cpe_profiles_local` in your
 run list (and before any other cookbook you're intending to use).
 
 Note that the default `prefix` attribute is a *dummy* value that will
-be dynamically replaced by the desitnation cookbook's prefix using a simple
+be dynamically replaced by the destination cookbook's prefix using a simple
 string substitution in both the top-level profile Hash key and the
 `ProfileIdentifier` key in the contained profile Hash.
 
@@ -66,8 +66,8 @@ all at once with a single switchover via `default_cookbook`. Use it like this:
 
 ```
 prefix = node['cpe_profiles']['prefix']
-node.deafult['cpe_profiles']['cookbook_map']["#{prefix}.myprofile"] = 'mdm_profiles'
+node.default['cpe_profiles']['cookbook_map']["#{prefix}.myprofile"] = 'mdm_profiles'
 ```
 
 This would map `"#{prefix}.myprofile"` to use the `mdm_profiles` cookbook, for
-exmaple instead of being re-written to use the `default_cookbook`.
+example instead of being re-written to use the `default_cookbook`.

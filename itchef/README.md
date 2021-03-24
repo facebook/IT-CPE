@@ -56,7 +56,7 @@ node.default['cpe_launchd']['doesnothing'] = {
 ```
 
 Because cpe_launchd uses the prefix set in company_init.rb, we do not need to specify a
-full reverse domain name. cpe_launchd is smart enought to build the correct reverse
+full reverse domain name. cpe_launchd is smart enough to build the correct reverse
 domain name for the LaunchDaemon.
 
 In Terminal, cd to the `itchef` directory and do a local chef run:

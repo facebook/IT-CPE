@@ -25,7 +25,7 @@ appropriate.
 
 The general idea is that cookbooks are ordered least specific to most specific.
 This allows a small core team to make APIs and defaults and then let individual
-service owners' cookbooks at the end overwrite whatever they ened to. This also
+service owners' cookbooks at the end overwrite whatever they need to. This also
 ensures that all things the service owner chooses not to bother with are setup
 to sane settings by the core group at your site.
 
@@ -91,5 +91,3 @@ Contributing
 **DO NOT FORGET:** If you are calling an external cookbook Before you add an
 `include_recipe 'recipe'` statement be sure to add a `depends 'cookbook'` to the
 metadata.rb
-
-

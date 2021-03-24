@@ -57,7 +57,7 @@ action :run do
     content gen_selfservice_plist
   end
 
-  # This file is for context for users to know whats avalible for their machine
+  # This file is for context for users to know what's available for their machine
   pretty_json = JSON.pretty_generate(@catalog_items)
   file '/Library/Managed Installs/munki_catalog_items.json' do
     owner 'root'
@@ -129,11 +129,11 @@ end
 
 def parse_items_in_catalogs
   catalogs = []
-  catlogs_dir = '/Library/Managed Installs/catalogs/'
-  Dir.foreach(catlogs_dir) do |catalog|
+  catalogs_dir = '/Library/Managed Installs/catalogs/'
+  Dir.foreach(catalogs_dir) do |catalog|
     next if ['.', '..'].include?(catalog)
     begin
-      p = read_plist(catlogs_dir + catalog)
+      p = read_plist(catalogs_dir + catalog)
       p.each do |d|
         catalogs << d['name']
       end

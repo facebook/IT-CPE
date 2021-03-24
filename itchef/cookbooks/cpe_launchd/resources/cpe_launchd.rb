@@ -38,7 +38,7 @@ end
 
 def process_label(label, plist)
   return label if label.start_with?(node['cpe_launchd']['prefix'])
-  # label does have the prefix so now we preocess
+  # label does have the prefix so now we process
   append_to_cleanup(label, plist)
   if label.start_with?('com')
     label = delete_str_from_label(label, 'com')
