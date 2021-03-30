@@ -86,7 +86,7 @@ action :manage do
     group 'root'
   end
 
-  rem = node['cpe_flatpak']['remotes'].keys
+  rem = node['cpe_flatpak']['remotes'].keys.sort
   #  Keep track of what remotes are installed for idempotency.
   file flatpak_remotes_receipt_path do
     content Chef::JSONCompat.to_json_pretty(rem)
@@ -96,7 +96,7 @@ action :manage do
     action :create
   end
 
-  packages = node['cpe_flatpak']['pkgs'].keys
+  packages = node['cpe_flatpak']['pkgs'].keys.sort
   #  Keep track of what packages are installed for idempotency.
   file flatpak_packages_receipt_path do
     content Chef::JSONCompat.to_json_pretty(packages)
