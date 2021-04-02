@@ -1,5 +1,9 @@
 cpe_launchd Cookbook
 ====================
+> :warning: This cookbook is RETIRED. Please migrate your code to fb_launchd,
+which can be found at https://github.com/facebook/chef-cookbooks/tree/master/cookbooks/fb_launchd,
+by July 2021
+
 This is a cookbook that will manage all of the launch daemons/agents used with
 chef.
 
@@ -9,15 +13,16 @@ macOS
 
 Attributes
 ----------
-* node['cpe_launchd']
-* node['cpe_launchd']['prefix']
+* node['cpe_launchd_is_deprecated_please_use_fb_launchd']
+* node['cpe_launchd_is_deprecated_please_use_fb_launchd']['prefix']
 
 Usage
 -----
 Include this recipe and add any launchd items in the format shown in the
 example below.
 
-**Note:** Ensure that you override the default value of `node['cpe_launchd']['prefix']`
+**Note:** Ensure that you override the default value of
+`node['cpe_launchd_is_deprecated_please_use_fb_launchd']['prefix']`
 in a recipe (like a custom company_init). If you do not do this, it will assume
 a label prefix of `com.facebook.chef`.
 
@@ -25,12 +30,13 @@ a label prefix of `com.facebook.chef`.
 AND SUFFERING FOR YOUR FLEET!**
 
 If you are creating a new launchd, in your recipe add a key to
-node.default['cpe_launchd'] that is the name of the label of the launchd that
-you would like to create and the value should be the key found in the launchd
+node.default['cpe_launchd_is_deprecated_please_use_fb_launchd'] that is the
+name of the label of the launchd that you would like to create and the value
+should be the key found in the launchd
 docs on docs.chef.org
 
 ```
-node.default['cpe_launchd']['com.facebook.chef.CPE.chefctl'] = {
+node.default['cpe_launchd_is_deprecated_please_use_fb_launchd']['com.facebook.chef.CPE.chefctl'] = {
   'program_arguments' => ['/opt/scripts/chef/chefctl.sh'],
   'run_at_load' => true,
   'start_interval' => 1800,
@@ -43,7 +49,7 @@ attribute, and set it to a proc that will be evaluated by the resource at
 runtime:
 
 ```
-node.default['cpe_launchd']['com.facebook.chef.CPE.chefctl'] = {
+node.default['cpe_launchd_is_deprecated_please_use_fb_launchd']['com.facebook.chef.CPE.chefctl'] = {
   'only_if' => proc { boolean_expression },
   ...
 }
@@ -74,7 +80,7 @@ script = '/Library/scripts/launch_daemon_init.sh'
     'run_at_load' => true,
   }
 }.each do |k, v|
-  node.default['cpe_launchd'][k] = v
-  node.default['cpe_launchd'][k]['time_out'] = 14400
+  node.default['cpe_launchd_is_deprecated_please_use_fb_launchd'][k] = v
+  node.default['cpe_launchd_is_deprecated_please_use_fb_launchd'][k]['time_out'] = 14400
 end
 ```

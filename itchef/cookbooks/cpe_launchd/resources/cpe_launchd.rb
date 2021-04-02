@@ -20,7 +20,7 @@ provides :cpe_launchd, :os => 'darwin'
 default_action :run
 
 action :run do
-  node['cpe_launchd'].to_hash.each do |label, plist|
+  node['cpe_launchd_is_deprecated_please_use_fb_launchd'].to_hash.each do |label, plist|
     next if label == 'prefix'
     label = process_label(label, plist)
     action, plist = process_plist(label, plist)
@@ -30,21 +30,21 @@ end
 
 action :clean_up do
   process_plist_labels
-  return if node['cpe_launchd']['__cleanup'].nil?
-  node['cpe_launchd']['__cleanup'].each do |label, type|
+  return if node['cpe_launchd_is_deprecated_please_use_fb_launchd']['__cleanup'].nil?
+  node['cpe_launchd_is_deprecated_please_use_fb_launchd']['__cleanup'].each do |label, type|
     launchd_resource(label, 'delete', nil, type)
   end
 end
 
 def process_label(label, plist)
-  return label if label.start_with?(node['cpe_launchd']['prefix'])
+  return label if label.start_with?(node['cpe_launchd_is_deprecated_please_use_fb_launchd']['prefix'])
   # label does have the prefix so now we process
   append_to_cleanup(label, plist)
   if label.start_with?('com')
     label = delete_str_from_label(label, 'com')
   end
-  label = "#{node['cpe_launchd']['prefix']}.#{label}"
-  node.default['cpe_launchd'][label] = plist
+  label = "#{node['cpe_launchd_is_deprecated_please_use_fb_launchd']['prefix']}.#{label}"
+  node.default['cpe_launchd_is_deprecated_please_use_fb_launchd'][label] = plist
   label
 end
 
@@ -56,8 +56,8 @@ def process_plist(label, plist)
 end
 
 def append_to_cleanup(label, plist_or_path)
-  node.default['cpe_launchd']['__cleanup'] = {} unless
-    node['cpe_launchd']['__cleanup']
+  node.default['cpe_launchd_is_deprecated_please_use_fb_launchd']['__cleanup'] = {} unless
+    node['cpe_launchd_is_deprecated_please_use_fb_launchd']['__cleanup']
   plist_type = nil # daemon
   if plist_or_path.is_a?(Hash) &&
     plist_or_path.include?('type') &&
@@ -67,7 +67,7 @@ def append_to_cleanup(label, plist_or_path)
   if plist_or_path.is_a?(String)
     plist_type = 'agent' if plist_or_path.downcase.include?('launchagent')
   end
-  node.default['cpe_launchd']['__cleanup'][label] = plist_type
+  node.default['cpe_launchd_is_deprecated_please_use_fb_launchd']['__cleanup'][label] = plist_type
 end
 
 def delete_str_from_label(label, string)
@@ -106,7 +106,7 @@ def find_managed_plist_labels
     edir = ::File.expand_path(dir)
     entries = Dir.glob(
       "#{edir}/*#{Chef::Util::PathHelper.escape_glob(
-        node['cpe_launchd']['prefix'],
+        node['cpe_launchd_is_deprecated_please_use_fb_launchd']['prefix'],
       )}*.plist",
     )
     entries.any? ? results << entries : results
@@ -120,7 +120,7 @@ def process_plist_labels
   plists.map! do |full_daemon_path|
     label = full_daemon_path.split('/')[-1]
     label = delete_str_from_label(label, 'plist')
-    unless node['cpe_launchd'].keys.include?(label)
+    unless node['cpe_launchd_is_deprecated_please_use_fb_launchd'].keys.include?(label)
       append_to_cleanup(label, full_daemon_path)
     end
   end

@@ -21,7 +21,7 @@
 # Be sure to replace all instances of MYCOMPANY with your actual company name
 node.default['organization'] = 'MYCOMPANY'
 prefix = "com.#{node['organization']}.chef"
-node.default['cpe_launchd']['prefix'] = prefix
+node.default['cpe_launchd_is_deprecated_please_use_fb_launchd']['prefix'] = prefix
 node.default['cpe_profiles']['prefix'] = prefix
 
 # Install munki

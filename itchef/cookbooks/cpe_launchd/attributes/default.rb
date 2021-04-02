@@ -15,5 +15,5 @@
 # Cookbook Name:: cpe_launchd
 # Attributes:: default
 
-default['cpe_launchd'] = {}
-default['cpe_launchd']['prefix'] = 'com.facebook.chef'
+default['cpe_launchd_is_deprecated_please_use_fb_launchd'] = {} # ~FB041
+default['cpe_launchd_is_deprecated_please_use_fb_launchd']['prefix'] = 'com.facebook.chef' # ~FB041
