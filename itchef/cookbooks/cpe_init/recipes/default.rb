@@ -49,7 +49,6 @@ if node.macos?
     'cpe_powermanagement',
     'cpe_preferencepanes',
     'cpe_spotlight',
-    'cpe_vfuse',
     # Here Be Dragons... Ordering is important.
     # launchd and profiles need to be last, as other apis depend on these
     'cpe_launchd',

@@ -38,7 +38,6 @@ depends 'cpe_profiles'
 depends 'cpe_remote'
 depends 'cpe_spotlight'
 depends 'cpe_symlinks'
-depends 'cpe_vfuse'
 depends 'cpe_win_telemetry'
 
 ## Web Browser API Cookbooks
