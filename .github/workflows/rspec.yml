@@ -14,5 +14,5 @@ jobs:
         bundler-cache: true
     - name: Run tests
       run: |
-        rspec 'tests/run_rubocop.rb'
-        rspec 'tests/run_foodcritic.rb'
+        bundle exec rspec 'tests/run_rubocop.rb'
+        bundle exec rspec 'tests/run_foodcritic.rb'
