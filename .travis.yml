@@ -1,9 +1,0 @@
-language: ruby
-rvm:
- - 2.4.1
-# uncomment and edit the following line if your project needs to run something other than `rake`:
-gemfile:
-  Gemfile
-script:
-  - rspec 'tests/run_rubocop.rb'
-  - rspec 'tests/run_foodcritic.rb'

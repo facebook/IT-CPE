@@ -1,0 +1,18 @@
+name: Rspec Actions
+on: [push, pull_request]
+jobs:
+  rspec:
+    runs-on: ubuntu-latest
+    env:
+      BUNDLE_GEMFILE: Gemfile
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 2.4.1
+        bundler-cache: true
+    - name: Run tests
+      run: |
+        rspec 'tests/run_rubocop.rb'
+        rspec 'tests/run_foodcritic.rb'
