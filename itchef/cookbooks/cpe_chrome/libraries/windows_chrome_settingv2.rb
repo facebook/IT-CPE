@@ -15,12 +15,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+require_relative 'chrome_windows'
 # This class is a superclass for implementing different types of chrome
 # settings.
 # All subclasses must implement `to_chef_reg_provider` to regurgitate something
 # that chef can consume via the `registry_key` resource.
 class WindowsChromeSettingV2
+  include CPE::ChromeManagement
   attr_accessor :registry_location, :subkey, :iterable, :value, :type
 
   def initialize(registry_location, subkey, type, iterable)
@@ -74,6 +75,8 @@ class WindowsChromeFlatSetting < WindowsChromeSettingV2
       @value = 1
     elsif @value.is_a?(FalseClass)
       @value = 0
+    elsif JSONIFY_REG_KEYS['Chrome'].include?(@subkey)
+      @value = @value.to_json
     end
 
     [{ :name => @subkey, :type => @type, :data => @value }]
