@@ -42,6 +42,7 @@ default['cpe_chrome'] = {
     'ChromeVariations' => nil,
     'DefaultPluginsSetting' => nil,
     'ExtensionInstallSources' => [],
+    'ManagedBookmarks' => [],
     'PluginsAllowedForUrls' => [],
     'RelaunchNotification' => nil,
     'RelaunchNotificationPeriod' => nil,
