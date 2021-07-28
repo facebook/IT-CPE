@@ -64,6 +64,7 @@ action :prompt do
       key 'WindowTimeOut'
       value dpn['conf']['initialTimeout']
       type 'int'
+      ignore_failure true
     end
 
     # We're gonna try to do some logic here so that we don't
