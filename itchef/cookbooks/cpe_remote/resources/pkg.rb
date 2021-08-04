@@ -30,6 +30,7 @@ property :pkg_url, String
 property :receipt, String, :desired_state => false
 property :remote, [TrueClass, FalseClass], :default => true
 property :version, String
+property :pkg_compat, [TrueClass, FalseClass], :default => false
 
 action_class do
   include CPE::Remote
@@ -145,6 +146,7 @@ action :install do
     execute "Installing #{pkg_file}" do
       only_if { valid_url }
       only_if { validate_checksum(pkg_on_disk, new_resource.checksum) }
+      only_if { pkg_compat(pkg_on_disk, new_resource.pkg_compat) }
       command "/usr/sbin/installer -pkg '#{pkg_file_path}' -target /"
     end
 
