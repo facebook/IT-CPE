@@ -72,7 +72,7 @@ action :create do
   converge_if_changed do
     base_filename = ::File.basename(zip_path)
     # @lint-ignore FBCHEFFoodcritic
-    directory ::File.dirname(zip_path) do
+    directory ::File.dirname(zip_path) do # ~FB019 ~FB024
       recursive true
     end
 
@@ -126,7 +126,7 @@ action :create do
       end
     end
 
-    package 'unzip' do
+    package 'unzip' do # ~FB043
       only_if { node.linux? }
       action :nothing
     end
@@ -140,7 +140,7 @@ action :create do
     end
 
     # @lint-ignore FBCHEFFoodcritic
-    directory new_resource.extract_location do
+    directory new_resource.extract_location do # ~FB019
       not_if { node.windows? }
       recursive true
       mode new_resource.mode

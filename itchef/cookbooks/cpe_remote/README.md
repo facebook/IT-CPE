@@ -58,6 +58,8 @@ package from a remote URL. The package file will be stored in the
           `base_url/app/app-version.pkg`
 * `checksum` - sha256 checksum of the pkg to download.
 * `backup` - Specify the # of files to backup. Default is 0
+* `force_arm64` - Specify if the pkg requires arm64 `installer`. For example,
+               if you are running chef via Rosetta on Apple Silicon.
 * `pkg_name` - Specify the name of the pkg if it is not the same as
               `app-version`, or if the name has spaces.
 * `pkg_url` - URL of the pkg on the server if it's different than

@@ -24,6 +24,7 @@ property :allow_downgrade, [TrueClass, FalseClass], :default => true
 property :app, String, :name_property => true
 property :checksum, String
 property :backup, [FalseClass, Integer], :default => false
+property :force_arm64, [TrueClass, FalseClass], :default => false
 property :mpkg, [TrueClass, FalseClass], :default => false
 property :pkg_name, String
 property :pkg_url, String
@@ -142,10 +143,16 @@ action :install do
       pkg_on_disk = download_file_path
     end
 
+    force_arm64 = new_resource.force_arm64
+    cmd = "/usr/sbin/installer -pkg '#{pkg_file_path}' -target /"
+    if force_arm64
+      cmd = '/usr/bin/arch --arm64 ' + cmd
+    end
+
     execute "Installing #{pkg_file}" do
       only_if { valid_url }
       only_if { validate_checksum(pkg_on_disk, new_resource.checksum) }
-      command "/usr/sbin/installer -pkg '#{pkg_file_path}' -target /"
+      command cmd
     end
 
     Chef.event_handler do
