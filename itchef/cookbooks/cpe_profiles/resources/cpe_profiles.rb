@@ -20,6 +20,10 @@ provides :cpe_profiles, :os => 'darwin'
 default_action :run
 
 action :run do
+  if node['cpe_profiles']['default_cookbook'].empty?
+    Chef::Log.warn("#{cookbook_name}: No default profiles cookbook defined")
+    return
+  end
   map = node['cpe_profiles']['cookbook_map']
   default = node['cpe_profiles']['default_cookbook']
   prefix = node['cpe_profiles']['prefix']

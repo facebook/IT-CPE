@@ -20,10 +20,10 @@ Usage
 
 To add a new config profile, in your recipe, add a key matching the
 profile `PayloadIdentifier` with a value that contains the hash of the profile
-to `node.default['cpe_profiles']`:
+to `node.default['cpe_profiles']` (assume "profile" contains a fully-fleshed
+out profile with all requisite keys):
 
 ```
-# assume "profile" contains a fully-fleshed out profile with all requisite keys
 prefix = node['cpe_profiles']['prefix']
 profile = {
   # other keys in the profile here
@@ -33,12 +33,12 @@ profile = {
 node.default['cpe_profiles]["#{prefix}.myprofile"] = profile
 ```
 
-This cookbook's `default_cookbook` attribute is, by default, set to
-`cpe_profiles_local`. This means that in the above example this cookbook
-will re-write the above profile into the `cpe_profiles_local` cookbook's node
-attribute *as if* you had specified it like this:
+This cookbook's `default_cookbook` attribute is, by default, empty.
+This means that you'll need to define which method you want to use.
 
 ```
+node.default['cpe_profiles']['default_cookbook'] = 'cpe_profiles_local'
+
 prefix = node['cpe_profiles_local']['prefix']
 profile = {
   # other keys in the profile here

@@ -17,6 +17,6 @@
 
 default['cpe_profiles'] = {
   'prefix' => 'com.facebook.prefix-rewritten.chef',
-  'default_cookbook' => 'cpe_profiles_local',
+  'default_cookbook' => '',
   'cookbook_map' => {},
 }
