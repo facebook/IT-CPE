@@ -24,7 +24,10 @@ action :config do
   # chrome is installed on all machines
   chrome_installed = ::File.file?(
     "#{ENV['ProgramFiles(x86)']}\\Google\\Chrome\\Application\\chrome.exe",
-  )
+  ) || ::File.file?(
+    "#{ENV['ProgramFiles']}\\Google\\Chrome\\Application\\chrome.exe",
+  ) || !node['cpe_chrome']['validate_installed']
+
   return unless chrome_installed || node.installed?('Google Chrome')
   return unless node['cpe_chrome']['profile'].values.any?
 
@@ -255,10 +258,10 @@ action :config do
     'c:\\Program Files (x86)\\Google\\Chrome\\Application\\master_preferences'
   file "delete-#{master_path}" do
     only_if do
-      node['cpe_chrome']['mp']['FileContents'].
-        to_hash.
-        reject { |_k, v| v.nil? }.
-        empty?
+      node['cpe_chrome']['mp']['FileContents']
+        .to_hash
+        .compact
+        .empty?
     end
     path master_path
     action :delete
@@ -281,16 +284,16 @@ action :config do
   # Create the Master Preferences file
   file "create-#{master_path}" do # ~FB023
     not_if do
-      node['cpe_chrome']['mp']['FileContents'].
-        to_hash.
-        reject { |_k, v| v.nil? }.
-        empty?
+      node['cpe_chrome']['mp']['FileContents']
+        .to_hash
+        .compact
+        .empty?
     end
     content lazy {
       Chef::JSONCompat.to_json_pretty(
-        node['cpe_chrome']['mp']['FileContents'].
-        to_hash.
-        reject { |_k, v| v.nil? },
+        node['cpe_chrome']['mp']['FileContents']
+        .to_hash
+        .compact
       )
     }
     path master_path

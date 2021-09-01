@@ -68,15 +68,14 @@ action_class do
     return if node['cpe_chrome']['validate_installed'] &&
       !node.installed?('com.google.Chrome')
     if node['cpe_chrome']['mp']['UseMasterPreferencesFile']
-      mprefs =
-        node['cpe_chrome']['mp']['FileContents'].reject { |_k, v| v.nil? }
+      mprefs = node['cpe_chrome']['mp']['FileContents'].compact
     else
       mprefs = {}
     end
     prefs = node['cpe_chrome']['profile'].reject do |_k, v|
       v.nil? || (v.respond_to?(:empty?) && v.empty?)
     end
-    return if prefs.empty? && mprefs.empty?
+
     case node['os']
     when 'darwin'
       manage_chrome_macos(mprefs, prefs)
@@ -88,7 +87,10 @@ action_class do
   def manage_chrome_extensions
     return if node['cpe_chrome']['validate_installed'] &&
       !node.installed?('com.google.Chrome')
-    extprefs = node['cpe_chrome']['extension_profile'].reject do |_k, v|
+    extprefs = node['cpe_chrome']['extension_profile'].map do |k, v|
+      [k, v.compact]
+    end.to_h
+    extprefs = extprefs.reject do |_k, v|
       v.nil? || (v.respond_to?(:empty?) && v.empty?)
     end
     case node['os']
@@ -140,7 +142,35 @@ action_class do
     end
   end
 
+  def manage_chrome_macos_master_prefs(mprefs)
+    # Apply the Master Preferences file
+    master_path = '/Library/Google/Google Chrome Master Preferences'
+    if mprefs.empty?
+      file master_path do
+        action :delete
+      end
+    else
+      directory '/Library/Google' do
+        mode '0755'
+        owner 'root'
+        group 'wheel'
+        action :create
+      end
+      # Create the Master Preferences file
+      file master_path do
+        mode '0644'
+        owner 'root'
+        group 'wheel'
+        action :create
+        content Chef::JSONCompat.to_json_pretty(mprefs)
+      end
+    end
+  end
+
   def manage_chrome_macos(mprefs, prefs)
+    manage_chrome_macos_master_prefs(mprefs)
+    return if prefs.empty?
+
     prefix = node['cpe_profiles']['prefix']
     organization = node['organization'] ? node['organization'] : 'Facebook'
     chrome_profile = {
@@ -197,32 +227,11 @@ action_class do
       profile_domain = "#{node['cpe_profiles']['prefix']}.browsers.chromecanary"
       node.default['cpe_profiles'][profile_domain] = canary_profile
     end
-    # Apply the Master Preferences file
-    master_path = '/Library/Google/Google Chrome Master Preferences'
-    if mprefs.empty?
-      file master_path do
-        action :delete
-      end
-    else
-      directory '/Library/Google' do
-        mode '0755'
-        owner 'root'
-        group 'wheel'
-        action :create
-      end
-      # Create the Master Preferences file
-      file master_path do
-        mode '0644'
-        owner 'root'
-        group 'wheel'
-        action :create
-        content Chef::JSONCompat.to_json_pretty(mprefs)
-      end
-    end
   end
 
   def manage_chrome_extensions_macos(extprefs)
     return if extprefs.empty?
+    
     prefix = node['cpe_profiles']['prefix']
     organization = node['organization'] ? node['organization'] : 'Facebook'
     extprefs.each do |k, v|
