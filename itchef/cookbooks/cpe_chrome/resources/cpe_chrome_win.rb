@@ -24,6 +24,8 @@ action :config do
   # chrome is installed on all machines
   chrome_installed = ::File.file?(
     "#{ENV['ProgramFiles(x86)']}\\Google\\Chrome\\Application\\chrome.exe",
+  ) || ::File.file?(
+    "#{ENV['ProgramFiles']}\\Google\\Chrome\\Application\\chrome.exe",
   )
   return unless chrome_installed || node.installed?('Google Chrome')
   return unless node['cpe_chrome']['profile'].values.any?
@@ -250,54 +252,67 @@ action :config do
     end
   end
 
-  # Apply the Master Preferences file
-  master_path =
-    'c:\\Program Files (x86)\\Google\\Chrome\\Application\\master_preferences'
-  file "delete-#{master_path}" do
-    only_if do
-      node['cpe_chrome']['mp']['FileContents'].
-        to_hash.
-        reject { |_k, v| v.nil? }.
-        empty?
-    end
-    path master_path
-    action :delete
-  end
+  # There are two migrations going on here.  From the legacy x86
+  # program files to the x86_64 one, and from master_preferences to
+  # initial_preferences.  At time of writing, we have Chrome instances
+  # installed in both locations.  While we probably do not have any
+  # chromes old enough to be unaware of the new initial_preferences
+  # file name, we might, and the current files use that name.  It's
+  # safer to just keep creating it until we're sure everything is on
+  # the new name.
+  ['initial_preferences', 'master_preferences'].each do |basename|
+    [
+      'C:\\Program Files (x86)\\',
+      'C:\\Program Files\\',
+    ].each do |prefix|
 
-  [
-    'C:\\Program Files (x86)\\Google',
-    'C:\\Program Files (x86)\\Google\\Chrome',
-    'C:\\Program Files (x86)\\Google\\Chrome\\Application',
-  ].each do |dir|
-    directory dir do # ~FB024
-      rights :read, 'Everyone', :applies_to_children => true
-      rights :read_execute, 'Users', :applies_to_children => true
-      rights :full_control, ['Administrators', 'SYSTEM'],
-             :applies_to_children => true
-      action :create
-    end
-  end
+      pref_path = "#{prefix}\\Google\\Chrome\\Application\\#{basename}"
+      file "delete-#{pref_path}" do
+        only_if do
+          node['cpe_chrome']['mp']['FileContents'].
+            to_hash.
+            reject { |_k, v| v.nil? }.
+            empty?
+        end
+        path pref_path
+        action :delete
+      end
 
-  # Create the Master Preferences file
-  file "create-#{master_path}" do # ~FB023
-    not_if do
-      node['cpe_chrome']['mp']['FileContents'].
-        to_hash.
-        reject { |_k, v| v.nil? }.
-        empty?
+      [
+        "#{prefix}\\Google",
+        "#{prefix}\\Google\\Chrome",
+        "#{prefix}\\Google\\Chrome\\Application",
+      ].each do |dir|
+        directory dir do # ~FB024
+          rights :read, 'Everyone', :applies_to_children => true
+          rights :read_execute, 'Users', :applies_to_children => true
+          rights :full_control, ['Administrators', 'SYSTEM'],
+                 :applies_to_children => true
+          action :create
+        end
+      end
+
+      file "create-#{pref_path}" do # ~FB023
+        not_if do
+          node['cpe_chrome']['mp']['FileContents'].
+            to_hash.
+            reject { |_k, v| v.nil? }.
+            empty?
+        end
+        content lazy {
+          Chef::JSONCompat.to_json_pretty(
+            node['cpe_chrome']['mp']['FileContents'].
+              to_hash.
+              reject { |_k, v| v.nil? },
+          )
+        }
+        path pref_path
+        rights :read, 'Everyone', :applies_to_children => true
+        rights :read_execute, 'Users', :applies_to_children => true
+        rights :full_control, ['Administrators', 'SYSTEM'],
+               :applies_to_children => true
+        action :create
+      end
     end
-    content lazy {
-      Chef::JSONCompat.to_json_pretty(
-        node['cpe_chrome']['mp']['FileContents'].
-        to_hash.
-        reject { |_k, v| v.nil? },
-      )
-    }
-    path master_path
-    rights :read, 'Everyone', :applies_to_children => true
-    rights :read_execute, 'Users', :applies_to_children => true
-    rights :full_control, ['Administrators', 'SYSTEM'],
-           :applies_to_children => true
-    action :create
   end
 end
