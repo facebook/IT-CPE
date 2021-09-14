@@ -31,6 +31,7 @@ default['cpe_munki'] = {
     'DaysBetweenNotifications' => nil,
     'FollowHTTPRedirects' => nil,
     'InstallAppleSoftwareUpdates' => nil,
+    'LocalOnlyManifest' => nil,
     'LogFile' => nil,
     'LoggingLevel' => nil,
     'LogToSyslog' => nil,

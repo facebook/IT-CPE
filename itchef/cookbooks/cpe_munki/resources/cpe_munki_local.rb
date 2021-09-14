@@ -23,15 +23,20 @@ provides :cpe_munki_local, :os => 'darwin'
 default_action :run
 
 action :run do
-  locals_exist = node['cpe_munki']['local']['managed_installs'].any? ||
-                node['cpe_munki']['local']['managed_uninstalls'].any?
+  # Managed local manifest if local installs/uninstalls or LocalOnlyManifest
+  # attributes are set
+  manage_locals = (
+    (node['cpe_munki']['local']['managed_installs'].any? ||
+    node['cpe_munki']['local']['managed_uninstalls'].any?) ||
+    !node['cpe_munki']['preferences']['LocalOnlyManifest'].nil?
+  )
 
-  return unless locals_exist
+  return unless manage_locals
   return unless ::File.exist?('/usr/local/munki/managedsoftwareupdate')
 
   # If local only manifest preference is not set,
   # set it to the default 'extra_packages'
-  unless node['cpe_munki']['preferences'].key?('LocalOnlyManifest')
+  if node['cpe_munki']['preferences']['LocalOnlyManifest'].nil?
     node.default['cpe_munki']['preferences']['LocalOnlyManifest'] =
       'extra_packages'
   end
