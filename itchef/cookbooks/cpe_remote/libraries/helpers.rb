@@ -19,6 +19,12 @@ module CPE
       http = node['cpe_remote']['http']
       uri = http ? 'http' : 'https'
       url = "#{uri}://#{node['cpe_remote']['base_url']}/#{path}/#{file}"
+      if defined?(CPE::Distro)
+        cdn_url = CPE::Distro.gen_url_from_api(path, file)
+        unless cdn_url.nil?
+          url = cdn_url
+        end
+      end
       Chef::Log.info("Source URL: #{url}")
       url
     end
