@@ -1,6 +1,8 @@
-# vim: syntax=ruby:expandtab:shiftwidth=2:softtabstop=2:tabstop=2
 #
-# Copyright (c) 2018-present, Facebook, Inc.
+# Cookbook Name:: fb_helpers
+# Recipe:: spec
+#
+# Copyright (c) 2012-present, Facebook, Inc.
 # All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,13 +16,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
 
-default['fb_helpers'] = {
-  'reboot_allowed' => false,
-  'reboot_allowed_callback' => nil,
-  'managed_reboot_callback' => nil,
-  'reboot_logging_callback' => nil,
-  'network_changes_allowed_method' => nil,
-  'interface_change_allowed_method' => nil,
-  'interface_start_allowed_method' => nil,
-}
+# This recipe is only for running ChefSpec tests
+if defined?(ChefSpec)
+  fb_helpers_gated_template '/tmp/testfile' do
+    # purposefully bogus, so we raise UserIDNotFound and catch in spec
+    owner 'bogususer123'
+    group 'bogususer123'
+    mode '0644'
+    source 'spec_network.erb'
+  end
+end
