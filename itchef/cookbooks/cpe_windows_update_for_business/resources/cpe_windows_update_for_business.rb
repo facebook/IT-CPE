@@ -110,6 +110,17 @@ property :defer_feature_updates,
                        node['cpe_windows_update_for_business']['defer_feature_updates']
                      }
 
+property :product_version,
+         [String, NilClass],
+         :callbacks => {
+           'must be a valid product' => lambda { |v|
+             CPE::WindowsUpdateForBusiness::ProductVersion.valid?(v)
+           },
+         },
+         :default => lazy {
+                       node['cpe_windows_update_for_business']['product_version']
+                     }
+
 property :use_wsus, [TrueClass, FalseClass], :default => false
 property :au_set, [TrueClass, FalseClass], :default => false
 property :managed_key_exists, [TrueClass, FalseClass], :default => true
@@ -135,6 +146,7 @@ load_current_value do
       exclude_drivers = bool_from_int_or_nil(value.fetch('ExcludeWUDriversInQualityUpdate', 0))
 
       branch_readiness_level value.fetch('BranchReadinessLevel', nil)
+      product_version value.fetch('ProductVersion', nil)
       defer_quality_updates_period_in_days value.fetch('DeferQualityUpdatesPeriodinDays', nil)
       defer_feature_updates_period_in_days value.fetch('DeferFeatureUpdatesPeriodinDays', nil)
       pause_quality_updates_start_time value.fetch('PauseQualityUpdatesStartTime', nil)
@@ -218,6 +230,9 @@ action :config do
     :target_release_version_info => {
       'subkey' => 'TargetReleaseVersionInfo',
       'only_if' => proc { node.os_at_least?('10.0.17134.0') },
+    },
+    :product_version => {
+      'subkey' => 'ProductVersion',
     },
   }.each do |k, v|
     converge_if_changed k do

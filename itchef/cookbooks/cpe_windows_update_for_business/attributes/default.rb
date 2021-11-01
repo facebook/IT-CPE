@@ -17,6 +17,7 @@
 
 default['cpe_windows_update_for_business'] = {
   'enabled' => nil,
+  'product_version' => nil,
   'branch_readiness_level' => nil,
   'defer_quality_updates' => false,
   'defer_feature_updates' => false,

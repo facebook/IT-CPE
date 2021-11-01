@@ -17,6 +17,24 @@
 
 module CPE
   module WindowsUpdateForBusiness
+    module ProductVersion
+      WINDOWS_10 = 'Windows 10'.freeze
+      WINDOWS_11 = 'Windows 11'.freeze
+
+      def products
+        [
+          WINDOWS_10,
+          WINDOWS_11,
+        ].freeze
+      end
+
+      def valid?(v)
+        products.include?(v) || v.nil?
+      end
+
+      module_function :valid?, :products
+    end
+
     module BranchReadinessLevel
       INSIDER_FAST = 2
       INSIDER_SLOW = 4

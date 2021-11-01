@@ -18,6 +18,7 @@ Attributes
 * node['cpe_windows_update_for_business']['target_release_version_info']
 * node['cpe_windows_update_for_business']['defer_quality_updates']
 * node['cpe_windows_update_for_business']['defer_feature_updates']
+* node['cpe_windows_update_for_business']['product_version']
 
 Usage
 -----
@@ -77,6 +78,9 @@ When set to `true` quality updates are deferred until the duration set in
 When set to `true` feature updates are deferred until the duration set in
 `defer_feature_updates_period_in_days` has passed.
 
+### `node['cpe_windows_update_for_business']['product_version']`
+Which major release of Windows to configure the device to pull updates for.
+
 ### Example
 
 ```ruby
@@ -87,6 +91,7 @@ node.default['cpe_windows_update_for_business'].merge!({
   'defer_feature_updates_period_in_days' => 250,
   'pause_feature_updates_start_time' => 1,
   'exclude_wu_drivers_in_quality_update' => true,
+  'product_version' => 'Windows 10',
   'target_release_version_info' => '20H2',
 })
 ```
