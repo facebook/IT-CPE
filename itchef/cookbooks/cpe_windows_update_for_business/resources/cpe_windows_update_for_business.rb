@@ -118,7 +118,49 @@ property :product_version,
            },
          },
          :default => lazy {
-                       node['cpe_windows_update_for_business']['product_version']
+           node['cpe_windows_update_for_business']['product_version']
+         }
+
+property :configure_deadline_for_quality_updates,
+         [Integer, NilClass],
+         :callbacks => {
+           'is not between 0-30' => ->(v) { v.between?(0, 30) },
+         },
+         :default => lazy {
+                       node['cpe_windows_update_for_business']['configure_deadline_for_quality_updates']
+                     }
+
+property :configure_deadline_for_feature_updates,
+         [Integer, NilClass],
+         :callbacks => {
+           'is not between 0-30' => ->(v) { v.between?(0, 30) },
+         },
+         :default => lazy {
+                       node['cpe_windows_update_for_business']['configure_deadline_for_feature_updates']
+                     }
+
+property :configure_deadline_grace_period_for_feature_updates,
+         [Integer, NilClass],
+         :callbacks => {
+           'is not between 0-7' => ->(v) { v.between?(0, 7) },
+         },
+         :default => lazy {
+                       node['cpe_windows_update_for_business']['configure_deadline_grace_period_for_feature_updates']
+                     }
+
+property :configure_deadline_grace_period,
+         [Integer, NilClass],
+         :callbacks => {
+           'is not between 0-7' => ->(v) { v.between?(0, 7) },
+         },
+         :default => lazy {
+                       node['cpe_windows_update_for_business']['configure_deadline_grace_period']
+                     }
+
+property :set_compliance_deadline,
+         [TrueClass, FalseClass],
+         :default => lazy {
+                       node['cpe_windows_update_for_business']['set_compliance_deadline']
                      }
 
 property :use_wsus, [TrueClass, FalseClass], :default => false
@@ -144,6 +186,7 @@ load_current_value do
       defer_quality = bool_from_int_or_nil(value.fetch('DeferQualityUpdates', 0))
       defer_feature = bool_from_int_or_nil(value.fetch('DeferFeatureUpdates', 0))
       exclude_drivers = bool_from_int_or_nil(value.fetch('ExcludeWUDriversInQualityUpdate', 0))
+      use_compliance_deadlines = bool_from_int_or_nil(value.fetch('SetComplianceDeadline', 0))
 
       branch_readiness_level value.fetch('BranchReadinessLevel', nil)
       product_version value.fetch('ProductVersion', nil)
@@ -155,6 +198,11 @@ load_current_value do
       exclude_wu_drivers_in_quality_update exclude_drivers
       defer_quality_updates defer_quality
       defer_feature_updates defer_feature
+      configure_deadline_for_quality_updates value.fetch('ConfigureDeadlineForQualityUpdates', nil)
+      configure_deadline_for_feature_updates value.fetch('ConfigureDeadlineForFeatureUpdates', nil)
+      configure_deadline_grace_period_for_feature_updates value.fetch('ConfigureDeadlineGracePeriodForFeatureUpdates', nil)
+      configure_deadline_grace_period value.fetch('ConfigureDeadlineGracePeriod', nil)
+      set_compliance_deadline use_compliance_deadlines
       use_wsus using_wsus
     end
   end
@@ -233,6 +281,21 @@ action :config do
     },
     :product_version => {
       'subkey' => 'ProductVersion',
+    },
+    :configure_deadline_for_quality_updates => {
+      'subkey' => 'ConfigureDeadlineForQualityUpdates',
+    },
+    :configure_deadline_for_feature_updates => {
+      'subkey' => 'ConfigureDeadlineForFeatureUpdates',
+    },
+    :configure_deadline_grace_period_for_feature_updates => {
+      'subkey' => 'ConfigureDeadlineGracePeriodForFeatureUpdates',
+    },
+    :configure_deadline_grace_period => {
+      'subkey' => 'ConfigureDeadlineGracePeriod',
+    },
+    :set_compliance_deadline => {
+      'subkey' => 'SetComplianceDeadline',
     },
   }.each do |k, v|
     converge_if_changed k do

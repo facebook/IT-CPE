@@ -19,6 +19,11 @@ Attributes
 * node['cpe_windows_update_for_business']['defer_quality_updates']
 * node['cpe_windows_update_for_business']['defer_feature_updates']
 * node['cpe_windows_update_for_business']['product_version']
+* node['cpe_windows_update_for_business']['set_compliance_deadline']
+* node['cpe_windows_update_for_business']['configure_deadline_for_quality_updates']
+* node['cpe_windows_update_for_business']['configure_deadline_for_feature_updates']
+* node['cpe_windows_update_for_business']['configure_deadline_grace_period']
+* node['cpe_windows_update_for_business']['configure_deadline_grace_period_for_feature_updates']
 
 Usage
 -----
@@ -80,6 +85,21 @@ When set to `true` feature updates are deferred until the duration set in
 
 ### `node['cpe_windows_update_for_business']['product_version']`
 Which major release of Windows to configure the device to pull updates for.
+
+### `node['cpe_windows_update_for_business']['set_compliance_deadline']`
+Toggles deadline compliance.
+
+### `node['cpe_windows_update_for_business']['configure_deadline_for_quality_updates']`
+Number in days allowed before enforcing quality updates.
+
+### `node['cpe_windows_update_for_business']['configure_deadline_for_feature_updates']`
+Number in days allowed before enforcing feature updates.
+
+### `node['cpe_windows_update_for_business']['configure_deadline_grace_period']`
+Number of days grace allowed before enforcing updates.
+
+### `node['cpe_windows_update_for_business']['configure_deadline_grace_period_for_feature_updates']`
+Number of days grace allowed before enforcing feature updates.
 
 ### Example
 
