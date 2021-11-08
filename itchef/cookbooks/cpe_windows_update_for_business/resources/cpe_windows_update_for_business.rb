@@ -158,7 +158,7 @@ property :configure_deadline_grace_period,
                      }
 
 property :set_compliance_deadline,
-         [TrueClass, FalseClass],
+         [TrueClass, FalseClass, NilClass],
          :default => lazy {
                        node['cpe_windows_update_for_business']['set_compliance_deadline']
                      }
@@ -301,6 +301,13 @@ action :config do
     converge_if_changed k do
       new_value = new_resource.send(k)
       reg_values = { v['subkey'] => new_value }
+
+      # nil in this sense is "Not Configured" which means it doesn't exist
+      # in the registry
+      if new_value.nil?
+        delete_list << create_registry_hash({ v['subkey'] => nil })
+        next
+      end
 
       if v['only_if']
         if v['only_if'].call
