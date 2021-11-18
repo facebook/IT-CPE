@@ -57,6 +57,25 @@ module CPE
       end
     end
 
+    def clear_applocker_policy
+      powershell_script 'Remove all AppLocker rules' do
+        # Don't bother trying to remove them if the service is already stopped
+        not_if '(Get-Service AppIDSvc).Status -eq "Stopped"'
+        # To disable applocker we should remove the policies.
+        code <<-EOH
+        $TempFile = New-TemporaryFile
+        Set-Content -Path $TempFile -Value '<AppLockerPolicy Version="1">
+            <RuleCollection Type="Exe" EnforcementMode="NotConfigured" />
+            <RuleCollection Type="Msi" EnforcementMode="NotConfigured" />
+            <RuleCollection Type="Script" EnforcementMode="NotConfigured" />
+            <RuleCollection Type="Dll" EnforcementMode="NotConfigured" />
+            <RuleCollection Type="Appx" EnforcementMode="NotConfigured" />
+        </AppLockerPolicy>'
+        Set-ApplockerPolicy -XMLPolicy $TempFile
+        EOH
+      end
+    end
+
     # Given an XML config from AppLocker, this should return a Hash with only
     # the values that we care about.
     def xml_to_hash(xml)

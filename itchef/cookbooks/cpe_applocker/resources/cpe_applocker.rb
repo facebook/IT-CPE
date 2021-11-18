@@ -73,6 +73,7 @@ action_class do
     service 'AppIDSvc' do
       supports :restart => true, :stop => true
       action [:stop]
+      timeout 120
     end
   end
 
@@ -88,9 +89,8 @@ action_class do
 end
 
 action :uninstall do
-  converge_if_changed :applocker_rules do
-    set_applocker_policy
-  end
+  # Remove app locker policies
+  clear_applocker_policy
   # Lastly disable the service and set the startup type to manual
   uninstall_applocker
 end
