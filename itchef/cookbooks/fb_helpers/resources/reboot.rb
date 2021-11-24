@@ -59,7 +59,7 @@ NOT_ALLOWED_MSG = 'Was asked to reboot, but ' +
 
 load_current_value do
   # macOS doesn't have /dev/shm, so use /tmp instead which is wiped on boot.
-  prefix node.macos? ? '/tmp' : '/dev/shm'
+  prefix macos? ? '/tmp' : '/dev/shm'
 end
 
 action_class do
@@ -79,7 +79,7 @@ action_class do
 
     file ::File.join(current_resource.prefix, REBOOT_OVERRIDE) do
       owner node.root_user
-      group node.root_group
+      group node['root_group']
       mode '0644'
       content "#{reboot_type} reboot '#{new_resource.name}' requested by " +
         "recipe #{cookbook_name}::#{new_resource.recipe_name}"
@@ -89,7 +89,7 @@ action_class do
   def set_reboot_trigger
     file ::File.join(current_resource.prefix, REBOOT_TRIGGER) do
       owner node.root_user
-      group node.root_group
+      group node['root_group']
       mode '0644'
     end
   end
@@ -97,7 +97,7 @@ action_class do
   def set_reboot_required
     file ::File.join(current_resource.prefix, REBOOT_REQUIRED) do
       owner node.root_user
-      group node.root_group
+      group node['root_group']
       mode '0644'
     end
   end

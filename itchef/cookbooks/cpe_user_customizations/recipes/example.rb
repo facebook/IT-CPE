@@ -18,5 +18,5 @@
 
 # Copy this file and rename it to your username (e.g. nate.rb)
 # Always scope the change to the OS you are targeting
-if node.macos?
+if macos?
 end

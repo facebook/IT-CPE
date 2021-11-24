@@ -33,7 +33,7 @@ run_list += [
 ]
 
 # Unix-like platforms only
-unless node.windows?
+unless windows?
   run_list += [
     'cpe_logger',
     'cpe_pathsd',
@@ -41,7 +41,7 @@ unless node.windows?
   ]
 end
 
-if node.macos?
+if macos?
   run_list += [
     'cpe_bluetooth',
     'cpe_deprecation_notifier',
@@ -54,12 +54,12 @@ if node.macos?
     'cpe_launchd',
     'cpe_profiles',
   ]
-elsif node.windows?
+elsif windows?
   run_list += [
     'cpe_applocker',
     'cpe_win_telemetry',
   ]
-elsif node.linux?
+elsif linux?
   run_list += [
     'cpe_dconf',
     'cpe_flatpak',

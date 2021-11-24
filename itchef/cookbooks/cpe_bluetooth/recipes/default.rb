@@ -15,5 +15,5 @@
 # Cookbook Name:: cpe_bluetooth
 # Recipes:: default
 
-return unless node.macos?
+return unless macos?
 cpe_bluetooth 'Configure Bluetooth Profile'

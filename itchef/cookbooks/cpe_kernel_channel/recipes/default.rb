@@ -15,7 +15,7 @@
 # Cookbook Name:: cpe_dconf
 # Recipe:: default
 
-return unless node.fedora?
+return unless fedora?
 
 cpe_kernel_channel 'Configure kernel channel' do
   only_if { node['cpe_kernel_channel']['enable'] }

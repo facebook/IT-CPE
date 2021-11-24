@@ -49,9 +49,9 @@ action :run do
     file HOSTS_FILE do
       retries 2
       ignore_failure true
-      unless node.windows?
+      unless windows?
         owner node.root_user
-        group node.root_group
+        group node['root_group']
         mode '0644'
       end
       content lines.join
@@ -61,9 +61,9 @@ action :run do
       retries 2
       ignore_failure true
       source 'hosts.erb'
-      unless node.windows?
+      unless windows?
         owner node.root_user
-        group node.root_group
+        group node['root_group']
         mode '0644'
       end
     end

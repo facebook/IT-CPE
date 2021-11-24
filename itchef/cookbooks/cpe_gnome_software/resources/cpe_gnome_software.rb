@@ -20,7 +20,7 @@ provides :cpe_gnome_software
 default_action :manage
 
 action :manage do
-  unless node.fedora?
+  unless fedora?
     fail 'cpe_gnome_software is only supported on Fedora'
   end
 

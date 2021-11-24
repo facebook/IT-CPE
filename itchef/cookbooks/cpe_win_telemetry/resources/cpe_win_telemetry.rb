@@ -20,7 +20,7 @@ default_action :config
 provides :cpe_win_telemetry, :os => 'windows'
 
 action :config do
-  return unless node.windows? && node.os_at_least?('10.0.15063')
+  return unless windows? && node.os_at_least?('10.0.15063')
   if node['cpe_win_telemetry']['AllowTelemetry'] == -1
     ['DiagTrack', 'dmwappushservice'].each do |svc_name|
       # Disable these services to kill telemetry data to Microsoft

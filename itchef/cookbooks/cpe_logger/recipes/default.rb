@@ -15,12 +15,12 @@
 # Cookbook Name:: cpe_logger
 # Recipes:: default
 
-return if node.windows?
+return if windows?
 
 logfile = '/var/log/cpe_logger.log'
-logrotate_conf = if node.macos?
+logrotate_conf = if macos?
                    '/etc/newsyslog.d/cpe_logger.conf'
-                 elsif node.linux?
+                 elsif linux?
                    '/etc/logrotate.d/cpe_logger.conf'
                  end
 
@@ -28,7 +28,7 @@ return if logrotate_conf.nil?
 
 package 'logrotate' do
   only_if { node['cpe_logger']['enable'] }
-  only_if { node.linux? }
+  only_if { linux? }
   action :upgrade
 end
 
@@ -36,7 +36,7 @@ template logrotate_conf do
   only_if { node['cpe_logger']['enable'] }
   source "logrotate.#{node['os']}.erb"
   owner node.root_user
-  group node.root_group
+  group node['root_group']
   mode '0644'
   variables(
     :logfile => logfile,

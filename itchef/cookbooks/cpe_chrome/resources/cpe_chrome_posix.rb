@@ -28,11 +28,11 @@ end
 
 action_class do
   def install_repos
-    return unless node.linux?
+    return unless linux?
     return unless node['cpe_chrome']['manage_repo']
 
     yum_repository 'google-chrome' do
-      only_if { node.fedora? || node.centos? }
+      only_if { fedora? || centos? }
       description 'Google Chrome repo'
       baseurl 'http://dl.google.com/linux/chrome/rpm/stable/x86_64'
       enabled true
@@ -42,7 +42,7 @@ action_class do
     end
 
     apt_repository 'google-chrome' do
-      only_if { node.debian_family? }
+      only_if { debian? }
       uri 'http://dl.google.com/linux/chrome/deb/'
       distribution 'stable'
       components ['main']
@@ -53,12 +53,12 @@ action_class do
   end
 
   def install_chrome
-    return unless node.linux?
+    return unless linux?
     return unless node['cpe_chrome']['install_package']
 
     package 'google-chrome-stable' do
       only_if do
-        node.fedora? || node.centos? || node.debian_family?
+        fedora? || centos? || debian?
       end
       action :upgrade
     end
@@ -111,14 +111,14 @@ action_class do
       directory path do
         mode '0755'
         owner node.root_user
-        group node.root_group
+        group node['root_group']
       end
     end
     migrate_chromium_settings_linux
     link '/etc/chromium' do
       to '/etc/opt/chrome'
       owner node.root_user
-      group node.root_group
+      group node['root_group']
     end
     {
       '/etc/opt/chrome/policies/managed/test_policy.json' => prefs,
@@ -132,7 +132,7 @@ action_class do
         file path do
           mode '0644'
           owner node.root_user
-          group node.root_group
+          group node['root_group']
           action :create
           content Chef::JSONCompat.to_json_pretty(preferences)
         end
@@ -303,7 +303,7 @@ action_class do
       file path do
         mode '0644'
         owner node.root_user
-        group node.root_group
+        group node['root_group']
         action :create
         content Chef::JSONCompat.to_json_pretty(extension_hash)
       end
@@ -321,7 +321,7 @@ action_class do
       code <<-EOH
         find /etc/chromium -type d -exec chmod 0755 {} \\;
         find /etc/chromium -type f -exec chmod 0644 {} \\;
-        chown -R #{node.root_user}:#{node.root_group} /etc/chromium
+        chown -R #{node.root_user}:#{node['root_group']} /etc/chromium
         cp -R /etc/chromium/* /etc/opt/chrome/
         rm -rf /etc/chromium
       EOH
