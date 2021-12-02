@@ -63,6 +63,8 @@ module CPE
         not_if '(Get-Service AppIDSvc).Status -eq "Stopped"'
         # To disable applocker we should remove the policies.
         code <<-EOH
+        # Need to call this next line or else the script times out
+        $null = Get-AppLockerPolicy -Local -ErrorAction SilentlyContinue
         $TempFile = New-TemporaryFile
         Set-Content -Path $TempFile -Value '<AppLockerPolicy Version="1">
             <RuleCollection Type="Exe" EnforcementMode="NotConfigured" />

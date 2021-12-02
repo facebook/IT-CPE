@@ -72,7 +72,7 @@ action_class do
     # Lastly stop the service
     service 'AppIDSvc' do
       supports :restart => true, :stop => true
-      action [:stop]
+      action [:stop, :disable]
       timeout 120
     end
   end
