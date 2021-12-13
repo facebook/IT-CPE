@@ -59,13 +59,23 @@ module CPE
 
     def clear_applocker_policy
       powershell_script 'Remove all AppLocker rules' do
-        # Don't bother trying to remove them if the service is already stopped
-        not_if '(Get-Service AppIDSvc).Status -eq "Stopped"'
+        not_if <<-EOH
+          # Result starts at False.
+          $result = $True
+          # Iterate over each collection.
+          (Get-AppLockerPolicy -Local).RuleCollections | ForEach {
+            # If any collection is not empty (e.g. $False) the -And will make
+            # all future $result return $false.
+            # Result will only ever return $True if all items are empty
+            $result = $result -And [string]::IsNullOrEmpty($_)
+          }
+          $result
+        EOH
         # To disable applocker we should remove the policies.
         code <<-EOH
         # Need to call this next line or else the script times out
         $null = Get-AppLockerPolicy -Local -ErrorAction SilentlyContinue
-        $TempFile = New-TemporaryFile
+        $TempFile = [System.IO.Path]::GetTempFileName()
         Set-Content -Path $TempFile -Value '<AppLockerPolicy Version="1">
             <RuleCollection Type="Exe" EnforcementMode="NotConfigured" />
             <RuleCollection Type="Msi" EnforcementMode="NotConfigured" />
@@ -74,6 +84,7 @@ module CPE
             <RuleCollection Type="Appx" EnforcementMode="NotConfigured" />
         </AppLockerPolicy>'
         Set-ApplockerPolicy -XMLPolicy $TempFile
+        Remove-Item -Force $TempFile
         EOH
       end
     end
