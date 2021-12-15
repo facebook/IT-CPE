@@ -189,7 +189,7 @@ module CPE
         standard_home = ::File.join(ENV['SYSTEMDRIVE'], 'Users', console_user)
         return standard_home if ::Dir.exist?(standard_home)
       end
-    rescue StandardError
+    rescue StandardError => e
       Chef::Log.warn('Unable to lookup console_user_home_dir ' +
         "#{e.message} \n" +
         "#{e.backtrace.to_a.join("\n")}\n")
