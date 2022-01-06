@@ -88,7 +88,7 @@ module CPE
     module KnownSettings
       GENERATED = {
       <% known_settings.map do |k,v| -%>
-        "<%= k -%>" => <%= v.generated_form.tr('"', '') -%>,
+        '<%= k -%>' => <%= v.generated_form.tr('"', '') -%>,
       <% end -%>
       }.freeze
     end

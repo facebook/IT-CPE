@@ -247,6 +247,8 @@ module CPE
       JSONIFY_REG_KEYS = {
         'Chrome' => {
           'ManagedBookmarks' => :string,
+          'ManagedConfigurationPerOrigin' => :string,
+          'WebAppInstallForceList' => :string,
         },
       }.freeze
     end
