@@ -767,7 +767,7 @@ class Chef
       # both, but Cookstyle will tell us `macos` isn't valid.
       value_for_platform(
         %w{openbsd freebsd mac_os_x macos} => { 'default' => 'wheel' },
-        'windows' => { 'default' => 'Administrators' },
+        'windows' => { 'default' => 'S-1-5-32-544' }, # Administrators
         'default' => 'root',
       )
     end
