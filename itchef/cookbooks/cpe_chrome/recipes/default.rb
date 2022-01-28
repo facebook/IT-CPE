@@ -21,3 +21,11 @@ cpe_chrome 'Configure Google Chrome' do
     node['cpe_chrome']['mp']['UseMasterPreferencesFile']
   end
 end
+
+cookbook_file '/usr/local/libexec/chromium1238517workaround' do
+  only_if { node.linux? }
+  source 'chromium1238517workaround.py'
+  owner node.root_user
+  group node.root_group
+  mode '0755'
+end
