@@ -45,6 +45,8 @@ action :config do
       key pref
       value value
       action :write
+      host :current
+      user :current unless node.chef_less_than?('17.8.25')
     end
   end
 end
