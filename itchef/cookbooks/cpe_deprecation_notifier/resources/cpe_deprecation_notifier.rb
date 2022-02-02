@@ -60,7 +60,8 @@ action :prompt do
     macos_userdefaults 'Reset Timeout' do
       action :nothing
       domain 'com.megacorp.DeprecationNotifier'
-      user node.person['username'] # ~FB039
+      host :current
+      user node.person['username'].to_s
       key 'WindowTimeOut'
       value dpn['conf']['initialTimeout']
       type 'int'
