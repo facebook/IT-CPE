@@ -218,18 +218,22 @@ module CPE
       end
 
       # Drop the header row. Naively return the first active session.
+      active_user = nil
       output.drop(1).each do |line|
         row = line.split
         # The > usually indicates the user that ran the command, which in most
         # cases is you! Regardless, it should be dropped from what is returned
         # to chef.
-        return row[0].tr('>', '').strip if row[3].strip.downcase == 'active'
+        if row[3].strip.downcase == 'active'
+          active_user = row[0].tr('>', '').strip
+          break
+        end
       end
+      active_user
     rescue Mixlib::ShellOut::CommandTimeout
       Chef::Log.warn('command timeout while looking up user')
     rescue StandardError => e
       Chef::Log.warn(e.to_s)
-
       nil
     end
 
@@ -243,7 +247,25 @@ module CPE
     end
 
     def self.logged_on_user_name
-      logged_on_user_query
+      last_user = logged_on_user_query
+      !last_user.nil? ? last_user : last_logged_on_user_from_registry
+    end
+
+    def self.last_logged_on_user_from_registry
+      user_reg = logged_on_user_registry
+      last_user = nil
+      if user_reg.key?('LastLoggedOnUser')
+        last_user =
+          user_reg['LastLoggedOnUser'].to_s.match(
+            /(?:.*\\)?([\w.-]+)(?:@.*)?/,
+          ).captures[0]
+      end
+      last_user
+    rescue StandardError => e
+      message =
+        "CPE:Helper.last_logged_on_user_from_registry failed with:#{e.message}"
+      Chef::Log.warn(message)
+      nil
     end
 
     def self.logged_on_user_sid

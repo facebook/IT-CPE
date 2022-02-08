@@ -169,6 +169,16 @@ testdummy2             console             1  Active      none   8/31/2020 18:00
  USERNAME              SESSIONNAME        ID  STATE   IDLE TIME  LOGON TIME
 testdummy              console             1
         EOF
+      NO_ACTIVE_USERS = <<-'EOF'.freeze
+ USERNAME              SESSIONNAME        ID  STATE   IDLE TIME  LOGON TIME
+testdummy              console             1  Inactive    none   8/31/2020 12:22 PM
+testdummy2             console             1  Inactive    none   8/31/2020 18:00 PM
+        EOF
+
+      OUTPUT_DIFFERENT_LANG = <<-'EOF'.freeze
+ USERNAME              SESSIONNAME        ID  STATE   IDLE TIME  LOGON TIME
+>testdummy             console             1  Actif      aucun   8/31/2020 12:22 PM
+        EOF
 
       before do
         allow(Chef::Log).to receive(:debug)
@@ -202,10 +212,19 @@ testdummy              console             1
         expect(subject.logged_on_user_query).to be nil
       end
 
-      it 'should return nil if a field is missing for whatever reason' do
-        result = double(:stdout => MISSING_FIELD)
-        allow(subject).to receive(:shell_out).and_return(result)
-        expect(subject.logged_on_user_query).to be nil
+      {
+        'should return nil if a field is missing for whatever reason' =>
+          { 'output' => MISSING_FIELD },
+        'should return nil if no active users' =>
+          { 'output' => NO_ACTIVE_USERS },
+        'should return nil when output is in different language' =>
+          { 'output' => OUTPUT_DIFFERENT_LANG },
+      }.each do |test_name, test_data|
+        it test_name do
+          result = double(:stdout => test_data['output'])
+          allow(subject).to receive(:shell_out).and_return(result)
+          expect(subject.logged_on_user_query).to be nil
+        end
       end
 
       {
@@ -221,6 +240,33 @@ testdummy              console             1
           allow(subject).to receive(:shell_out).and_return(result)
           expect(subject.logged_on_user_query).to eql test_data['expected']
         end
+      end
+
+      it 'last_logged_on_user_from_registry should return nil if
+      the output does not contain LastLoggedOnUser' do
+        allow(subject).to receive(:logged_on_user_registry).and_return({})
+        expect(subject.last_logged_on_user_from_registry).to be nil
+      end
+
+      it 'last_logged_on_user_from_registry should return nil if there is
+      an exception ' do
+        allow(subject).to receive(:logged_on_user_registry).and_raise(
+          NoMethodError, 'blah'
+        )
+        expect(subject.last_logged_on_user_from_registry).to be nil
+      end
+
+      logged_on_user_registry_output = {
+        'LastLoggedOnSAMUser'=>'THEFACEBOOK\\testdummy',
+        'LastLoggedOnUser'=>'THEFACEBOOK\\testdummy',
+        'LastLoggedOnUserSID'=>'S-1-5-21-4286658467',
+        'SelectedUserSID'=>'S-1-5-21-4286658467',
+      }
+      it 'last_logged_on_user_from_registry should parse a valid user ' do
+        allow(subject).to receive(:logged_on_user_registry).and_return(
+          logged_on_user_registry_output,
+        )
+        expect(subject.last_logged_on_user_from_registry).to eql 'testdummy'
       end
     end
   end
