@@ -22,6 +22,13 @@ cpe_chrome 'Configure Google Chrome' do
   end
 end
 
+directory '/usr/local/libexec' do
+  only_if { node.debian_family? }
+  owner node.root_user
+  group node.root_group
+  mode '0755'
+end
+
 cookbook_file '/usr/local/libexec/chromium1238517workaround' do
   only_if { node.linux? }
   source 'chromium1238517workaround.py'
