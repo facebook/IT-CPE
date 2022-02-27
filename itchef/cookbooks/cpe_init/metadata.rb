@@ -20,7 +20,7 @@ depends 'fb_launchd'
 depends 'cpe_launchd'
 
 ### API Cookbooks
-depends 'cpe_adobe_flash'
+# depends 'cpe_adobe_flash'
 depends 'cpe_applocker'
 depends 'cpe_bluetooth'
 depends 'cpe_dconf'
@@ -36,7 +36,7 @@ depends 'cpe_powermanagement'
 depends 'cpe_preferencepanes'
 depends 'cpe_profiles'
 depends 'cpe_remote'
-depends 'cpe_spotlight'
+# depends 'cpe_spotlight'
 depends 'cpe_symlinks'
 depends 'cpe_win_telemetry'
 

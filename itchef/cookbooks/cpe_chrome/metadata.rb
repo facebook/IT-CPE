@@ -10,4 +10,4 @@ version '0.1.0'
 
 depends 'cpe_profiles'
 depends 'cpe_helpers'
-depends 'fb_osquery'
+# depends 'fb_osquery'
