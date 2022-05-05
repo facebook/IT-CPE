@@ -15,6 +15,6 @@
 # Cookbook Name:: cpe_gnome_software
 # Recipe:: default
 
-return unless node.fedora?
+return unless fedora?
 
 cpe_gnome_software 'Configure GNOME Software'

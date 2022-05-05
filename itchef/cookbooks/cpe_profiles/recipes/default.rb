@@ -15,6 +15,6 @@
 # Cookbook Name:: cpe_profiles
 # Recipe:: default
 
-return unless node.macos?
+return unless macos?
 
 cpe_profiles 'Managing Configuration Profiles'

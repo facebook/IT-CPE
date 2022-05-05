@@ -15,6 +15,6 @@
 # Cookbook Name:: cpe_deprecation_notifier
 # Recipe:: default
 
-return unless node.macos?
+return unless macos?
 
 cpe_deprecation_notifier 'Managed Deprecation Notifier'

@@ -19,6 +19,7 @@ require 'plist'
 require 'json'
 
 resource_name :cpe_munki_local
+unified_mode true
 provides :cpe_munki_local, :os => 'darwin'
 default_action :run
 

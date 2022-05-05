@@ -16,6 +16,7 @@
 # Resource:: cpe_munki_install
 
 resource_name :cpe_munki_install
+unified_mode true
 provides :cpe_munki_install, :os => 'darwin'
 default_action :install
 

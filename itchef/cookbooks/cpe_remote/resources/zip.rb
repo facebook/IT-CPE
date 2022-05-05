@@ -17,6 +17,7 @@
 #
 
 resource_name :cpe_remote_zip
+unified_mode true
 default_action :create
 provides :cpe_remote_zip
 
@@ -76,7 +77,7 @@ action :create do
       recursive true
     end
 
-    if node.windows?
+    if windows?
       zip_cmd = CPE::Utils.sevenzip_cmd
       return if CPE::Log.if(
         "#{cookbook_name}: No local 7zip command found",
@@ -117,8 +118,8 @@ action :create do
       end
       action :create
       notifies :install, 'package[unzip]', :immediately if node.linux?
-      notifies :run, 'execute[extract_zip]' unless node.windows?
-      if node.windows?
+      notifies :run, 'execute[extract_zip]' unless windows?
+      if windows?
         owner 'Administrators'
         group 'Administrators'
         notifies :create, 'directory[dest_folder]'
@@ -133,7 +134,7 @@ action :create do
 
     execute 'extract_zip' do
       only_if { ::File.exist?(zip_path) }
-      not_if { node.windows? }
+      not_if { windows? }
       cwd new_resource.extract_location
       command "unzip -o #{zip_path} -d #{new_resource.extract_location}"
       action :nothing
@@ -141,7 +142,7 @@ action :create do
 
     # @lint-ignore FBCHEFFoodcritic
     directory new_resource.extract_location do # ~FB019
-      not_if { node.windows? }
+      not_if { windows? }
       recursive true
       mode new_resource.mode
       owner new_resource.owner

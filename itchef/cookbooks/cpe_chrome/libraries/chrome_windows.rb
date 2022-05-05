@@ -206,7 +206,7 @@ module CPE
       # "5"=".exact.hostname.com"
       ENUM_REG_KEYS = {
         'AudioCaptureAllowedUrls' => :string,
-        'AutoplayWhitelist' => :string,
+        'AutoplayAllowlist' => :string,
         'AutoSelectCertificateForUrls' => :string,
         'ChromeFrameContentTypes' => :string,
         'CookiesAllowedForUrls' => :string,

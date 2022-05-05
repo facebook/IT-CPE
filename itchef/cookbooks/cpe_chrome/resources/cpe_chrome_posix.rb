@@ -16,6 +16,7 @@
 # Resources:: cpe_chrome_posix
 
 resource_name :cpe_chrome_posix
+unified_mode true
 provides :cpe_chrome, :os => ['darwin', 'linux']
 default_action :config
 
@@ -32,7 +33,7 @@ action_class do
     return unless node['cpe_chrome']['manage_repo']
 
     yum_repository 'google-chrome' do
-      only_if { node.fedora? || node.centos? }
+      only_if { fedora? || centos? }
       description 'Google Chrome repo'
       baseurl 'http://dl.google.com/linux/chrome/rpm/stable/x86_64'
       enabled true
@@ -58,7 +59,7 @@ action_class do
 
     package 'google-chrome-stable' do
       only_if do
-        node.fedora? || node.centos? || node.debian_family?
+        fedora? || centos? || node.debian_family?
       end
       action :upgrade
     end

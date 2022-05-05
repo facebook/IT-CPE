@@ -16,6 +16,7 @@
 # Resources:: cpe_chrome_win
 
 resource_name :cpe_chrome_win
+unified_mode true
 provides :cpe_chrome, :os => 'windows'
 default_action :config
 

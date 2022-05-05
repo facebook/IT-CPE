@@ -16,6 +16,7 @@
 # Resource:: cpe_bluetooth
 
 resource_name :cpe_bluetooth
+unified_mode true
 provides :cpe_bluetooth, :os => 'darwin'
 default_action :config
 

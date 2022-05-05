@@ -15,5 +15,5 @@
 # Cookbook Name:: cpe_win_telemetry
 # Recipe:: default
 
-return unless node.windows? && node.os_at_least?('10.0.15063')
+return unless windows? && node.os_at_least?('10.0.15063')
 cpe_win_telemetry 'Configure Windows Telemetry Settings'

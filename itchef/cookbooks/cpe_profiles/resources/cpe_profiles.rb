@@ -16,6 +16,7 @@
 # Resource:: cpe_profiles
 
 resource_name :cpe_profiles
+unified_mode true
 provides :cpe_profiles, :os => 'darwin'
 default_action :run
 
