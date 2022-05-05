@@ -15,7 +15,7 @@
 # Cookbook Name:: cpe_munki
 # Recipe:: default
 
-return unless node.macos?
+return unless macos?
 
 cpe_munki_install 'Install Munki'
 cpe_munki_local 'Manage Local Munki Manifest'

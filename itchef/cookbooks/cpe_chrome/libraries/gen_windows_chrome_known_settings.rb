@@ -1216,8 +1216,8 @@ module CPE
           :string,
           true,
         ),
-        'AutoplayWhitelist' => WindowsChromeIterableSetting.new(
-          'HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome\AutoplayWhitelist',
+        'AutoplayAllowlist' => WindowsChromeIterableSetting.new(
+          'HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome\AutoplayAllowlist',
           nil,
           :string,
           true,

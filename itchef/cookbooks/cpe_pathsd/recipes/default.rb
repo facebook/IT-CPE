@@ -15,7 +15,7 @@
 # Cookbook Name:: cpe_pathsd
 # Recipe:: default
 
-return if node.windows?
+return if windows?
 
 cpe_pathsd 'Manage paths' do
   only_if { node['cpe_pathsd'].any? }

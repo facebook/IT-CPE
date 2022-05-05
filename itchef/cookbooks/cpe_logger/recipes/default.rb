@@ -15,10 +15,10 @@
 # Cookbook Name:: cpe_logger
 # Recipes:: default
 
-return if node.windows?
+return if windows?
 
 logfile = '/var/log/cpe_logger.log'
-logrotate_conf = if node.macos?
+logrotate_conf = if macos?
                    '/etc/newsyslog.d/cpe_logger.conf'
                  elsif node.linux?
                    '/etc/logrotate.d/cpe_logger.conf'

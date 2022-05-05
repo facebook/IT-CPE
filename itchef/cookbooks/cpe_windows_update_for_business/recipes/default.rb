@@ -15,6 +15,6 @@
 # Cookbook Name:: cpe_windows_update_for_business
 # Recipe:: default
 
-return unless node.windows? && !node.os_less_than?('10.0.15063')
+return unless windows? && !node.os_less_than?('10.0.15063')
 
 cpe_windows_update_for_business 'Configure Windows Update for Business'

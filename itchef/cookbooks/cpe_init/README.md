@@ -67,7 +67,7 @@ This is where we conditionally set which cookbook/recipe should be added to the
 following things:
 
 #### Based on platform
-* node.macos?
+* macos?
 * node.linux?
 
 #### Based on OS version

@@ -17,6 +17,7 @@
 #
 
 resource_name :cpe_remote_pkg
+unified_mode true
 default_action :install
 
 provides :cpe_remote_pkg, :os => 'darwin'

@@ -36,7 +36,7 @@ default['cpe_chrome'] = {
     # },
   },
   'profile' => {
-    'AutoplayWhitelist' => [],
+    'AutoplayAllowlist' => [],
     'ExtensionInstallForcelist' => [],
     'ExtensionInstallBlacklist' => [],
     'CloudManagementEnrollmentToken' => nil,

@@ -16,6 +16,7 @@
 # Resource:: default
 
 resource_name :cpe_preferencepanes
+unified_mode true
 provides :cpe_preferencepanes, :os => 'darwin'
 default_action :config
 

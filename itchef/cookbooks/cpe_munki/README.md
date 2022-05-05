@@ -56,7 +56,7 @@ node.default['cpe_munki']['preferences']['AppleSoftwareUpdatesOnly'] = true
 Advanced Example:
 
 Note: You must have a Munki server setup and all packages you add to this
-attribute must be available in the node's catalogs
+attribute must be available in the node's catalogs.
 
 #### Add `managed_installs` using a local manifest
 

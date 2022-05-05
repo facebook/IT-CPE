@@ -17,6 +17,7 @@
 #
 
 resource_name :cpe_remote_file
+unified_mode true
 default_action :create
 provides :cpe_remote_file
 

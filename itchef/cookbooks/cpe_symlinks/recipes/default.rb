@@ -15,5 +15,5 @@
 # Cookbook Name:: cpe_symlinks
 # Recipe:: default
 
-return if node.windows?
+return if windows?
 cpe_symlinks 'Manage symlinks'

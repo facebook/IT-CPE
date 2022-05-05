@@ -17,6 +17,7 @@
 #
 
 resource_name :cpe_powermanagement
+unified_mode true
 provides :cpe_powermanagement, :os => 'darwin'
 default_action :config
 
