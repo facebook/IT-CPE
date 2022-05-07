@@ -43,7 +43,7 @@ action :create do
     content Chef::JSONCompat.to_json_pretty(symlink_list.uniq)
     action :create
     owner node.root_user
-    group node.root_group
+    group node['root_group']
     mode '755'
   end
 

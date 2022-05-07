@@ -863,7 +863,7 @@ class Chef
     end
 
     def host_chef_base_path
-      if node.windows?
+      if windows?
         File.join('C:', 'chef')
       else
         File.join('/var', 'chef')
@@ -871,7 +871,7 @@ class Chef
     end
 
     def solo_chef_base_path
-      if node.windows?
+      if windows?
         File.join('C:', 'chef', 'solo')
       else
         File.join('/opt', 'chef-solo')

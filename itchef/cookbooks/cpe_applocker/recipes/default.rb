@@ -18,7 +18,7 @@
 # limitations under the License.
 #
 
-return unless node.windows?
+return unless windows?
 
 cpe_applocker 'Uninstall Applocker' do
   not_if { node['cpe_applocker']['enabled'].nil? }

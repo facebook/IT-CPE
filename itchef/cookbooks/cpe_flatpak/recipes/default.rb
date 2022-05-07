@@ -16,6 +16,6 @@
 # limitations under the License.
 #
 
-return unless node.linux?
+return unless linux?
 
 cpe_flatpak 'Manage Flatpak'

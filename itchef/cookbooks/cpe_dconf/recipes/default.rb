@@ -15,6 +15,6 @@
 # Cookbook Name:: cpe_dconf
 # Recipe:: default
 
-return unless node.linux?
+return unless linux?
 
 cpe_dconf 'Configure dconf settings'

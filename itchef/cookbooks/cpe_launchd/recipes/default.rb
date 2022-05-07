@@ -15,7 +15,7 @@
 # Cookbook Name:: cpe_launchd
 # Recipes:: default
 
-return unless node.macos?
+return unless macos?
 
 cpe_launchd 'Managing all of launchd'
 

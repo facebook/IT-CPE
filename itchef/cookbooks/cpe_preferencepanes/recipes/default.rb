@@ -15,5 +15,5 @@
 # Cookbook Name:: cpe_preferencepanes
 # Recipe:: default
 
-return unless node.macos?
+return unless macos?
 cpe_preferencepanes 'Configure PreferencePanes Profile'

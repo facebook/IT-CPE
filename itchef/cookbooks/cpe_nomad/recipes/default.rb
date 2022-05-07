@@ -17,6 +17,6 @@
 # limitations under the License.
 #
 
-return unless node.macos?
+return unless macos?
 
 cpe_nomad_darwin 'Configure NoMAD'
