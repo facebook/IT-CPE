@@ -456,6 +456,17 @@ EOF
       [rel_splits[0].to_i, rel_splits[1..-1].join('.')]
     end
 
+    def self.sevenzip_cmd
+      [
+        'C:\\ProgramData\\chocolatey\\tools\\7z.exe',
+        'C:\\ProgramData\\chocolatey\\tools\\7za.exe',
+        'C:\\ProgramData\\chocolatey\\lib\\chocolatey\\tools\\' +
+          'chocolateyInstall\\tools\\7z.exe',
+        'C:\\ProgramData\\chocolatey\\lib\\chocolatey\\tools\\' +
+          'chocolateyInstall\\tools\\7za.exe',
+      ].find { |cmd_candidate| File.exist?(cmd_candidate) }
+    end
+
     def self.sys_uid_max
       @sys_uid_max ||=
         if macos?

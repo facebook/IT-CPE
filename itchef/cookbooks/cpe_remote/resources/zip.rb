@@ -77,7 +77,7 @@ action :create do
     end
 
     if node.windows?
-      zip_cmd = CPE::Utils.sevenzip_cmd
+      zip_cmd = CPE::Helpers.sevenzip_cmd
       return if CPE::Log.if(
         "#{cookbook_name}: No local 7zip command found",
         :level => :warn,
