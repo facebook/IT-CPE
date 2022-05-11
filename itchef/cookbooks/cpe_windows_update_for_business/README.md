@@ -15,6 +15,7 @@ Attributes
 * node['cpe_windows_update_for_business']['pause_quality_updates_start_time']
 * node['cpe_windows_update_for_business']['pause_feature_updates_start_time']
 * node['cpe_windows_update_for_business']['exclude_wu_drivers_in_quality_update']
+* node['cpe_windows_update_for_business']['target_release_version']
 * node['cpe_windows_update_for_business']['target_release_version_info']
 * node['cpe_windows_update_for_business']['defer_quality_updates']
 * node['cpe_windows_update_for_business']['defer_feature_updates']
@@ -69,6 +70,9 @@ format.
 ### `node['cpe_windows_update_for_business']['exclude_wu_drivers_in_quality_update']`
 Exclude driver updates from update searches when set to `true`.
 
+### `node['cpe_windows_update_for_business']['target_release_version']`
+Enable release targeting when set to `true`.
+
 ### `node['cpe_windows_update_for_business']['target_release_version_info']`
 Beginning in Windows 10 1803 you may set a string containing a release version
 that the device will try upgrade to. See the `Version` column in [the
@@ -112,6 +116,7 @@ node.default['cpe_windows_update_for_business'].merge!({
   'pause_feature_updates_start_time' => 1,
   'exclude_wu_drivers_in_quality_update' => true,
   'product_version' => 'Windows 10',
+  'target_release_version' => true,
   'target_release_version_info' => '20H2',
 })
 ```

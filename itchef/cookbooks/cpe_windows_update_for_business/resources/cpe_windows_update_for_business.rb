@@ -87,6 +87,12 @@ property :exclude_wu_drivers_in_quality_update,
                        node['cpe_windows_update_for_business']['exclude_wu_drivers_in_quality_update']
                      }
 
+property :target_release_version,
+         [TrueClass, FalseClass, NilClass],
+         :default => lazy {
+                       node['cpe_windows_update_for_business']['target_release_version']
+                     }
+
 property :target_release_version_info,
          [String, NilClass],
          :callbacks => {
@@ -187,6 +193,7 @@ load_current_value do
       defer_feature = bool_from_int_or_nil(value.fetch('DeferFeatureUpdates', 0))
       exclude_drivers = bool_from_int_or_nil(value.fetch('ExcludeWUDriversInQualityUpdate', 0))
       use_compliance_deadlines = bool_from_int_or_nil(value.fetch('SetComplianceDeadline', 0))
+      target_release_version_enabled = bool_from_int_or_nil(value.fetch('TargetReleaseVersion', 0))
 
       branch_readiness_level value.fetch('BranchReadinessLevel', nil)
       product_version value.fetch('ProductVersion', nil)
@@ -195,6 +202,7 @@ load_current_value do
       pause_quality_updates_start_time value.fetch('PauseQualityUpdatesStartTime', nil)
       pause_feature_updates_start_time value.fetch('PauseFeatureUpdatesStartTime', nil)
       target_release_version_info value.fetch('TargetReleaseVersionInfo', nil)
+      target_release_version target_release_version_enabled
       exclude_wu_drivers_in_quality_update exclude_drivers
       defer_quality_updates defer_quality
       defer_feature_updates defer_feature
@@ -274,6 +282,10 @@ action :config do
     },
     :exclude_wu_drivers_in_quality_update => {
       'subkey' => 'ExcludeWUDriversinQualityUpdate',
+    },
+    :target_release_version => {
+      'subkey' => 'TargetReleaseVersion',
+      'only_if' => proc { node.os_at_least?('10.0.17134.0') },
     },
     :target_release_version_info => {
       'subkey' => 'TargetReleaseVersionInfo',

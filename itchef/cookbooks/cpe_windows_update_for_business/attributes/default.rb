@@ -32,4 +32,5 @@ default['cpe_windows_update_for_business'] = {
   'configure_deadline_grace_period_for_feature_updates' => nil,
   'exclude_wu_drivers_in_quality_update' => true,
   'target_release_version_info' => nil,
+  'target_release_version' => nil,
 }
