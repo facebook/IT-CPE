@@ -23,7 +23,7 @@ cpe_chrome 'Configure Google Chrome' do
 end
 
 directory '/usr/local/libexec' do
-  only_if { node.debian_family? }
+  only_if { node.debian_family? || node.arch_family? }
   owner node.root_user
   group node.root_group
   mode '0755'
