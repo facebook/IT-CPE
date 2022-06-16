@@ -28,6 +28,10 @@ action :run do
   default = node['cpe_profiles']['default_cookbook']
   prefix = node['cpe_profiles']['prefix']
   profiles.each do |k, v|
+    # Chef::DelayedEvaluator's need accessed with node
+    # if we want the real object type to be returned
+    v = node['cpe_profiles'][k] if v.is_a?(Chef::DelayedEvaluator)
+
     # see if this prefix is overridden with a cookbook or fallback to default
     cookbook = map.key?(k) ? map[k] : default
 
@@ -45,11 +49,20 @@ end
 action_class do
   def profiles
     node['cpe_profiles'].to_h.reject do |k, v|
+      # Chef::DelayedEvaluator's need accessed with node
+      # if we want the real object type to be returned
+      v = node['cpe_profiles'][k] if v.is_a?(Chef::DelayedEvaluator)
+
       [
         'prefix',
         'default_cookbook',
         'cookbook_map',
-      ].include?(k) || !v.is_a?(Hash)
+      ].include?(k) ||
+        # Rejects any profile that isnt
+        #  a Hash or a Chef::DelayedEvaluator
+        #  or is empty
+        !v.is_a?(Hash) ||
+        (v.is_a?(Hash) && v.empty?)
     end
   end
 
