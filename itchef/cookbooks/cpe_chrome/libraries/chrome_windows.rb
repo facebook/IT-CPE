@@ -51,9 +51,9 @@ module CPE
           'AlwaysAuthorizePlugins' => :dword,
           'ApplicationLocaleValue' => :string,
           'AudioCaptureAllowed' => :dword,
-          'AuthNegotiateDelegateWhitelist' => :string,
+          'AuthNegotiateDelegateAllowlist' => :string,
           'AuthSchemes' => :string,
-          'AuthServerWhitelist' => :string,
+          'AuthServerAllowlist' => :string,
           'AutoFillEnabled' => :dword,
           'BackgroundModeEnabled' => :dword,
           'BlockThirdPartyCookies' => :dword,
@@ -198,7 +198,7 @@ module CPE
       # These are keys that will accept string values. For each registry key
       # under the registry hive they are labeled with a number and then the
       # corresponding string value. For example,
-      # [HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome\URLWhitelist]
+      # [HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome\URLAllowlist]
       # "1"="example.com"
       # "2"="https://ssl.server.com"
       # "3"="hosting.com/bad_path"
@@ -206,7 +206,7 @@ module CPE
       # "5"=".exact.hostname.com"
       ENUM_REG_KEYS = {
         'AudioCaptureAllowedUrls' => :string,
-        'AutoplayWhitelist' => :string,
+        'AutoplayAllowlist' => :string,
         'AutoSelectCertificateForUrls' => :string,
         'ChromeFrameContentTypes' => :string,
         'CookiesAllowedForUrls' => :string,
@@ -216,16 +216,16 @@ module CPE
         'DefaultSearchProviderEncodings' => :string,
         'EnableDeprecatedWebPlatformFeatures' => :string,
         'ExtensionAllowedTypes' => :string,
-        'ExtensionInstallBlacklist' => :string,
+        'ExtensionInstallBlocklist' => :string,
         'ExtensionInstallForcelist' => :string,
         'ExtensionInstallSources' => :string,
-        'ExtensionInstallWhitelist' => :string,
+        'ExtensionInstallAllowlist' => :string,
         'ImagesAllowedForUrls' => :string,
         'ImagesBlockedForUrls' => :string,
         'JavaScriptAllowedForUrls' => :string,
         'JavaScriptBlockedForUrls' => :string,
-        'NativeMessagingBlacklist' => :string,
-        'NativeMessagingWhitelist' => :string,
+        'NativeMessagingBlocklist' => :string,
+        'NativeMessagingAllowlist' => :string,
         'NotificationsAllowedForUrls' => :string,
         'NotificationsBlockedForUrls' => :string,
         'PluginsAllowedForUrls' => :string,
@@ -236,8 +236,8 @@ module CPE
         'RenderInChromeFrameList' => :string,
         'RenderInHostList' => :string,
         'RestoreOnStartupURLs' => :string,
-        'URLBlacklist' => :string,
-        'URLWhitelist' => :string,
+        'URLBlocklist' => :string,
+        'URLAllowlist' => :string,
         'VideoCaptureAllowedUrls' => :string,
       }.freeze
 

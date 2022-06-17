@@ -36,9 +36,9 @@ default['cpe_chrome'] = {
     # },
   },
   'profile' => {
-    'AutoplayWhitelist' => [],
+    'AutoplayAllowlist' => [],
     'ExtensionInstallForcelist' => [],
-    'ExtensionInstallBlacklist' => [],
+    'ExtensionInstallBlocklist' => [],
     'CloudManagementEnrollmentToken' => nil,
     'ChromeVariations' => nil,
     'DefaultPluginsSetting' => nil,
@@ -53,6 +53,8 @@ default['cpe_chrome'] = {
     'RelaunchNotification' => nil,
     'RelaunchNotificationPeriod' => nil,
     'TotalMemoryLimitMb' => nil,
+    'URLAllowlist' => [],
+    'URLBlocklist' => [],
   },
   'mp' => {
     'UseMasterPreferencesFile' => false,

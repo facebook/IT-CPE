@@ -124,9 +124,9 @@ module CPE
           :dword,
           false,
         ),
-        'AuthNegotiateDelegateWhitelist' => WindowsChromeFlatSetting.new(
+        'AuthNegotiateDelegateAllowlist' => WindowsChromeFlatSetting.new(
           'HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome',
-          'AuthNegotiateDelegateWhitelist',
+          'AuthNegotiateDelegateAllowlist',
           :string,
           false,
         ),
@@ -136,9 +136,9 @@ module CPE
           :string,
           false,
         ),
-        'AuthServerWhitelist' => WindowsChromeFlatSetting.new(
+        'AuthServerAllowlist' => WindowsChromeFlatSetting.new(
           'HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome',
-          'AuthServerWhitelist',
+          'AuthServerAllowlist',
           :string,
           false,
         ),
@@ -1216,8 +1216,8 @@ module CPE
           :string,
           true,
         ),
-        'AutoplayWhitelist' => WindowsChromeIterableSetting.new(
-          'HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome\AutoplayWhitelist',
+        'AutoplayAllowlist' => WindowsChromeIterableSetting.new(
+          'HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome\AutoplayAllowlist',
           nil,
           :string,
           true,
@@ -1306,8 +1306,8 @@ module CPE
           :string,
           true,
         ),
-        'ExtensionInstallBlacklist' => WindowsChromeIterableSetting.new(
-          'HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome\ExtensionInstallBlacklist',
+        'ExtensionInstallBlocklist' => WindowsChromeIterableSetting.new(
+          'HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome\ExtensionInstallBlocklist',
           nil,
           :string,
           true,
@@ -1324,8 +1324,8 @@ module CPE
           :string,
           true,
         ),
-        'ExtensionInstallWhitelist' => WindowsChromeIterableSetting.new(
-          'HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome\ExtensionInstallWhitelist',
+        'ExtensionInstallAllowlist' => WindowsChromeIterableSetting.new(
+          'HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome\ExtensionInstallAllowlist',
           nil,
           :string,
           true,
@@ -1378,14 +1378,14 @@ module CPE
           :string,
           true,
         ),
-        'NativeMessagingBlacklist' => WindowsChromeIterableSetting.new(
-          'HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome\NativeMessagingBlacklist',
+        'NativeMessagingBlocklist' => WindowsChromeIterableSetting.new(
+          'HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome\NativeMessagingBlocklist',
           nil,
           :string,
           true,
         ),
-        'NativeMessagingWhitelist' => WindowsChromeIterableSetting.new(
-          'HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome\NativeMessagingWhitelist',
+        'NativeMessagingAllowlist' => WindowsChromeIterableSetting.new(
+          'HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome\NativeMessagingAllowlist',
           nil,
           :string,
           true,
@@ -1474,8 +1474,8 @@ module CPE
           :string,
           true,
         ),
-        'SafeBrowsingWhitelistDomains' => WindowsChromeIterableSetting.new(
-          'HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome\SafeBrowsingWhitelistDomains',
+        'SafeBrowsingAllowlistDomains' => WindowsChromeIterableSetting.new(
+          'HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome\SafeBrowsingAllowlistDomains',
           nil,
           :string,
           true,
@@ -1492,8 +1492,8 @@ module CPE
           :string,
           true,
         ),
-        'SpellcheckLanguageBlacklist' => WindowsChromeIterableSetting.new(
-          'HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome\SpellcheckLanguageBlacklist',
+        'SpellcheckLanguageBlocklist' => WindowsChromeIterableSetting.new(
+          'HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome\SpellcheckLanguageBlocklist',
           nil,
           :string,
           true,
@@ -1504,14 +1504,14 @@ module CPE
           :string,
           true,
         ),
-        'URLBlacklist' => WindowsChromeIterableSetting.new(
-          'HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome\URLBlacklist',
+        'URLBlocklist' => WindowsChromeIterableSetting.new(
+          'HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome\URLBlocklist',
           nil,
           :string,
           true,
         ),
-        'URLWhitelist' => WindowsChromeIterableSetting.new(
-          'HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome\URLWhitelist',
+        'URLAllowlist' => WindowsChromeIterableSetting.new(
+          'HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome\URLAllowlist',
           nil,
           :string,
           true,

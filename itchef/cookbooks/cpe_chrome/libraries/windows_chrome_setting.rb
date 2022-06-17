@@ -14,7 +14,7 @@
 
 # Cookbook Name:: cpe_browsers
 # Library:: windows_chrome_setting
-
+require 'chef'
 require_relative 'chrome_windows'
 
 # This class is an abstraction around what constitutes a Chrome setting in

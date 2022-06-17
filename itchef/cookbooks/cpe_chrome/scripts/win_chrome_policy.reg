@@ -19,9 +19,9 @@
 "ApplicationLocaleValue"="en"
 "AudioCaptureAllowed"=dword:00000000
 "AudioSandboxEnabled"=dword:00000001
-"AuthNegotiateDelegateWhitelist"="foobar.example.com"
+"AuthNegotiateDelegateAllowlist"="foobar.example.com"
 "AuthSchemes"="basic,digest,ntlm,negotiate"
-"AuthServerWhitelist"="*.example.com,example.com"
+"AuthServerAllowlist"="*.example.com,example.com"
 "AutofillAddressEnabled"=dword:00000000
 "AutofillCreditCardEnabled"=dword:00000000
 "AutoplayAllowed"=dword:00000001
@@ -211,7 +211,7 @@
 [HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome\AutoSelectCertificateForUrls]
 "1"="{\"pattern\":\"https://www.example.com\",\"filter\":{\"ISSUER\":{\"CN\":\"certificate issuer name\", \"L\": \"certificate issuer location\", \"O\": \"certificate issuer org\", \"OU\": \"certificate issuer org unit\"}, \"SUBJECT\":{\"CN\":\"certificate subject name\", \"L\": \"certificate subject location\", \"O\": \"certificate subject org\", \"OU\": \"certificate subject org unit\"}}}"
 
-[HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome\AutoplayWhitelist]
+[HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome\AutoplayAllowlist]
 "1"="https://www.example.com"
 "2"="[*.]example.edu"
 
@@ -272,7 +272,7 @@
 [HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome\ExtensionAllowedTypes]
 "1"="hosted_app"
 
-[HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome\ExtensionInstallBlacklist]
+[HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome\ExtensionInstallBlocklist]
 "1"="extension_id1"
 "2"="extension_id2"
 
@@ -283,7 +283,7 @@
 [HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome\ExtensionInstallSources]
 "1"="https://corp.mycompany.com/*"
 
-[HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome\ExtensionInstallWhitelist]
+[HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome\ExtensionInstallAllowlist]
 "1"="extension_id1"
 "2"="extension_id2"
 
@@ -318,11 +318,11 @@
 "1"="www.example.com"
 "2"="[*.]example.edu"
 
-[HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome\NativeMessagingBlacklist]
+[HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome\NativeMessagingBlocklist]
 "1"="com.native.messaging.host.name1"
 "2"="com.native.messaging.host.name2"
 
-[HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome\NativeMessagingWhitelist]
+[HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome\NativeMessagingAllowlist]
 "1"="com.native.messaging.host.name1"
 "2"="com.native.messaging.host.name2"
 
@@ -354,8 +354,8 @@
 "1"="ExtensionSettings"
 
 [HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome\PolicyListMultipleSourceMergeList]
-"1"="ExtensionInstallWhitelist"
-"2"="ExtensionInstallBlacklist"
+"1"="ExtensionInstallAllowlist"
+"2"="ExtensionInstallBlocklist"
 
 [HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome\PopupsAllowedForUrls]
 "1"="https://www.example.com"
@@ -381,7 +381,7 @@
 "1"="https://example.com"
 "2"="https://www.chromium.org"
 
-[HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome\SafeBrowsingWhitelistDomains]
+[HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome\SafeBrowsingAllowlistDomains]
 "1"="mydomain.com"
 "2"="myuniversity.edu"
 
@@ -392,14 +392,14 @@
 "1"="fr"
 "2"="es"
 
-[HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome\SpellcheckLanguageBlacklist]
+[HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome\SpellcheckLanguageBlocklist]
 "1"="fr"
 "2"="es"
 
 [HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome\SyncTypesListDisabled]
 "1"="bookmarks"
 
-[HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome\URLBlacklist]
+[HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome\URLBlocklist]
 "1"="example.com"
 "2"="https://ssl.server.com"
 "3"="hosting.com/bad_path"
@@ -409,7 +409,7 @@
 "7"="custom_scheme:*"
 "8"="*"
 
-[HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome\URLWhitelist]
+[HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome\URLAllowlist]
 "1"="example.com"
 "2"="https://ssl.server.com"
 "3"="hosting.com/good_path"

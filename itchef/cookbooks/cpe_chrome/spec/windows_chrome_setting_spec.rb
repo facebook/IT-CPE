@@ -46,7 +46,7 @@ RSpec.describe WindowsChromeSetting do
     },
   ].freeze
   settings = {
-    'empty_setting' => { 'ExtensionInstallBlacklist' => [] },
+    'empty_setting' => { 'ExtensionInstallBlocklist' => [] },
     'doc_setting' => { 'AlternateErrorPagesEnabled' => [true] },
     'json_setting' => { 'ManagedBookmarks' => JSON_EXAMPLE_DATA },
     'example_setting' => {
@@ -68,15 +68,15 @@ RSpec.describe WindowsChromeSetting do
   expected_results = {
     'empty_setting' => {
       'header' => 'A simple setting that has no value',
-      'name' => 'ExtensionInstallBlacklist',
+      'name' => 'ExtensionInstallBlocklist',
       'type' => :string,
       'data' => [],
       'expected_class' => 'Array',
       'fullpath' => 'HKLM\Software\Policies\Google\Chrome' +
-                '\ExtensionInstallBlacklist',
+                '\ExtensionInstallBlocklist',
       'fullpath_forced' =>
         'HKLM\Software\Policies\Google\Chrome' +
-        '\ExtensionInstallBlacklist',
+        '\ExtensionInstallBlocklist',
       'path' => 'HKLM\Software\Policies\Google\Chrome',
     },
     'example_setting' => {
