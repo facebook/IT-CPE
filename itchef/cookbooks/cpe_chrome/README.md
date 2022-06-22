@@ -80,14 +80,14 @@ chrome_ext_update_url = 'https://clients2.google.com/service/update2/crx'
 end
 ```
 
-Likewise, extensions can be blacklisted (and thus forcibly removed from
+Likewise, extensions can be Blocklisted (and thus forcibly removed from
 the browser by policy):
 
 ```
 # Forcefully remove the BetterHistory malware extension
 chrome_ext_update_url = 'https://clients2.google.com/service/update2/crx'
 {
-  'ExtensionInstallBlacklist' => [
+  'ExtensionInstallBlocklist' => [
     'obciceimmggglbmelaidpjlmodcebijb',
   ],
 }.each do |k, v|
