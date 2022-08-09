@@ -1,0 +1,25 @@
+Windows Registry Editor Version 5.00
+<% @policies[:delete][:iterable].each do |k| -%>
+
+[-<%= k %>]
+<% end -%>
+<% @policies[:delete][:flat].each do |k, entries| -%>
+  <% if !entries.empty? -%>
+
+[<%= k %>]
+    <% entries.each do |entry| -%>
+"<%= entry[:name] %>"=-
+    <% end -%>
+  <% end -%>
+<% end -%>
+<% @policies[:create].each do |k, entries| -%>
+
+[<%= k %>]
+  <% entries.each do |entry| -%>
+    <% if entry[:type] == :string -%>
+"<%= entry[:name] %>"="<%= entry[:data].gsub('"', '\"') %>"
+    <% else -%>
+"<%= entry[:name] %>"=<%= entry[:type] %>:<%= entry[:data].to_s(16) %>
+    <% end -%>
+  <% end -%>
+<% end -%>

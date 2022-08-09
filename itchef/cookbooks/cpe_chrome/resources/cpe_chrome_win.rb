@@ -31,62 +31,57 @@ action :config do
   return unless node['cpe_chrome']['profile'].values.any?
 
   if node['cpe_chrome']['_use_new_windows_provider']
-    reg_settings = []
-    node['cpe_chrome']['profile'].each do |setting_key, setting_value|
-      next if setting_value.nil?
-      setting = CPE::ChromeManagement::KnownSettings::GENERATED.fetch(
-        setting_key,
-        nil,
-      )
-      unless setting
-        Chef::Log.warn("#{setting_key} is not a known setting, skipping")
-        next
-      end
-
-      if setting_value.is_a?(Hash)
-        next if setting_value.empty?
-        setting.value = setting_value.to_json
-      else
-        setting.value = setting_value
-      end
-
-      reg_settings << setting
-    end
-
     # Set all the keys we care about. If there's any mismatch of data, just
     # delete the entire key and re-establish it, because we can't atomically
     # change individual subkeys in one single registry_key resource invocation
-    CPE::ChromeManagement::KnownSettings::GENERATED.each do |name, obj|
-      if obj.is_a?(WindowsChromeFlatSetting)
-        begin
-          current_values = registry_get_values(obj.registry_location).
-                           select { |k, _| name == k[:name] }
-        rescue Chef::Exceptions::Win32RegKeyMissing
-          next
-        end
-        next unless current_values.any?
-        next unless obj.value.nil?
-        next if current_values == obj.to_chef_reg_provider
+    reg_settings = set_reg_settings(node)
+    doomed_policies = policies_to_remove(node['cpe_chrome']['_use_reg_file'])
 
-        registry_key obj.registry_location do
-          values current_values
-          action :delete
-        end
-      elsif obj.is_a?(WindowsChromeIterableSetting)
-        if registry_key_exists?(obj.registry_location) && obj.value.nil?
-          registry_key obj.registry_location do
+    if node['cpe_chrome']['_use_reg_file']
+      reg_file_path = ::File.join(Chef::Config[:file_cache_path], 'chrome.reg')
+
+      policy_settings = gen_reg_file_settings(
+        doomed_policies, reg_settings
+      )
+      template reg_file_path do # ~FB031
+        source 'chrome_Settings.reg.erb'
+        variables(:policies => policy_settings)
+        rights :read, 'Everyone', :applies_to_children => true
+        rights :read_execute, 'Users', :applies_to_children => true
+        rights :full_control, ['Administrators', 'SYSTEM'],
+               :applies_to_children => true
+        action :create
+        only_if { verify_update_needed(policy_settings) }
+      end
+
+      powershell_script 'import reg file' do
+        code <<-EOT
+         $process = Start-Process reg -NoNewWindow -ArgumentList "import #{reg_file_path}" -PassThru -Wait
+         Exit $process.ExitCode
+        EOT
+        only_if { verify_update_needed(policy_settings) }
+      end
+    else
+      doomed_policies.each do |policy, curr_value|
+        if policy.is_a?(WindowsChromeFlatSetting)
+          registry_key policy.registry_location do
+            values curr_value
+            action :delete
+          end
+        elsif policy.is_a?(WindowsChromeIterableSetting)
+          registry_key policy.registry_location do
             recursive true
             action :delete_key
           end
         end
       end
-    end
 
-    reg_settings.each do |setting|
-      registry_key setting.registry_location do
-        values setting.to_chef_reg_provider
-        recursive true
-        action :create
+      reg_settings.each do |setting|
+        registry_key setting.registry_location do
+          values setting.to_chef_reg_provider
+          recursive true
+          action :create
+        end
       end
     end
 
@@ -110,7 +105,9 @@ action :config do
             'data' => v_ext['value'],
           }
         end
-        registry_key "#{CPE::ChromeManagement.chrome_reg_3rd_party_ext_root}\\#{k}\\policy" do
+        reg_key_path =
+          "#{CPE::ChromeManagement.chrome_reg_3rd_party_ext_root}\\#{k}\\policy"
+        registry_key reg_key_path do
           values ext_values
           recursive true
           action :create
@@ -315,4 +312,8 @@ action :config do
       end
     end
   end
+end
+
+action_class do
+  include CPE::WindowsChromeHelpers
 end

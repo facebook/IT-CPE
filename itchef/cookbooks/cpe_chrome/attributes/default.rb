@@ -62,4 +62,5 @@ default['cpe_chrome'] = {
   },
   'canary_ignored_prefs' => [],
   '_use_new_windows_provider' => false,
+  '_use_reg_file' => false,
 }

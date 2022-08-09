@@ -76,7 +76,7 @@ class WindowsChromeFlatSetting < WindowsChromeSettingV2
     elsif @value.is_a?(FalseClass)
       @value = 0
     elsif JSONIFY_REG_KEYS['Chrome'].include?(@subkey)
-      @value = @value.to_json
+      @value = @value.to_json unless @value.is_a?(String)
     end
 
     [{ :name => @subkey, :type => @type, :data => @value }]
