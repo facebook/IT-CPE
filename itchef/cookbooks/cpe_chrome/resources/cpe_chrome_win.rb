@@ -61,6 +61,17 @@ action :config do
         EOT
         only_if { verify_update_needed(policy_settings) }
       end
+
+      # This cookbook configures extension settings using the value
+      # "ExtensionSettings" at the key "HKLM\SOFTWARE\Policies\Google\Chrome".
+      # We need to remove the key at "HKLM\SOFTWARE\Policies\Google\Chrome\ExtensionSettings"
+      # or else chrome may incorrectly use that to set extension policies instead.
+      extension_settings_key =
+        'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Google\Chrome\ExtensionSettings'
+      registry_key extension_settings_key do
+        action :delete_key
+        recursive true
+      end
     else
       doomed_policies.each do |policy, curr_value|
         if policy.is_a?(WindowsChromeFlatSetting)
