@@ -61,6 +61,6 @@ default['cpe_chrome'] = {
     'FileContents' => {},
   },
   'canary_ignored_prefs' => [],
-  '_use_new_windows_provider' => false,
-  '_use_reg_file' => false,
+  '_use_new_windows_provider' => true,
+  '_use_reg_file' => true,
 }
