@@ -64,7 +64,7 @@ describe CPE::WindowsChromeHelpers do
 
       wch.set_reg_settings(fake_node)
 
-      doomed_policies = wch.policies_to_remove(true)
+      doomed_policies = wch.policies_to_remove
       expected_invalid_itter_policy = CPE::ChromeManagement::KnownSettings::GENERATED.fetch(
         'ExtensionInstallBlocklist', nil
 )
@@ -93,7 +93,7 @@ describe CPE::WindowsChromeHelpers do
 
       wch.set_reg_settings(fake_node)
 
-      doomed_policies = wch.policies_to_remove(true)
+      doomed_policies = wch.policies_to_remove
       expected_invalid_itter_policy = CPE::ChromeManagement::KnownSettings::GENERATED.fetch(
         'ExtensionInstallBlocklist', nil
 )
@@ -144,7 +144,7 @@ describe CPE::WindowsChromeHelpers do
 
       fake_node = default_settings
       new_settings = wch.set_reg_settings(fake_node)
-      doomed_policies = wch.policies_to_remove(true)
+      doomed_policies = wch.policies_to_remove
       settings = wch.gen_reg_file_settings(doomed_policies, new_settings)
       expect(settings).to eq(expected_settings)
     end

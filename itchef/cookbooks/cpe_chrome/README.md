@@ -166,7 +166,8 @@ The profile's organization key defaults to `Facebook` unless
 On Windows, Chrome policy is stored in the registry, in
 `HKEY_LOCAL_MACHINE\\Software\\Policies\\Google\\Chrome`. These registry keys
 here are mapped from the `node['cpe_chrome']['profile']` attribute in the
-chrome_windows.rb library, which provide a class that converts them.
+gen_windows_chrome_known_settings.rb library, which provide a class
+that converts them.
 
 As Google adds new keys and deprecates old ones, they may need to be manually
 added to the chrome_windows.rb library in order to provide support and
@@ -175,10 +176,8 @@ compatibility.
 This cookbook will automatically cleanup subkeys that are stored in the policy
 registry key but are not found in the node attribute.
 
-#### New Windows Provider
-
-We are dogfooding generating settings directly from a reference file provided
-in the Chrome ADMX template. This does not cover *every* setting, so we also
+We detect policies to manage from the Chrome ADMX template.
+This does not cover *every* setting, so we also
 will generate policies from a separate reference file that is manually
 maintained. All reference files are `.reg` files.
 
@@ -190,10 +189,3 @@ have the chefdk installed locally.
 
 All generated settings are placed
 into `libraries/gen_windows_chrome_known_settings.rb`.
-
-To use the provider in your environment you need to enable it:
-
-  node.default['cpe_chrome']['_use_new_windows_provider'] = true
-
-The new provider is a drop-in replacement, you don't need to take any further
-action aside from enabling it to use it.

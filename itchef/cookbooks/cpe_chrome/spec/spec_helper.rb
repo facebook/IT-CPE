@@ -1,7 +1,6 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 #
 require 'rspec'
-require_relative '../libraries/windows_chrome_setting'
 require_relative '../libraries/chrome_windows'
 
 RSpec.configure do |config|

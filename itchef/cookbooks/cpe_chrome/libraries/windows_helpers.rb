@@ -26,7 +26,7 @@ module CPE
       reg_settings
     end
 
-    def policies_to_remove(using_reg_file)
+    def policies_to_remove
       doomed_policies = {}
       CPE::ChromeManagement::KnownSettings::GENERATED.each do |name, obj|
         if obj.is_a?(WindowsChromeFlatSetting)
@@ -36,35 +36,25 @@ module CPE
           rescue Chef::Exceptions::Win32RegKeyMissing
             next
           end
-          # when using registry_key resource we only need to delete the key if
-          # a current value is set and we are not explicity setting a new value
-          next unless current_values.any? || using_reg_file
-          next unless obj.value.nil? || using_reg_file
 
           # when using a reg file, we need to delete values even if we are overwriting them
           # due to how the idempotency check works.
-          next if using_reg_file && obj.value.nil? && current_values.empty?
+          next if obj.value.nil? && current_values.empty?
 
           next if current_values == obj.to_chef_reg_provider
           doomed_policies[obj] = current_values
         elsif obj.is_a?(WindowsChromeIterableSetting)
-          if using_reg_file
-            begin
-              current_values = registry_get_values(obj.registry_location)
-            rescue Chef::Exceptions::Win32RegKeyMissing
-              next
-            end
+          begin
+            current_values = registry_get_values(obj.registry_location)
+          rescue Chef::Exceptions::Win32RegKeyMissing
+            next
+          end
 
-            # delete existing iterable settings if any subvalue differs from
-            # expected if we are using a regfile to apply changes since it will
-            # not delete unmanaged keys automatically
-            unless policy_values_match(current_values, obj.to_chef_reg_provider)
-              doomed_policies[obj] = nil
-            end
-          elsif registry_key_exists?(obj.registry_location) && obj.value.nil?
-            # delete existing iterable settings if we are not explicitly
-            # managing them if we are using the registry_key resource
-            doomed_policies[obj] = current_values
+          # delete existing iterable settings if any subvalue differs from
+          # expected if we are using a regfile to apply changes since it will
+          # not delete unmanaged keys automatically
+          unless policy_values_match(current_values, obj.to_chef_reg_provider)
+            doomed_policies[obj] = nil
           end
         end
       end
