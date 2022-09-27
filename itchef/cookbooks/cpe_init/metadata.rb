@@ -22,7 +22,7 @@ depends 'cpe_launchd'
 ### API Cookbooks
 depends 'cpe_adobe_flash'
 depends 'cpe_applocker'
-depends 'cpe_bluetooth'
+depends 'fb_bluetooth'
 depends 'cpe_dconf'
 depends 'cpe_deprecation_notifier'
 depends 'cpe_flatpak'

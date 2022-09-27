@@ -43,7 +43,7 @@ end
 
 if node.macos?
   run_list += [
-    'cpe_bluetooth',
+    'fb_bluetooth',
     'cpe_deprecation_notifier',
     'cpe_munki',
     'cpe_powermanagement',
