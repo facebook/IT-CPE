@@ -130,9 +130,9 @@ action :config do
         "#{prefix}\\Google\\Chrome\\Application",
       ].each do |dir|
         directory dir do # ~FB024
-          rights :read, 'Everyone', :applies_to_children => true
-          rights :read_execute, 'Users', :applies_to_children => true
-          rights :full_control, ['Administrators', 'SYSTEM'],
+          rights :read, 'S-1-1-0', :applies_to_children => true # Everyone
+          rights :read_execute, 'S-1-5-32-545', :applies_to_children => true # Users
+          rights :full_control, ['S-1-5-32-544', 'S-1-5-18'], # [Administrators, SYSTEM]
                  :applies_to_children => true
           action :create
         end
@@ -153,9 +153,9 @@ action :config do
           )
         }
         path pref_path
-        rights :read, 'Everyone', :applies_to_children => true
-        rights :read_execute, 'Users', :applies_to_children => true
-        rights :full_control, ['Administrators', 'SYSTEM'],
+        rights :read, 'S-1-1-0', :applies_to_children => true # Everyone
+        rights :read_execute, 'S-1-5-32-545', :applies_to_children => true # Users
+        rights :full_control, ['S-1-5-32-544', 'S-1-5-18'], # [Administrators, SYSTEM]
                :applies_to_children => true
         action :create
       end

@@ -808,7 +808,7 @@ class Chef
       # See the `macos?` method above
       value_for_platform(
         %w{openbsd freebsd mac_os_x macos} => { 'default' => 'wheel' },
-        'windows' => { 'default' => 'Administrators' },
+        'windows' => { 'default' => 'S-1-5-32-544' }, # Administrators
         'default' => 'root',
       )
       # rubocop:enable Chef/Correctness/InvalidPlatformValueForPlatformHelper
