@@ -34,7 +34,7 @@ action_class do
     yum_repository 'google-chrome' do
       only_if { node.fedora? || node.centos? }
       description 'Google Chrome repo'
-      baseurl 'http://dl.google.com/linux/chrome/rpm/stable/x86_64'
+      baseurl 'https://dl.google.com/linux/chrome/rpm/stable/x86_64'
       enabled true
       gpgkey 'https://dl.google.com/linux/linux_signing_key.pub'
       gpgcheck true
@@ -56,7 +56,7 @@ action_class do
     return unless node.linux?
     return unless node['cpe_chrome']['install_package']
 
-    package 'google-chrome-stable' do
+    package 'google-chrome-stable' do # ~FB043
       only_if do
         node.fedora? || node.centos? || node.debian_family?
       end
