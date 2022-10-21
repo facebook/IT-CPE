@@ -61,6 +61,7 @@ class WindowsChromeIterableSetting < WindowsChromeSettingV2
   # sequentially from [1...N]
   def to_chef_reg_provider
     list = []
+    return list if @value.nil?
     @value.each_with_index do |entry, index|
       list << { :name => (index + 1).to_s, :type => @type, :data => entry }
     end
