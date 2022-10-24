@@ -55,6 +55,7 @@ default['cpe_chrome'] = {
     'TotalMemoryLimitMb' => nil,
     'URLAllowlist' => [],
     'URLBlocklist' => [],
+    'PasswordManagerEnabled' => nil,
   },
   'mp' => {
     'UseMasterPreferencesFile' => false,
