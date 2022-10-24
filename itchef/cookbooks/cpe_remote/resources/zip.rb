@@ -126,7 +126,7 @@ action :create do
       end
     end
 
-    package 'unzip' do # ~FB043
+    package 'unzip' do # rubocop:disable Chef/Meta/PackageInstallsHaveVersionOrAction, Chef/Meta/CPEPackageResource # ~FB043
       only_if { node.linux? }
       action :nothing
     end

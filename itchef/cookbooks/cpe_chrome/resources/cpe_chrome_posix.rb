@@ -56,7 +56,7 @@ action_class do
     return unless node.linux?
     return unless node['cpe_chrome']['install_package']
 
-    package 'google-chrome-stable' do # ~FB043
+    package 'google-chrome-stable' do # rubocop:disable Chef/Meta/CPEPackageResource # ~FB043
       only_if do
         node.fedora? || node.centos? || node.debian_family?
       end
