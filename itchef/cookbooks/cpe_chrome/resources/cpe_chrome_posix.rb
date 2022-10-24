@@ -79,7 +79,7 @@ action_class do
     return if prefs.empty? && mprefs.empty?
     case node['os']
     when 'darwin'
-      manage_chrome_macos(mprefs, prefs)
+      manage_chrome_macos(mprefs, FB::Helpers.evaluate_lazy_enumerable(prefs))
     when 'linux'
       manage_chrome_linux(mprefs, prefs)
     end
