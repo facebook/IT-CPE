@@ -72,7 +72,7 @@ action :create do
   converge_if_changed do
     base_filename = ::File.basename(zip_path)
     # @lint-ignore FBCHEFFoodcritic
-    directory ::File.dirname(zip_path) do # ~FB019 ~FB024
+    directory ::File.dirname(zip_path) do # rubocop:disable Chef/Meta/RequireOwnerGroupMode # ~FB019 ~FB024
       recursive true
     end
 
