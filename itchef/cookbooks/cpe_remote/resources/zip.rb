@@ -61,7 +61,7 @@ load_current_value do |desired| # ~FC006
   end
 end
 
-action :create do
+action :create do # rubocop:disable Chef/Meta/NoRecursiveDirs # ~FB019
   chef_cache = Chef::Config[:file_cache_path]
   extra_loco = new_resource.extract_location.delete(':')
   zip_path = ::File.join(
@@ -69,10 +69,10 @@ action :create do
   )
 
   return unless node['cpe_remote']['server_accessible']
-  converge_if_changed do
+  converge_if_changed do # rubocop:disable Chef/Meta/NoRecursiveDirs # ~FB019
     base_filename = ::File.basename(zip_path)
     # @lint-ignore FBCHEFFoodcritic
-    directory ::File.dirname(zip_path) do # rubocop:disable Chef/Meta/RequireOwnerGroupMode # ~FB019 ~FB024
+    directory ::File.dirname(zip_path) do # rubocop:disable Chef/Meta/RequireOwnerGroupMode, Chef/Meta/NoRecursiveDirs # ~FB019 ~FB024
       recursive true
     end
 
@@ -126,7 +126,7 @@ action :create do
       end
     end
 
-    package 'unzip' do # rubocop:disable Chef/Meta/PackageInstallsHaveVersionOrAction, Chef/Meta/CPEPackageResource # ~FB043
+    package 'unzip' do # rubocop:disable Chef/Meta/PackageInstallsHaveVersionOrAction, Chef/Meta/CPEPackageResource
       only_if { node.linux? }
       action :nothing
     end
@@ -140,7 +140,7 @@ action :create do
     end
 
     # @lint-ignore FBCHEFFoodcritic
-    directory new_resource.extract_location do # ~FB019
+    directory new_resource.extract_location do # rubocop:disable Chef/Meta/NoRecursiveDirs # ~FB019
       not_if { node.windows? }
       recursive true
       mode new_resource.mode
