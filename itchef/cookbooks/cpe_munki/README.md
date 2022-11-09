@@ -218,6 +218,21 @@ The default list of items to be installed on clients is in
 `cpe_munki::managed_installs`. Anyone can override this value to add or remove
 things that they want (or don't want).
 
+All local manifest lists support being passed a Delayed evaluator to allow
+for comound api interactions. For example if you want to add a package to the
+managed_installs list based on an api attribute you can do the following:
+
+```
+node['cpe_munki']['local']['managed_installs'] << FB::Helpers.attempt_lazy do
+   return nil unless node['cpe_example']['install_package']
+   'example_package'
+end
+```
+
+If node['cpe_example']['install_package'] is false, nil will be returned when
+the array is evaluated at the runtime of this cookbook. Nil values will simply
+be ignored when generating the local manifest.
+
 ```ruby
 # How to install one App:
 node.default['cpe_munki']['local']['managed_installs'] << 'Firefox'

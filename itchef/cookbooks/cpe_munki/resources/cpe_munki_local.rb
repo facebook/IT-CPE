@@ -74,6 +74,7 @@ end
 
 def validate_install_array(install_array)
   catalog_items = parse_items_in_catalogs
+  install_array = FB::Helpers.evaluate_lazy_enumerable(install_array.to_a).compact
   return install_array if catalog_items.empty?
   ret = []
   install_array.uniq.each do |item|
