@@ -120,8 +120,20 @@ def process_plist_labels
   plists.map! do |full_daemon_path|
     label = full_daemon_path.split('/')[-1]
     label = delete_str_from_label(label, 'plist')
-    unless node['cpe_launchd_is_deprecated_please_use_fb_launchd'].keys.include?(label)
+    if cleanup_required?(label)
       append_to_cleanup(label, full_daemon_path)
     end
+  end
+end
+
+def cleanup_required?(label)
+  return true unless node['cpe_launchd_is_deprecated_please_use_fb_launchd'].keys.include?(label)
+  guard = node['cpe_launchd_is_deprecated_please_use_fb_launchd'][label]['only_if']
+
+  # clenup if the guard is valid and does not pass
+  if guard
+    guard.class == Proc && !guard.call
+  else
+    false
   end
 end
