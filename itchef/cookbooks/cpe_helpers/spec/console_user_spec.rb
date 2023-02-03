@@ -26,6 +26,7 @@ describe CPE::Helpers do
       allow(CPE::Log).to receive(:log)
       allow(CPE::Helpers).to receive(:machine_owner).
         and_return('from_machine_owner')
+      allow(::File).to receive(:exist?).and_call_original
       allow(::File).to receive(:exist?).with('/usr/bin/loginctl').
         and_return(true)
       allow(::File).to receive(:exist?).with('/bin/loginctl').
