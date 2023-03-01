@@ -42,10 +42,6 @@ Lets customize a few things and see what happens.
 Open `itchef/cookbooks/cpe_init/recipes/company_init.rb`
 in your favorite text editor.
 
-> :warning: cpe_launchd is RETIRED. Please migrate your code to fb_launchd,
-which can be found at https://github.com/facebook/chef-cookbooks/tree/master/cookbooks/fb_launchd,
-by July 2021
-
 Add the following line to the bottom of the file:
 
 ```
@@ -53,14 +49,14 @@ Add the following line to the bottom of the file:
 node.default['cpe_screensaver']['idleTime'] = 300
 
 # Add a launchd that echo's nothing
-node.default['cpe_launchd_is_deprecated_please_use_fb_launchd']['doesnothing'] = {
+node.default['fb_launchd']['doesnothing'] = {
     'program_arguments' => ['echo', 'nothing'],
     'run_at_load' => true,
 }
 ```
 
-Because cpe_launchd uses the prefix set in company_init.rb, we do not need to specify a
-full reverse domain name. cpe_launchd is smart enough to build the correct reverse
+Because fb_launchd uses the prefix set in company_init.rb, we do not need to specify a
+full reverse domain name. fb_launchd is smart enough to build the correct reverse
 domain name for the LaunchDaemon.
 
 In Terminal, cd to the `itchef` directory and do a local chef run:

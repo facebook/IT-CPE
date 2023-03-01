@@ -16,9 +16,6 @@ depends 'cpe_node_customizations'
 depends 'fb_helpers'
 depends 'fb_launchd'
 
-# deprecated
-depends 'cpe_launchd'
-
 ### API Cookbooks
 depends 'cpe_applocker'
 depends 'cpe_dconf'
