@@ -1,4 +1,4 @@
-#!/opt/chefdk/embedded/bin/ruby
+#!/opt/chef-workstation/embedded/bin/ruby
 #
 # Copyright (c) Facebook, Inc. and its affiliates.
 #
