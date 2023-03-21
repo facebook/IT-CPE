@@ -105,6 +105,7 @@ action_class do
       /etc/opt
       /etc/opt/chrome
       /etc/opt/chrome/policies
+      /etc/opt/chrome/policies/enrollment
       /etc/opt/chrome/policies/managed
       /etc/opt/chrome/policies/recommended
     }.each do |path|
@@ -136,6 +137,17 @@ action_class do
           action :create
           content Chef::JSONCompat.to_json_pretty(preferences)
         end
+      end
+    end
+    file '/etc/opt/chrome/policies/enrollment/CloudManagementEnrollmentToken' do
+      if node['cpe_chrome']['profile']['CloudManagementEnrollmentToken'].nil?
+        action :delete
+      else
+        action :create
+        content node['cpe_chrome']['profile']['CloudManagementEnrollmentToken'].to_s
+        owner node.root_user
+        group node.root_group
+        mode '0644'
       end
     end
   end
