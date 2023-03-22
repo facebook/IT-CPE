@@ -539,7 +539,7 @@ module CPE
           false,
         ),
         'DownloadRestrictions' => WindowsChromeFlatSetting.new(
-          'HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome\Recommended',
+          'HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome',
           'DownloadRestrictions',
           :dword,
           false,
@@ -1006,9 +1006,9 @@ module CPE
           :string,
           false,
         ),
-        'SafeBrowsingEnabled' => WindowsChromeFlatSetting.new(
-          'HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome\Recommended',
-          'SafeBrowsingEnabled',
+        'SafeBrowsingProtectionLevel' => WindowsChromeFlatSetting.new(
+          'HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome',
+          'SafeBrowsingProtectionLevel',
           :dword,
           false,
         ),
