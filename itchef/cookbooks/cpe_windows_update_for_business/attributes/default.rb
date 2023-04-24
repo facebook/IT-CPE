@@ -33,4 +33,10 @@ default['cpe_windows_update_for_business'] = {
   'exclude_wu_drivers_in_quality_update' => true,
   'target_release_version_info' => nil,
   'target_release_version' => nil,
+  'set_restart_warning_schedule' => nil,
+  'configure_schedule_restart_warning' => nil,
+  'configure_schedule_imminent_restart_warning' => nil,
+  'set_auto_restart_required_notification_dismissal' => nil,
+  'configure_auto_restart_required_notification_dismissal' => nil,
+  'set_elevate_non_admins' => nil,
 }

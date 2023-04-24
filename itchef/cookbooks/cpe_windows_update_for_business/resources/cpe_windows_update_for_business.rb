@@ -169,6 +169,51 @@ property :set_compliance_deadline,
                        node['cpe_windows_update_for_business']['set_compliance_deadline']
                      }
 
+property :set_restart_warning_schedule,
+         [TrueClass, FalseClass, NilClass],
+         :default => lazy {
+           node['cpe_windows_update_for_business']['set_restart_warning_schedule']
+         }
+
+property :configure_schedule_restart_warning,
+         [Integer, NilClass],
+         :callbacks => {
+           'is not between 2 and 24' => ->(v) { v.between?(2, 24) },
+         },
+         :default => lazy {
+           node['cpe_windows_update_for_business']['configure_schedule_restart_warning']
+         }
+
+property :configure_schedule_imminent_restart_warning,
+         [Integer, NilClass],
+         :callbacks => {
+           'is not between 15 and 60' => ->(v) { v.between?(15, 60) },
+         },
+         :default => lazy {
+           node['cpe_windows_update_for_business']['configure_schedule_imminent_restart_warning']
+         }
+
+property :set_auto_restart_required_notification_dismissal,
+         [TrueClass, FalseClass, NilClass],
+         :default => lazy {
+           node['cpe_windows_update_for_business']['set_auto_restart_required_notification_dismissal']
+         }
+
+property :configure_auto_restart_required_notification_dismissal,
+         [Integer, NilClass],
+         :callbacks => {
+           'is not between 1 and 2' => ->(v) { v.between?(1, 2) },
+         },
+         :default => lazy {
+           node['cpe_windows_update_for_business']['configure_auto_restart_required_notification_dismissal']
+         }
+
+property :set_elevate_non_admins,
+         [TrueClass, FalseClass, NilClass],
+         :default => lazy {
+           node['cpe_windows_update_for_business']['set_elevate_non_admins']
+         }
+
 property :use_wsus, [TrueClass, FalseClass], :default => false
 property :au_set, [TrueClass, FalseClass], :default => false
 property :managed_key_exists, [TrueClass, FalseClass], :default => true
@@ -194,6 +239,9 @@ load_current_value do
       exclude_drivers = bool_from_int_or_nil(value.fetch('ExcludeWUDriversInQualityUpdate', 0))
       use_compliance_deadlines = bool_from_int_or_nil(value.fetch('SetComplianceDeadline', 0))
       target_release_version_enabled = bool_from_int_or_nil(value.fetch('TargetReleaseVersion', 0))
+      use_restart_warning_schedule = bool_from_int_or_nil(value.fetch('SetRestartWarningSchd', 0))
+      require_notification_dismissal = bool_from_int_or_nil(value.fetch('SetAutoRestartRequiredNotificationDismissal', 0))
+      non_admin = bool_from_int_or_nil(value.fetch('ElevateNonAdmins', 0))
 
       branch_readiness_level value.fetch('BranchReadinessLevel', nil)
       product_version value.fetch('ProductVersion', nil)
@@ -210,6 +258,12 @@ load_current_value do
       configure_deadline_for_feature_updates value.fetch('ConfigureDeadlineForFeatureUpdates', nil)
       configure_deadline_grace_period_for_feature_updates value.fetch('ConfigureDeadlineGracePeriodForFeatureUpdates', nil)
       configure_deadline_grace_period value.fetch('ConfigureDeadlineGracePeriod', nil)
+      set_restart_warning_schedule use_restart_warning_schedule
+      configure_schedule_restart_warning value.fetch('ScheduleRestartWarning', nil)
+      configure_schedule_imminent_restart_warning value.fetch('ScheduleImminentRestartWarning', nil)
+      set_auto_restart_required_notification_dismissal require_notification_dismissal
+      configure_auto_restart_required_notification_dismissal value.fetch('AutoRestartRequiredNotificationDismissal', nil)
+      set_elevate_non_admins non_admin
       set_compliance_deadline use_compliance_deadlines
       use_wsus using_wsus
     end
@@ -308,6 +362,24 @@ action :config do
     },
     :set_compliance_deadline => {
       'subkey' => 'SetComplianceDeadline',
+    },
+    :set_restart_warning_schedule => {
+      'subkey' => 'SetRestartWarningSchd',
+    },
+    :configure_schedule_restart_warning => {
+      'subkey' => 'ScheduleRestartWarning',
+    },
+    :configure_schedule_imminent_restart_warning => {
+      'subkey' => 'ScheduleImminentRestartWarning',
+    },
+    :set_auto_restart_required_notification_dismissal => {
+      'subkey' => 'SetAutoRestartRequiredNotificationDismissal',
+    },
+    :configure_auto_restart_required_notification_dismissal => {
+      'subkey' => 'AutoRestartRequiredNotificationDismissal',
+    },
+    :set_elevate_non_admins => {
+      'subkey' => 'ElevateNonAdmins',
     },
   }.each do |k, v|
     converge_if_changed k do

@@ -105,6 +105,30 @@ Number of days grace allowed before enforcing updates.
 ### `node['cpe_windows_update_for_business']['configure_deadline_grace_period_for_feature_updates']`
 Number of days grace allowed before enforcing feature updates.
 
+### `node['cpe_windows_update_for_business']['set_restart_warning_schedule']`
+Enables or disables the option to warn users about a scheduled restart for the update
+installation deadline.
+
+### `node['cpe_windows_update_for_business']['configure_schedule_restart_warning']`
+Controls how long before a scheduled restart takes place a warning will pop up.
+Defaults to 4 hours, available options are 2, 4, 8, 12, 24 hours.
+
+### `node['cpe_windows_update_for_business']['configure_schedule_imminent_restart_warning']`
+Specifies the amount of time prior to a scheduled restart to display the
+warning reminder to the user. Defaults to 15 minutes, 30 and 60 minutes
+are the only other options.
+
+### `node['cpe_windows_update_for_business']['set_auto_restart_required_notification_dismissal']`
+Enables or disables the ability to require notifications to be dismissed
+automatically or through user action
+
+### `node['cpe_windows_update_for_business']['configure_auto_restart_required_notification_dismissal']`
+Specifies how auto-restart required notifications are dismissed. 1
+is automatic, 2 is user action.
+
+### `node['cpe_windows_update_for_business']['set_elevate_non_admins']`
+Controls whether non-administrative users will receive update notifications
+
 ### Example
 
 ```ruby
