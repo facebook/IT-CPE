@@ -140,11 +140,24 @@ module CPE
         end
     end
 
+    def self.macos_local_account?(user)
+      ['root', '_mbsetupuser', 'admin'].include?(user.to_s)
+    end
+
     def self.console_user
       # memoize the value so it isn't executed multiple times per run
       @console_user ||=
         if macos?
-          ::Etc.getpwuid(::File.stat('/dev/console').uid).name
+          user = ::Etc.getpwuid(::File.stat('/dev/console').uid).name
+          if macos_local_account?(user)
+            CPE::Log.log(
+              "#{user} detected as console user, " +
+              "falling back to machine owner: #{machine_owner}",
+              :type => 'cpe::helpers.console_user',
+              :action => 'read_from_machine_owner_macos',
+            )
+          end
+          user
         elsif linux?
           filtered_users = loginctl_users.select do |u|
             u['user'] != 'gdm' && u['uid'] >= 1000
