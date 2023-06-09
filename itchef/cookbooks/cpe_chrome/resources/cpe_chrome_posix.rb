@@ -38,6 +38,9 @@ action_class do
       enabled true
       gpgkey 'https://dl.google.com/linux/linux_signing_key.pub'
       gpgcheck true
+      unless node['cpe_chrome']['repo_proxy'].nil?
+        proxy node['cpe_chrome']['repo_proxy']
+      end
       action :create
     end
 

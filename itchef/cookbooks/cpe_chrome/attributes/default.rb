@@ -22,6 +22,7 @@ default['cpe_chrome'] = {
   'validate_installed' => false,
   'install_package' => false,
   'manage_repo' => false,
+  'repo_proxy' => nil,
   'extension_profile' => {
     # '1234567890qwertyuiop' => {
     #   'display_name' => 'Example Extension',
