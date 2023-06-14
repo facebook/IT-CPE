@@ -86,7 +86,7 @@ module CPE
 
     def self.loginwindow?
       if macos?
-        ['root', '_mbsetupuser'].include?(console_user)
+        macos_local_account?(get_macos_console_user.to_s)
       elsif linux?
         loginctl_users.any? do |u|
           u['user'] == 'gdm'
@@ -140,6 +140,14 @@ module CPE
         end
     end
 
+    def self.get_macos_console_user
+      @console_user ||=
+        ::Etc.getpwuid(::File.stat('/dev/console').uid).name
+    rescue StandardError => e
+      Chef::Log.warn("Unable to determine macos_console_user: #{e}")
+      nil
+    end
+
     def self.macos_local_account?(user)
       ['root', '_mbsetupuser', 'admin'].include?(user.to_s)
     end
@@ -148,14 +156,24 @@ module CPE
       # memoize the value so it isn't executed multiple times per run
       @console_user ||=
         if macos?
-          user = ::Etc.getpwuid(::File.stat('/dev/console').uid).name
-          if macos_local_account?(user)
-            CPE::Log.log(
-              "#{user} detected as console user, " +
-              "falling back to machine owner: #{machine_owner}",
-              :type => 'cpe::helpers.console_user',
-              :action => 'read_from_machine_owner_macos',
-            )
+          user = get_macos_console_user.to_s
+
+          # tag file to rollout new logic to use machine_owner
+          # for local account chef runs
+          rollout_tag = ::File.join(
+            CPE::Utils.get_cpe_path('tags'),
+            '.use_machine_owner_for_local_accounts',
+          )
+          if ::File.exist?(rollout_tag)
+            if macos_local_account?(user)
+              CPE::Log.log(
+                "#{user} detected as console user, " +
+                "falling back to machine owner: #{machine_owner}",
+                :type => 'cpe::helpers.console_user',
+                :action => 'read_from_machine_owner_macos',
+              )
+              user = machine_owner
+            end
           end
           user
         elsif linux?
