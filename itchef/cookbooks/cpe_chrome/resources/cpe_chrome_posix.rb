@@ -84,7 +84,7 @@ action_class do
     when 'darwin'
       manage_chrome_macos(mprefs, FB::Helpers.evaluate_lazy_enumerable(prefs))
     when 'linux'
-      manage_chrome_linux(mprefs, prefs)
+      manage_chrome_linux(mprefs, FB::Helpers.evaluate_lazy_enumerable(prefs))
     end
   end
 
