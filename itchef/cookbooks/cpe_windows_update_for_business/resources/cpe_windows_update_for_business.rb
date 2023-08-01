@@ -82,7 +82,7 @@ property :pause_feature_updates_start_time,
                      }
 
 property :exclude_wu_drivers_in_quality_update,
-         [TrueClass, FalseClass],
+         [TrueClass, FalseClass, NilClass],
          :default => lazy {
                        node['cpe_windows_update_for_business']['exclude_wu_drivers_in_quality_update']
                      }
