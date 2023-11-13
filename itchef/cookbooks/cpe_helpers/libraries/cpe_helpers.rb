@@ -157,25 +157,13 @@ module CPE
       @console_user ||=
         if macos?
           user = get_macos_console_user.to_s
-
-          # tag file to rollout new logic to use machine_owner
-          # for local account chef runs
-          rollout_tag = ::File.join(
-            CPE::Utils.get_cpe_path('tags'),
-            '.use_machine_owner_for_local_accounts',
-          )
-          if ::File.exist?(rollout_tag)
-            if macos_local_account?(user)
-              CPE::Log.log(
-                "#{user} detected as console user, " +
-                "falling back to machine owner: #{machine_owner}",
-                :type => 'cpe::helpers.console_user',
-                :action => 'read_from_machine_owner_macos',
-              )
-              user = machine_owner
-            end
+          # use machine_owner if console user is a local account
+          # prevents running chef as "root" user
+          if macos_local_account?(user)
+            machine_owner
+          else
+            user
           end
-          user
         elsif linux?
           filtered_users = loginctl_users.select do |u|
             u['user'] != 'gdm' && u['uid'] >= 1000
