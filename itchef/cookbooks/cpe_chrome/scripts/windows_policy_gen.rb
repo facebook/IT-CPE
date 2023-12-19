@@ -16,7 +16,6 @@
 
 require 'pp'
 require 'erb'
-require 'inifile'
 require 'json'
 require_relative '../libraries/windows_chrome_settingv2'
 
