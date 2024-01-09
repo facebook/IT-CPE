@@ -61,7 +61,7 @@ load_current_value do |desired| # ~FC006
   end
 end
 
-action :create do # rubocop:disable Chef/Meta/NoRecursiveDirs # ~FB019
+action :create do
   chef_cache = Chef::Config[:file_cache_path]
   extra_loco = new_resource.extract_location.delete(':')
   zip_path = ::File.join(
@@ -69,11 +69,11 @@ action :create do # rubocop:disable Chef/Meta/NoRecursiveDirs # ~FB019
   )
 
   return unless node['cpe_remote']['server_accessible']
-  converge_if_changed do # rubocop:disable Chef/Meta/NoRecursiveDirs # ~FB019
+  converge_if_changed do
     base_filename = ::File.basename(zip_path)
     # @lint-ignore FBCHEFFoodcritic
-    directory ::File.dirname(zip_path) do # rubocop:disable Chef/Meta/RequireOwnerGroupMode, Chef/Meta/NoRecursiveDirs # ~FB019 ~FB024
-      recursive true
+    directory ::File.dirname(zip_path) do # rubocop:disable Chef/Meta/RequireOwnerGroupMode
+      recursive true # rubocop: disable Chef/Meta/NoRecursiveDirs
     end
 
     if node.windows?
@@ -140,9 +140,9 @@ action :create do # rubocop:disable Chef/Meta/NoRecursiveDirs # ~FB019
     end
 
     # @lint-ignore FBCHEFFoodcritic
-    directory new_resource.extract_location do # rubocop:disable Chef/Meta/NoRecursiveDirs # ~FB019
+    directory new_resource.extract_location do
       not_if { node.windows? }
-      recursive true
+      recursive true # rubocop:disable Chef/Meta/NoRecursiveDirs
       mode new_resource.mode
       owner new_resource.owner
       group new_resource.group
