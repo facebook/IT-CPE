@@ -27,6 +27,7 @@ action :update do
     'debian' => 'dconf-cli',
     :default => 'dconf',
   )
+  # rubocop:disable Chef/Meta/CPEPackageResource
   package dconf_cli_pkg do
     action :upgrade
   end
@@ -96,7 +97,7 @@ action :update do
     end
 
     # Generate locks file
-    template ::File.join(dconf_db_dir, 'locks', comp) do # ~FB031
+    template ::File.join(dconf_db_dir, 'locks', comp) do
       source 'dconf-generic-locks.erb'
       owner 'root'
       group 'root'

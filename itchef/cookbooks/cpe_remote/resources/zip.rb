@@ -139,7 +139,6 @@ action :create do
       action :nothing
     end
 
-    # @lint-ignore FBCHEFFoodcritic
     directory new_resource.extract_location do
       not_if { node.windows? }
       recursive true # rubocop:disable Chef/Meta/NoRecursiveDirs

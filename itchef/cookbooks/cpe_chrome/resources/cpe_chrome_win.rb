@@ -38,7 +38,7 @@ action :config do
   policy_settings = gen_reg_file_settings(
     doomed_policies, reg_settings
   )
-  template reg_file_path do # ~FB031
+  template reg_file_path do
     source 'chrome_Settings.reg.erb'
     variables(:policies => policy_settings)
     rights :read, 'Everyone', :applies_to_children => true
