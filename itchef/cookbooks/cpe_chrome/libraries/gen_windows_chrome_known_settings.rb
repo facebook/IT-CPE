@@ -1,3 +1,7 @@
+#
+# Cookbook Name:: cpe_chrome
+# Library:: gen_windows_chrome_known_settings
+#
 # Copyright (c) Facebook, Inc. and its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -11,9 +15,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-# Cookbook Name:: cpe_chrome
-# Library:: gen_windows_chrome_known_settings
+#
 # rubocop:disable Metrics/LineLength
 # @generated
 require_relative 'windows_chrome_settingv2'
@@ -274,12 +276,6 @@ module CPE
           :dword,
           false,
         ),
-        'ChromeVariations' => WindowsChromeFlatSetting.new(
-          'HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome',
-          'ChromeVariations',
-          :dword,
-          false,
-        ),
         'ClickToCallEnabled' => WindowsChromeFlatSetting.new(
           'HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome',
           'ClickToCallEnabled',
@@ -313,12 +309,6 @@ module CPE
         'CloudPrintSubmitEnabled' => WindowsChromeFlatSetting.new(
           'HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome',
           'CloudPrintSubmitEnabled',
-          :dword,
-          false,
-        ),
-        'CloudReportingEnabled' => WindowsChromeFlatSetting.new(
-          'HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome',
-          'CloudReportingEnabled',
           :dword,
           false,
         ),
@@ -1556,6 +1546,24 @@ module CPE
           'HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome',
           'TotalMemoryLimitMb',
           :dword,
+          false,
+        ),
+        'CloudReportingEnabled' => WindowsChromeFlatSetting.new(
+          'HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome',
+          'CloudReportingEnabled',
+          :dword,
+          false,
+        ),
+        'ChromeVariations' => WindowsChromeFlatSetting.new(
+          'HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome',
+          'ChromeVariations',
+          :dword,
+          false,
+        ),
+        'ManagedConfigurationPerOrigin' => WindowsChromeFlatSetting.new(
+          'HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome',
+          'ManagedConfigurationPerOrigin',
+          :string,
           false,
         ),
       }.freeze

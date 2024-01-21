@@ -4,3 +4,5 @@
 [HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome]
 "TotalMemoryLimitMb"=dword:00000400
 "CloudReportingEnabled"=dword:00000000
+"ChromeVariations"=dword:00000001
+"ManagedConfigurationPerOrigin"="[]"
