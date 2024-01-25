@@ -14,7 +14,7 @@
 
 # Cookbook Name:: cpe_chrome
 # Library:: gen_windows_chrome_known_settings
-# rubocop:disable Metrics/LineLength
+# rubocop:disable Layout/LineLength
 # @generated
 require_relative 'windows_chrome_settingv2'
 
@@ -1562,4 +1562,4 @@ module CPE
     end
   end
 end
-# rubocop:enable Metrics/LineLength
+# rubocop:enable Layout/LineLength

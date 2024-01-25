@@ -19,7 +19,7 @@ resource_name :cpe_windows_update_for_business
 provides :cpe_windows_update_for_business
 default_action :config
 
-# rubocop:disable Metrics/LineLength
+# rubocop:disable Layout/LineLength
 property :enabled,
          [TrueClass, FalseClass, NilClass],
          :default => lazy {
@@ -421,4 +421,4 @@ action :config do
     end
   end
 end
-# rubocop:enable Metrics/LineLength
+# rubocop:enable Layout/LineLength

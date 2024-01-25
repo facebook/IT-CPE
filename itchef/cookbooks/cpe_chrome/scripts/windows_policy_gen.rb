@@ -78,7 +78,7 @@ template = <<-'EOF'
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# rubocop:disable Metrics/LineLength
+# rubocop:disable Layout/LineLength
 # @generated
 require_relative 'windows_chrome_settingv2'
 
@@ -93,7 +93,7 @@ module CPE
     end
   end
 end
-# rubocop:enable Metrics/LineLength
+# rubocop:enable Layout/LineLength
 EOF
 
 IO.write(
