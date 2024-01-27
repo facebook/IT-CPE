@@ -39,7 +39,7 @@ action_class do
   include CPE::Remote
 end
 
-load_current_value do |desired| # ~FC006
+load_current_value do |desired| # rubocop:disable Chef/Correctness/ServiceResource
   chef_cache = Chef::Config[:file_cache_path]
   extra_loco = extract_location.delete(':')
   zip_path = ::File.join(chef_cache, 'remote_zip', extra_loco, zip_name)

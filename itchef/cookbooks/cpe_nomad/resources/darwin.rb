@@ -1,4 +1,4 @@
-# ~FC074
+# rubocop:disable Chef/Modernize/DefaultActionFromInitialize
 # Cookbook Name:: cpe_nomad
 # Resources:: darwin
 #

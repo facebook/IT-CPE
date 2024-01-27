@@ -129,7 +129,7 @@ action :config do
         "#{prefix}\\Google\\Chrome",
         "#{prefix}\\Google\\Chrome\\Application",
       ].each do |dir|
-        directory dir do # rubocop:disable Chef/Meta/RequireOwnerGroupMode # ~FB024
+        directory dir do # rubocop:disable Chef/Meta/RequireOwnerGroupMode
           rights :read, 'Everyone', :applies_to_children => true
           rights :read_execute, 'Users', :applies_to_children => true
           rights :full_control, ['Administrators', 'SYSTEM'],
@@ -138,7 +138,7 @@ action :config do
         end
       end
 
-      file "create-#{pref_path}" do # rubocop:disable Chef/Meta/RequireOwnerGroupMode # ~FB023
+      file "create-#{pref_path}" do # rubocop:disable Chef/Meta/RequireOwnerGroupMode
         not_if do
           node['cpe_chrome']['mp']['FileContents'].
             to_hash.

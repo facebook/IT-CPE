@@ -44,7 +44,7 @@ action_class do
   include CPE::Remote
 end
 
-load_current_value do |desired| # ~FC006
+load_current_value do |desired| # rubocop:disable Chef/Correctness/ServiceResource
   path = desired.path
   if ::File.exist?(path)
     f_stat = ::File.stat(path)
