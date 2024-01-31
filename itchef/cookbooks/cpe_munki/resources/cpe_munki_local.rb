@@ -44,7 +44,7 @@ action :run do
   @catalog_items = parse_items_in_catalogs
 
   local_manifest = node['cpe_munki']['preferences']['LocalOnlyManifest']
-  file "/Library/Managed Installs/manifests/#{local_manifest}" do # ~FC005
+  file "/Library/Managed Installs/manifests/#{local_manifest}" do
     owner 'root'
     group 'wheel'
     mode '644'

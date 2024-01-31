@@ -73,7 +73,7 @@ action :install do
   node['cpe_munki']['munki_version_to_install'].to_h.each do |pkg, opts|
     package_version = opts['version']
     package_name = "munkitools_#{pkg}-#{package_version}"
-    cpe_remote_pkg "munkitools_#{pkg}" do # ~FC037
+    cpe_remote_pkg "munkitools_#{pkg}" do
       app 'munkitools'
       pkg_name package_name
       pkg_url opts['url'] if opts['url']
