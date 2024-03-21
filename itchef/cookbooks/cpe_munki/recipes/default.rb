@@ -21,3 +21,12 @@ cpe_munki_install 'Install Munki'
 cpe_munki_local 'Manage Local Munki Manifest'
 cpe_munki_defaults_config 'Manage Defaults Preferences'
 cpe_munki_config 'Manage Munki Settings'
+
+return unless node.gk?('cpe') # rubocop:disable Chef/Meta/AvoidGKUse
+cookbook_file 'munki_preflight.py' do
+  mode '0755'
+  owner node.root_user
+  group node.root_group
+  path '/usr/local/munki/preflight'
+  action :create
+end
