@@ -4,6 +4,7 @@
 """Munki preflight to configure Munki run settings."""
 
 import os
+import plistlib
 import subprocess
 import sys
 import time
@@ -54,14 +55,12 @@ def check_munki_pause() -> None:
 
 def get_airport_info() -> str:
     """Get the SSID of the connected WiFi network."""
-    cmd = [
-        "/System/Library/PrivateFrameworks/Apple80211.framework/Versions/A/Resources/airport",  # NOQA
-        "-I",
-    ]
+    cmd = ["/usr/sbin/ioreg", "-r", "-k", "IO80211CountryCode", "-d", "1", "-a"]
     proc = subprocess.run(cmd, stdout=subprocess.PIPE)
-    output = proc.stdout.decode("utf-8").split("\n")
-    ssid_line: str = list(filter(lambda x: x.strip().startswith("SSID:"), output))
-    return ssid_line[0].replace("   SSID:", "").strip()
+    output = proc.stdout
+    plist_output = plistlib.loads(output)[0]
+    ssid = plist_output.get("IO80211SSID", "")
+    return ssid
 
 
 def exit_if_on_wifi_shuttle() -> None:
