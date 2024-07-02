@@ -43,7 +43,7 @@ action :update do
 
   yum_repository 'CentOS-BaseOS' do
     description "CentOS-#{release} - Base"
-    mirrorlist 'http://mirrorlist.centos.org/' +
+    mirrorlist 'http://vault.centos.org/' +
       "?release=#{release}&arch=$basearch&repo=BaseOS"
     fastestmirror_enabled true
     gpgkey 'file:///etc/pki/rpm-gpg/RPM-GPG-KEY-centosofficial'
