@@ -34,8 +34,8 @@ action :update do
 
   cookbook_file '/etc/pki/rpm-gpg/RPM-GPG-KEY-centosofficial' do
     source 'centos_kernel/RPM-GPG-KEY-centosofficial'
-    owner 'root'
-    group 'root'
+    owner node.root_user
+    group node.root_group
     mode '0644'
   end
 
