@@ -34,8 +34,8 @@ action :update do
 
   cookbook_file '/etc/pki/rpm-gpg/RPM-GPG-KEY-centosofficial' do
     source 'centos_kernel/RPM-GPG-KEY-centosofficial'
-    owner 'root'
-    group 'root'
+    owner node.root_user
+    group node.root_group
     mode '0644'
   end
 
@@ -43,8 +43,8 @@ action :update do
 
   yum_repository 'CentOS-BaseOS' do
     description "CentOS-#{release} - Base"
-    mirrorlist 'http://mirrorlist.centos.org/' +
-      "?release=#{release}&arch=$basearch&repo=BaseOS"
+    baseurl 'http://vault.centos.org/' +
+      "#{release}/BaseOS/$basearch/os"
     fastestmirror_enabled true
     gpgkey 'file:///etc/pki/rpm-gpg/RPM-GPG-KEY-centosofficial'
     includepkgs 'kernel*,kexec-tools'
