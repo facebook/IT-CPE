@@ -30,6 +30,7 @@ action_class do
   def install_repos
     return unless node.linux?
     return unless node['cpe_chrome']['manage_repo']
+    return if node.fogvm?
 
     yum_repository 'google-chrome' do
       only_if { node.fedora? || node.centos? }
@@ -221,14 +222,14 @@ action_class do
     else
       directory '/Library/Google' do
         mode '0755'
-        owner 'root'
+        owner node.root_user
         group 'wheel'
         action :create
       end
       # Create the Master Preferences file
       file master_path do
         mode '0644'
-        owner 'root'
+        owner node.root_user
         group 'wheel'
         action :create
         content Chef::JSONCompat.to_json_pretty(mprefs)
