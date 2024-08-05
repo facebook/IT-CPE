@@ -16,16 +16,21 @@
 module CPE
   module Remote
     def gen_url(path, file)
-      http = node['cpe_remote']['http']
+      http = ::Chef.node['cpe_remote']['http']
+
       uri = http ? 'http' : 'https'
-      url = "#{uri}://#{node['cpe_remote']['base_url']}/#{path}/#{file}"
-      if defined?(CPE::Distro)
-        cdn_url = CPE::Distro.gen_url_from_api(path, file)
-        unless cdn_url.nil?
-          url = cdn_url
-        end
+      url = "#{uri}://#{::Chef.node['cpe_remote']['base_url']}/#{path}/#{file}"
+      if ::Chef.node['cpe_remote']['force_cpe_distro']
+
+        url = CPE::Distro.gen_url_from_api(path, file)
       end
       Chef::Log.info("Source URL: #{url}")
+      if url.include?('cpespace.thefacebook.com')
+        Chef::Log.warn(
+          '[cpe_remote] cpespace.thefacebook.com is being deprecated. Use another source instead',
+
+        )
+      end
       url
     end
 

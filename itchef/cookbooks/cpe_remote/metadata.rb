@@ -12,3 +12,4 @@ supports 'windows'
 
 depends 'cpe_helpers'
 depends 'cpe_logger'
+depends 'cpe_utils'

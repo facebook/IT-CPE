@@ -20,4 +20,5 @@ default['cpe_remote'] = {
   'base_url' => 'MY DISTRO SERVER/chef',
   'server_accessible' => true,
   'additional_headers' => {},
+  'force_cpe_distro' => false,
 }
