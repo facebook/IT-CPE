@@ -4,7 +4,6 @@
 """Munki preflight to configure Munki run settings."""
 
 import os
-import plistlib
 import subprocess
 import sys
 import time
@@ -53,32 +52,10 @@ def check_munki_pause() -> None:
                 print(f"Unable to clear pause receipt: {e}")
 
 
-def get_airport_info() -> str:
-    """Get the SSID of the connected WiFi network."""
-    cmd = ["/usr/sbin/ioreg", "-r", "-k", "IO80211CountryCode", "-d", "1", "-a"]
-    proc = subprocess.run(cmd, stdout=subprocess.PIPE)
-    output = proc.stdout
-    plist_output = plistlib.loads(output)[0]
-    ssid = plist_output.get("IO80211SSID", "")
-    return ssid
-
-
-def exit_if_on_wifi_shuttle() -> None:
-    wireless_ssid = get_airport_info()
-    if wireless_ssid == "fbshuttle" or wireless_ssid == 'RIDEwifi':
-        print("MSC will not run on shuttle wifi.")
-        sys.exit(1)
-
-
 def main() -> None:
     print("Gathering run data...")
     # Verify munki pause
     check_munki_pause()
-
-    runtype: str = sys.argv[1]
-    if runtype == "auto":
-        exit_if_on_wifi_shuttle()
-
     print("Preflight completed successfully.")
 
 
