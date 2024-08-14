@@ -11,6 +11,7 @@ from pathlib import Path
 
 MUNKI_PAUSE_TRIGGER = "/Users/Shared/.pause_munki"
 MUNKI_PAUSE_RECEIPT = "/Library/CPE/tags/.munki_has_been_paused"
+HEARTBEAT = "/opt/facebook/bin/heartbeat"
 
 
 def check_munki_pause() -> None:
@@ -52,8 +53,23 @@ def check_munki_pause() -> None:
                 print(f"Unable to clear pause receipt: {e}")
 
 
+def send_heartbeat() -> None:
+    cmd = [
+        HEARTBEAT,
+        "--tag",
+        "munki_runs",
+        "-token_file",
+        "/Library/CPE/var/heartbeat_token.txt",
+        "&>/dev/null",
+    ]
+    proc = subprocess.run(cmd, stdout=subprocess.PIPE)
+
+
 def main() -> None:
+
     print("Gathering run data...")
+    if os.path.exists(HEARTBEAT):
+        send_heartbeat()
     # Verify munki pause
     check_munki_pause()
     print("Preflight completed successfully.")
