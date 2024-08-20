@@ -25,7 +25,7 @@ module CPE
         url = CPE::Distro.gen_url_from_api(path, file)
       end
       Chef::Log.info("Source URL: #{url}")
-      if url.include?('cpespace.thefacebook.com')
+      if url.to_s.include?('cpespace.thefacebook.com')
         Chef::Log.warn(
           '[cpe_remote] cpespace.thefacebook.com is being deprecated. Use another source instead',
 
