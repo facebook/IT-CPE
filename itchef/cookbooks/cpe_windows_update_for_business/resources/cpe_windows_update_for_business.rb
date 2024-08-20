@@ -61,22 +61,12 @@ property :defer_feature_updates_period_in_days,
 
 property :pause_quality_updates_start_time,
          [String, NilClass],
-         :callbacks => {
-           'is not in yyyy-mm-dd format' => lambda { |v|
-             DateTime.parse(v).strftime('%Y-%m-%d') == v
-           },
-         },
          :default => lazy {
                        node['cpe_windows_update_for_business']['pause_quality_updates_start_time']
                      }
 
 property :pause_feature_updates_start_time,
          [String, NilClass],
-         :callbacks => {
-           'is not in yyyy-mm-dd format' => lambda { |v|
-             DateTime.parse(v).strftime('%Y-%m-%d') == v
-           },
-         },
          :default => lazy {
                        node['cpe_windows_update_for_business']['pause_feature_updates_start_time']
                      }
