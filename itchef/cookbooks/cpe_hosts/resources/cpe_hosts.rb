@@ -17,6 +17,7 @@
 
 resource_name :cpe_hosts
 provides :cpe_hosts
+unified_mode(false) if Chef::VERSION >= 18
 default_action :run
 
 action :run do

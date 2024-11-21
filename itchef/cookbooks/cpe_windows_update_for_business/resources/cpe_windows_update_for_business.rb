@@ -17,6 +17,7 @@
 
 resource_name :cpe_windows_update_for_business
 provides :cpe_windows_update_for_business
+unified_mode(false) if Chef::VERSION >= 18
 default_action :config
 
 # rubocop:disable Layout/LineLength

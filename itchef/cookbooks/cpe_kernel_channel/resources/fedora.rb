@@ -17,6 +17,7 @@
 
 resource_name :cpe_kernel_channel_fedora
 provides :cpe_kernel_channel, :platform => 'fedora'
+unified_mode(false) if Chef::VERSION >= 18
 default_action :update
 
 action :update do

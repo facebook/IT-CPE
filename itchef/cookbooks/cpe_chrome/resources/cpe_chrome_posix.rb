@@ -17,6 +17,7 @@
 
 resource_name :cpe_chrome_posix
 provides :cpe_chrome, :os => ['darwin', 'linux']
+unified_mode(false) if Chef::VERSION >= 18
 default_action :config
 
 action :config do

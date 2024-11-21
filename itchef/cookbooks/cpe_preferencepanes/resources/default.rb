@@ -17,6 +17,7 @@
 
 resource_name :cpe_preferencepanes
 provides :cpe_preferencepanes, :os => 'darwin'
+unified_mode(false) if Chef::VERSION >= 18
 default_action :config
 
 # rubocop:disable Metrics/BlockLength

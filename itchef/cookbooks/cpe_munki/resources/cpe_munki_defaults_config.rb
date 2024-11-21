@@ -16,6 +16,7 @@
 # Resource:: cpe_munki_defaults_config
 
 provides :cpe_munki_defaults_config, :os => 'darwin'
+unified_mode(false) if Chef::VERSION >= 18
 default_action :config
 
 action :config do

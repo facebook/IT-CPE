@@ -20,6 +20,7 @@ resource_name :cpe_remote_pkg
 default_action :install
 
 provides :cpe_remote_pkg, :os => 'darwin'
+unified_mode(false) if Chef::VERSION >= 18
 property :allow_downgrade, [TrueClass, FalseClass], :default => true
 property :app, String, :name_property => true
 property :checksum, String

@@ -17,6 +17,7 @@
 
 resource_name :cpe_pathsd_linux
 provides :cpe_pathsd, :os => 'linux'
+unified_mode(false) if Chef::VERSION >= 18
 default_action :manage
 
 action :manage do

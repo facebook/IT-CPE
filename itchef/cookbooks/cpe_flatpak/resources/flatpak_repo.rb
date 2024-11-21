@@ -18,6 +18,7 @@
 
 resource_name :cpe_flatpak_repo
 provides :cpe_flatpak_repo, :os => 'linux'
+unified_mode(false) if Chef::VERSION >= 18
 default_action :install
 property :repo_name, String
 property :rfp, String, :name_property => true

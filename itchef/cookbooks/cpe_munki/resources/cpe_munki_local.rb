@@ -20,6 +20,7 @@ require 'json'
 
 resource_name :cpe_munki_local
 provides :cpe_munki_local, :os => 'darwin'
+unified_mode(false) if Chef::VERSION >= 18
 default_action :run
 
 action :run do

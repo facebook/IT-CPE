@@ -17,6 +17,7 @@
 
 resource_name :cpe_munki_install
 provides :cpe_munki_install, :os => 'darwin'
+unified_mode(false) if Chef::VERSION >= 18
 default_action :install
 
 action_class do

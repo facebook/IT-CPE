@@ -17,6 +17,7 @@
 
 resource_name :cpe_gnome_software
 provides :cpe_gnome_software
+unified_mode(false) if Chef::VERSION >= 18
 default_action :manage
 
 action :manage do

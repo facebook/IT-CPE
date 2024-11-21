@@ -18,6 +18,7 @@
 resource_name :cpe_win_telemetry
 default_action :config
 provides :cpe_win_telemetry, :os => 'windows'
+unified_mode(false) if Chef::VERSION >= 18
 
 action :config do
   return unless node.windows? && node.os_at_least?('10.0.15063')

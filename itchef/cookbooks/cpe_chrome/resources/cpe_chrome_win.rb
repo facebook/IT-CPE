@@ -17,6 +17,7 @@
 
 resource_name :cpe_chrome_win
 provides :cpe_chrome, :os => 'windows'
+unified_mode(false) if Chef::VERSION >= 18
 default_action :config
 
 action :config do

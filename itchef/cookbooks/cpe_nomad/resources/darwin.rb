@@ -19,6 +19,7 @@
 
 resource_name :cpe_nomad_darwin
 provides :cpe_nomad_darwin, :os => 'darwin'
+unified_mode(false) if Chef::VERSION >= 18
 default_action :manage
 
 action :manage do

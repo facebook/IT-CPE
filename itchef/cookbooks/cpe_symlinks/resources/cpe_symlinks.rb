@@ -17,6 +17,7 @@
 
 resource_name :cpe_symlinks
 provides :cpe_symlinks
+unified_mode(false) if Chef::VERSION >= 18
 default_action :create
 
 # rubocop:disable Metrics/BlockLength

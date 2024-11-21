@@ -17,6 +17,7 @@
 
 resource_name :cpe_dconf
 provides :cpe_dconf, :os => 'linux'
+unified_mode(false) if Chef::VERSION >= 18
 default_action :update
 
 action :update do

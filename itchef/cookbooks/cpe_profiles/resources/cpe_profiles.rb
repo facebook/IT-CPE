@@ -17,6 +17,7 @@
 
 resource_name :cpe_profiles
 provides :cpe_profiles, :os => 'darwin'
+unified_mode(false) if Chef::VERSION >= 18
 default_action :run
 
 action :run do

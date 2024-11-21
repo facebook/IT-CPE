@@ -18,6 +18,7 @@
 
 resource_name :cpe_flatpak_linux
 provides :cpe_flatpak, :os => 'linux'
+unified_mode(false) if Chef::VERSION >= 18
 default_action :manage
 property :fp, String, :name_property => true
 

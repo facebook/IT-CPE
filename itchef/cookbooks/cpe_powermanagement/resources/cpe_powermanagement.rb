@@ -18,6 +18,7 @@
 
 resource_name :cpe_powermanagement
 provides :cpe_powermanagement, :os => 'darwin'
+unified_mode(false) if Chef::VERSION >= 18
 default_action :config
 
 action :config do

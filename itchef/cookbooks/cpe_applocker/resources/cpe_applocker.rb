@@ -20,6 +20,7 @@
 
 resource_name :cpe_applocker
 provides :cpe_applocker, :os => 'windows'
+unified_mode(false) if Chef::VERSION >= 18
 default_action :configure
 property :applocker_rules, Hash
 

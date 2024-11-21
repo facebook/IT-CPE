@@ -19,6 +19,7 @@
 resource_name :cpe_remote_file
 default_action :create
 provides :cpe_remote_file
+unified_mode(false) if Chef::VERSION >= 18
 
 property :folder_name, String, :name_property => true
 # see https://github.com/chef/chef/blob/ +
