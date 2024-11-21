@@ -224,7 +224,7 @@ module CPE
     end
 
     def self.windows?
-      RUBY_PLATFORM =~ /mswin|mingw32|windows/
+      RUBY_PLATFORM =~ /mswin|mingw|windows/
     end
 
     def self.logged_on_user_query
