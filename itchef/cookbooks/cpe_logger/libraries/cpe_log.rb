@@ -18,7 +18,7 @@ module CPE
     def self.log_path
       unix_log = '/var/log/cpe_logger.log'
       win_log = 'C:\Windows\cpe\logs\cpe_logger.log'
-      RUBY_PLATFORM.include?('w32') ? win_log : unix_log
+      RUBY_PLATFORM.include?('mingw') ? win_log : unix_log
     end
 
     # rubocop:disable Metrics/ParameterLists
