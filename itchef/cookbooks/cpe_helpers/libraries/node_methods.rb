@@ -35,7 +35,7 @@ class Chef
     end
 
     def dmi_ram_total
-      CPE::Helpers.dmi_ram_total(node)
+      CPE::Helpers.dmi_ram_total(self)
     end
 
     def os_at_least?(version)
@@ -44,7 +44,7 @@ class Chef
         # sufficient version
         return true
       end
-      Gem::Version.new(node['platform_version']) >= Gem::Version.new(version)
+      Gem::Version.new(self['platform_version']) >= Gem::Version.new(version)
     end
 
     def os_at_most?(version)
@@ -53,7 +53,7 @@ class Chef
         # sufficient version
         return true
       end
-      Gem::Version.new(node['platform_version']) <= Gem::Version.new(version)
+      Gem::Version.new(self['platform_version']) <= Gem::Version.new(version)
     end
 
     def os_greater_than?(version)
@@ -62,7 +62,7 @@ class Chef
         # sufficient version
         return true
       end
-      Gem::Version.new(node['platform_version']) > Gem::Version.new(version)
+      Gem::Version.new(self['platform_version']) > Gem::Version.new(version)
     end
 
     def os_less_than?(version)
@@ -70,7 +70,7 @@ class Chef
         # Arch and debian/sid is a rolling release so it's always "latest"
         return false
       end
-      Gem::Version.new(node['platform_version']) < Gem::Version.new(version)
+      Gem::Version.new(self['platform_version']) < Gem::Version.new(version)
     end
 
     def console_user
