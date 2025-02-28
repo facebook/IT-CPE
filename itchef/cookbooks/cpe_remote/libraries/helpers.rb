@@ -21,14 +21,12 @@ module CPE
       uri = http ? 'http' : 'https'
       url = "#{uri}://#{::Chef.node['cpe_remote']['base_url']}/#{path}/#{file}"
       if ::Chef.node['cpe_remote']['force_cpe_distro']
-
         url = CPE::Distro.gen_url_from_api(path, file)
       end
       Chef::Log.info("Source URL: #{url}")
       if url.to_s.include?('cpespace.thefacebook.com')
         Chef::Log.warn(
           '[cpe_remote] cpespace.thefacebook.com is being deprecated. Use another source instead',
-
         )
       end
       url
