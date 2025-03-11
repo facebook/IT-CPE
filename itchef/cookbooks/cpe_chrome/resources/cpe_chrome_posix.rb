@@ -31,7 +31,6 @@ action_class do
   def install_repos
     return unless node.linux?
     return unless node['cpe_chrome']['manage_repo']
-    return if node.fogvm?
 
     yum_repository 'google-chrome' do
       only_if { node.fedora? || node.centos? }
@@ -60,7 +59,6 @@ action_class do
   def install_chrome
     return unless node.linux?
     return unless node['cpe_chrome']['install_package']
-    return if node.fogvm?
 
     package 'google-chrome-stable' do # rubocop:disable Chef/Meta/CPEPackageResource
       only_if do
