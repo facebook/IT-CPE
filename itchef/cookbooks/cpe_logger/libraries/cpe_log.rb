@@ -38,10 +38,12 @@ module CPE
       # Replace newlines to prevent null values written to scuba table
       msg = msg.to_s.tr("\n", ' ')
       Chef::Log.send(level, "#{type};#{action}#{actor}#{status} #{msg}")
+      # Large logs crash fluentbit, must be truncated
+      log = "#{Time.now}; type: #{type};#{action}#{status} msg: #{msg}"[0..32700] + ";\n"
       if Dir.exist?(File.dirname(log_path))
         ::File.write(
           log_path,
-          "#{Time.now}; type: #{type};#{action}#{status} msg: #{msg};\n",
+          log,
           :mode => 'a',
         )
       end
