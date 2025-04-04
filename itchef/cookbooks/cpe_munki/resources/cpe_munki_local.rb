@@ -101,6 +101,20 @@ def gen_plist
   optionals = validate_install_array(
     node['cpe_munki']['local']['optional_installs'],
   )
+
+  # Check for common elements in installs and uninstalls
+  common_elements = installs & uninstalls
+  if !common_elements.empty?
+    ::Chef::Log.warn(
+      "#{cookbook_name}: Found #{common_elements.size} items that are both
+      marked for install and uninstall: #{common_elements.join(', ')}. Common elements removed from installs
+      as uninstalls take precedence.",
+    )
+  end
+
+  # Remove elements from installs that are present in uninstalls
+  installs -= uninstalls
+
   plist_hash = {
     'managed_installs' => installs,
     'managed_uninstalls' => uninstalls,
