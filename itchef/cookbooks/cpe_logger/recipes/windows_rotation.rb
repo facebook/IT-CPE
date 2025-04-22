@@ -1,4 +1,4 @@
-# Copyright (c) Facebook, Inc. and its affiliates.
+# (c) Meta Platforms, Inc. and its affiliates. Confidential and proprietary.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,9 +13,13 @@
 # limitations under the License.
 #
 # Cookbook Name:: cpe_logger
-# Attributes:: default
+# Recipe:: windows_rotation
 
-default['cpe_logger'] = {
-  'enable' => false,
-  'enable_windows_rotation' => false,
-}
+return unless node.windows?
+
+win_log_rotate 'Rotate cpe_logger.log' do
+  log_path CPE::Log.log_path
+  max_backups 10
+  day_interval 1
+  only_if { node['cpe_logger']['enable_windows_rotation'] }
+end
