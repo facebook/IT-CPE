@@ -22,8 +22,7 @@ default_action :config
 action :config do
   return unless node['cpe_munki']['configure']
 
-  munki_prefs = node['cpe_munki'][
-    'defaults_preferences'].reject { |_k, v| v.nil? }
+  munki_prefs = node['cpe_munki']['defaults_preferences'].compact
 
   if munki_prefs.empty?
     Chef::Log.info("#{cookbook_name}: No defaults prefs found.")
@@ -32,10 +31,10 @@ action :config do
 
   munki_prefs.each do |pref, value|
     # Keys should not exist in both namespaces
-    if node['cpe_munki']['preferences'].key?(pref)
+    if !node['cpe_munki']['preferences'].fetch(pref, nil).nil?
       fail <<-REASON
         The preference #{pref} is configured both in
-        node['cpe_munki']['preferences' and
+        node['cpe_munki']['preferences]' and
         node['cpe_munki']['defaults_preferences']. Please choose
         one method to configure this preference
       REASON
