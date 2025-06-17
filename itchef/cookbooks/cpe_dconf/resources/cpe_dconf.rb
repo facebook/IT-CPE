@@ -42,8 +42,8 @@ action :update do
     /etc/dconf/db/cpe.d/locks
   }.each do |dir|
     directory dir do
-      owner 'root'
-      group 'root'
+      owner node.root_user
+      group node.root_group
       mode '0755'
     end
   end
@@ -51,8 +51,8 @@ action :update do
   # Install dconf user profile
   cookbook_file '/etc/dconf/profile/user' do
     source 'dconf-user-profile'
-    owner 'root'
-    group 'root'
+    owner node.root_user
+    group node.root_group
     mode '0644'
     notifies :run, 'execute[update dconf]', :delayed
   end
@@ -88,8 +88,8 @@ action :update do
     # Generate keys file
     template ::File.join(dconf_db_dir, comp) do
       source 'dconf-generic-keys.erb'
-      owner 'root'
-      group 'root'
+      owner node.root_user
+      group node.root_group
       mode '0644'
       notifies :run, 'execute[update dconf]', :delayed
       variables(
@@ -100,8 +100,8 @@ action :update do
     # Generate locks file
     template ::File.join(dconf_db_dir, 'locks', comp) do
       source 'dconf-generic-locks.erb'
-      owner 'root'
-      group 'root'
+      owner node.root_user
+      group node.root_group
       mode '0644'
       notifies :run, 'execute[update dconf]', :delayed
       variables(

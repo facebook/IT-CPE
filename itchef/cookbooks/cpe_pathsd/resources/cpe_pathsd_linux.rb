@@ -22,15 +22,15 @@ default_action :manage
 
 action :manage do
   directory '/etc/profile.d' do
-    owner 'root'
-    group 'root'
+    owner node.root_user
+    group node.root_group
     mode '0755'
   end
 
   template '/etc/profile.d/cpe_paths.sh' do
     source 'profile.d_paths.erb'
-    owner 'root'
-    group 'root'
+    owner node.root_user
+    group node.root_group
     mode '0644'
   end
 end

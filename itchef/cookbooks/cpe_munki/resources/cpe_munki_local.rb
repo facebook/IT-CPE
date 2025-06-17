@@ -46,7 +46,7 @@ action :run do
 
   local_manifest = node['cpe_munki']['preferences']['LocalOnlyManifest']
   file "/Library/Managed Installs/manifests/#{local_manifest}" do
-    owner 'root'
+    owner node.root_user
     group 'wheel'
     mode '644'
     content gen_plist
@@ -57,7 +57,7 @@ action :run do
     only_if do
       ::File.exist?('/Library/Managed Installs/manifests/SelfServeManifest')
     end
-    owner 'root'
+    owner node.root_user
     group 'wheel'
     mode '644'
     content gen_selfservice_plist
@@ -66,7 +66,7 @@ action :run do
   # This file is for context for users to know what's available for their machine
   pretty_json = JSON.pretty_generate(@catalog_items)
   file '/Library/Managed Installs/munki_catalog_items.json' do
-    owner 'root'
+    owner node.root_user
     group 'wheel'
     mode '644'
     content pretty_json.to_s

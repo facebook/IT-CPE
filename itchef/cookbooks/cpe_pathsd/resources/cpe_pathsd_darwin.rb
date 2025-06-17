@@ -22,14 +22,14 @@ default_action :manage
 
 action :manage do
   directory '/etc/paths.d/' do
-    owner 'root'
+    owner node.root_user
     group 'wheel'
     mode 0755
   end
 
   template '/etc/paths.d/cpe_pathsd' do
     source 'cpe_pathsd'
-    owner 'root'
+    owner node.root_user
     group 'wheel'
     mode 0644
   end

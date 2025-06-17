@@ -83,8 +83,8 @@ action :manage do
   cache_dir = "#{chef_cache}/cpe_flatpak"
   directory cache_dir do
     mode 0755
-    owner 'root'
-    group 'root'
+    owner node.root_user
+    group node.root_group
   end
 
   rem = node['cpe_flatpak']['remotes'].keys.sort
@@ -92,8 +92,8 @@ action :manage do
   file flatpak_remotes_receipt_path do
     content Chef::JSONCompat.to_json_pretty(rem)
     mode '644'
-    owner 'root'
-    group 'root'
+    owner node.root_user
+    group node.root_group
     action :create
   end
 
@@ -102,8 +102,8 @@ action :manage do
   file flatpak_packages_receipt_path do
     content Chef::JSONCompat.to_json_pretty(packages)
     mode '644'
-    owner 'root'
-    group 'root'
+    owner node.root_user
+    group node.root_group
     action :create
   end
 end
