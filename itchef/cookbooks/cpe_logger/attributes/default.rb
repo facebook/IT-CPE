@@ -17,5 +17,4 @@
 
 default['cpe_logger'] = {
   'enable' => false,
-  'enable_windows_rotation' => false,
 }
