@@ -1,0 +1,34 @@
+{
+  "name": "cpe_symlinks",
+  "description": "Manages symlinks on the machine",
+  "long_description": "cpe_symlinks Coobook\n====================\nManages symlinks on the machine\n\nRequirements\n------------\nmacOS, Linux\n\nAttributes\n----------\n* node['cpe_symlinks']\n\nUsage\n-----\nThis recipe manages symlinks.\n\nAdd any arbitrary symlinks and original paths as a key/value pair in a hash\ncontaining the desired directory in `node['cpe_symlinks']` to have them managed.\nAs long as the values are not nil and the file paths exist, this cookbook will\nmanage them.\n\n```\n# Add symlink to `/usr/local/bin`\n{\n  'chef-apply'  => '/opt/chef/bin/chef-apply',\n  'chef-client' => '/opt/chef/bin/chef-client',\n  'chef-shell'  => '/opt/chef/bin/chef-shell',\n  'chef-solo'   => '/opt/chef/bin/chef-solo',\n  'ohai'        => '/opt/chef/bin/ohai',\n  'knife'       => '/opt/chef/bin/knife',\n  'chefctl'     => '/opt/facebook/ops/scripts/chef/chefctl.sh',\n}.each { |k, v| node.default['cpe_symlinks']['/usr/local/bin'][k] = v }\n\n# Add symlink(s) to `/opt/foo/bin`\n{\n  'subl' => '/Applications/Sublime Text 3.app/something/sublime',\n}.each { |k, v| node.default['cpe_symlinks']['/opt/foo/bin'][k] = v }\n```\n",
+  "maintainer": "Facebook, Inc.",
+  "maintainer_email": "noreply@facebook.com",
+  "license": "Apache-2.0",
+  "platforms": {
+
+  },
+  "dependencies": {
+    "cpe_helpers": ">= 0.0.0"
+  },
+  "providing": {
+
+  },
+  "recipes": {
+
+  },
+  "version": "0.4.3",
+  "source_url": "",
+  "issues_url": "",
+  "privacy": false,
+  "chef_versions": [
+
+  ],
+  "ohai_versions": [
+
+  ],
+  "gems": [
+
+  ],
+  "eager_load_libraries": true
+}

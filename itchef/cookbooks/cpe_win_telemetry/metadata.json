@@ -1,0 +1,34 @@
+{
+  "name": "cpe_win_telemetry",
+  "description": "Installs/Configures cpe_win_telemetry",
+  "long_description": "cpe_win_telemetry Cookbook\n===================\nThis cookbook manages the telemetry settings on Windows machines. These settings\nspecify the amount and detail of data sent to Microsoft on a Windows node.\nMore information can be found here: https://docs.microsoft.com/en-us/windows/configuration/configure-windows-telemetry-in-your-organization\n\nAttributes\n----------\n* node['cpe_win_telemetry']['AllowTelemetry']\n\nUsage\n-----\nManages the telemetry settings on a Windows node\nnode['cpe_win_telemetry']['AllowTelemetry'].\n\nThe following values can be given to this attribute.\n-1 : disable telemetry completely by setting the telemetry level to '0' which\nis the minimum value MS allows.  Then disables two services which the telemetry\nservices relies on.  These are DiagTrack and dmwappushservice.\n\n0 : Security level. Security data only.\n1 : Basic level. Everything in 0 and basic system and quality data.\n2 : Enhanced level. Everything in 1 and enhanced insights and advanced\n     reliability data.\n3 : Full level. Everything in 2 and full diagnostics.\n\nFor example, to disable telemetry just set the attribute as follows:\n\n    node.default['cpe_win_telemetry'] = {\n      'AllowTelemetry' => -1,\n    }\n\nIf nothing is set, Microsoft defaults to level 3.\n",
+  "maintainer": "Facebook",
+  "maintainer_email": "noreply@facebook.com",
+  "license": "Apache-2.0",
+  "platforms": {
+
+  },
+  "dependencies": {
+    "cpe_helpers": ">= 0.0.0"
+  },
+  "providing": {
+
+  },
+  "recipes": {
+
+  },
+  "version": "0.1.0",
+  "source_url": "",
+  "issues_url": "",
+  "privacy": false,
+  "chef_versions": [
+
+  ],
+  "ohai_versions": [
+
+  ],
+  "gems": [
+
+  ],
+  "eager_load_libraries": true
+}

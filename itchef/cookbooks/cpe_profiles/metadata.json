@@ -1,0 +1,34 @@
+{
+  "name": "cpe_profiles",
+  "description": "Manages macOS configuration profiles via other cookbooks",
+  "long_description": "cpe_profiles Cookbook\n=====================\n\nThis cookbook facilitates using other cookbooks to manage macOS profiles in a\n\"modular\" way. This cookbook reads profile Hashes from its node attributes\nand then re-writes them back out to the node attributes of another cookbook with\nan identical API. It will also rewrite the profile identifiers of those\nprofiles to be that of the \"destination\" API cookbook. See Usage section for\nexamples.\n\nAttributes\n----------\n* node['cpe_profiles']\n* node['cpe_profiles']['prefix']\n* node['cpe_profiles']['default_cookbook']\n* node['cpe_profiles']['cookbook_map']\n\nUsage\n-----\n\nTo add a new config profile, in your recipe, add a key matching the\nprofile `PayloadIdentifier` with a value that contains the hash of the profile\nto `node.default['cpe_profiles']` (assume \"profile\" contains a fully-fleshed\nout profile with all requisite keys):\n\n```\nprefix = node['cpe_profiles']['prefix']\nprofile = {\n  # other keys in the profile here\n  'ProfileIdentifier' => \"#{prefix}.myprofile\",\n  # more keys\n}\nnode.default['cpe_profiles][\"#{prefix}.myprofile\"] = profile\n```\n\nThis cookbook's `default_cookbook` attribute is, by default, empty.\nThis means that you'll need to define which method you want to use.\n\n```\nnode.default['cpe_profiles']['default_cookbook'] = 'cpe_profiles_local'\n\nprefix = node['cpe_profiles_local']['prefix']\nprofile = {\n  # other keys in the profile here\n  'ProfileIdentifier' => \"#{prefix}.myprofile\",\n  # more keys\n}\nnode.default['cpe_profiles_local][\"#{prefix}.myprofile\"] = profile\n```\n\nThis allows us to, at run-time, swap out the value of `default_cookbook` to\ntarget another *different* cookbook that implements the same API but, say,\ninstalls profiles completely differently. Say, via MDM for example. This also\nmeans this cookbook should be run first before `cpe_profiles_local` in your\nrun list (and before any other cookbook you're intending to use).\n\nNote that the default `prefix` attribute is a *dummy* value that will\nbe dynamically replaced by the destination cookbook's prefix using a simple\nstring substitution in both the top-level profile Hash key and the\n`ProfileIdentifier` key in the contained profile Hash.\n\nThe `cookbook_map` attribute allows us to target specific profile identifiers\nto be mapped to a different cookbook than the `default_cookbook` attribute.\nThis allows a migration path to move specific profiles one-at-a-time rather than\nall at once with a single switchover via `default_cookbook`. Use it like this:\n\n```\nprefix = node['cpe_profiles']['prefix']\nnode.default['cpe_profiles']['cookbook_map'][\"#{prefix}.myprofile\"] = 'mdm_profiles'\n```\n\nThis would map `\"#{prefix}.myprofile\"` to use the `mdm_profiles` cookbook, for\nexample instead of being re-written to use the `default_cookbook`.\n",
+  "maintainer": "Facebook",
+  "maintainer_email": "noreply@facebook.com",
+  "license": "Apache-2.0",
+  "platforms": {
+    "mac_os_x": ">= 0.0.0"
+  },
+  "dependencies": {
+    "cpe_profiles_local": ">= 0.0.0"
+  },
+  "providing": {
+
+  },
+  "recipes": {
+
+  },
+  "version": "0.1.0",
+  "source_url": "",
+  "issues_url": "",
+  "privacy": false,
+  "chef_versions": [
+
+  ],
+  "ohai_versions": [
+
+  ],
+  "gems": [
+
+  ],
+  "eager_load_libraries": true
+}

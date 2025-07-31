@@ -1,0 +1,35 @@
+{
+  "name": "fb_bluetooth",
+  "description": "Manages Bluetooth settings / profile",
+  "long_description": "fb_bluetooth Cookbook\n=========================\nInstall a profile to manage Bluetooth settings. This should only apply to\nDashboards, Lobbies, Imaging servers, and Wayfinders.\n\nRequirements\n------------\nMac OS X\n\nAttributes\n----------\n* node['fb_bluetooth']\n* node['fb_bluetooth']['BluetoothAutoSeekKeyboard']\n* node['fb_bluetooth']['BluetoothAutoSeekPointingDevice']\n\nUsage\n-----\nThe profile will manage the `com.apple.Bluetooth` preference domain.\n\nThe profile's organization key defaults to `Facebook` unless\n`node['organization']` is configured in your company's custom init recipe. The\nprofile will also use whichever prefix is set in node['cpe_profiles']['prefix'],\nwhich defaults to `com.facebook.chef`\n\nThe profile delivers a payload of all keys in `node['fb_bluetooth']` that are\nnon-nil values.  The two provided keys\n`node['fb_bluetooth']['BluetoothAutoSeekKeyboard']` and\n`node['fb_bluetooth']['BluetoothAutoSeekPointingDevice']` are nil, so that no\nprofile is installed by default.\n\nYou can add any arbitrary keys to `node['fb_bluetooth']` to have them added to\nyour profile.  As long as the values are not nil and create a valid profile,\nthis cookbook will install and manage them.\n\nThe most common use case is for service machines.  Service devices like\ndashboards will want to suppress the automatic\n\"Search for Bluetooth mouse / keyboard\" prompt that comes up when no USB\nkeyboard is plugged in:\n\n```\n# Disable Bluetooth\nnode.default['fb_bluetooth']['BluetoothAutoSeekKeyboard'] = 0\nnode.default['fb_bluetooth']['BluetoothAutoSeekPointingDevice'] = 0\n```\n",
+  "maintainer": "Facebook",
+  "maintainer_email": "noreply@facebook.com",
+  "license": "Apache-2.0",
+  "platforms": {
+    "mac_os_x": ">= 0.0.0"
+  },
+  "dependencies": {
+    "fb_helpers": ">= 0.0.0",
+    "cpe_profiles": ">= 0.0.0"
+  },
+  "providing": {
+
+  },
+  "recipes": {
+
+  },
+  "version": "0.1.0",
+  "source_url": "",
+  "issues_url": "",
+  "privacy": false,
+  "chef_versions": [
+
+  ],
+  "ohai_versions": [
+
+  ],
+  "gems": [
+
+  ],
+  "eager_load_libraries": true
+}
