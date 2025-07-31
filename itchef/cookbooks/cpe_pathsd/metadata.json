@@ -1,0 +1,36 @@
+{
+  "name": "cpe_pathsd",
+  "description": "Installs/Configures cpe_pathsd",
+  "long_description": "Installs/Configures cpe_pathsd",
+  "maintainer": "Facebook",
+  "maintainer_email": "noreply@facebook.com",
+  "license": "Apache-2.0",
+  "platforms": {
+    "fedora": ">= 0.0.0",
+    "mac_os_x": ">= 0.0.0",
+    "ubuntu": ">= 0.0.0"
+  },
+  "dependencies": {
+    "cpe_helpers": ">= 0.0.0"
+  },
+  "providing": {
+
+  },
+  "recipes": {
+
+  },
+  "version": "0.1.0",
+  "source_url": "",
+  "issues_url": "",
+  "privacy": false,
+  "chef_versions": [
+
+  ],
+  "ohai_versions": [
+
+  ],
+  "gems": [
+
+  ],
+  "eager_load_libraries": true
+}

@@ -1,0 +1,34 @@
+{
+  "name": "cpe_kernel_channel",
+  "description": "Configures the repo used to deliver kernel packages",
+  "long_description": "cpe_kernel_channel Cookbook\n===========================\nThis cookbook configures the repository used to deliver kernel packages.\n\nRequirements\n------------\n* Fedora\n\nAttributes\n----------\n* node['cpe_kernel_channel']['enable']\n* node['cpe_kernel_channel']['kernel_version']\n* node['cpe_kernel_channel']['release']\n* node['cpe_kernel_channel']['repo']\n\nUsage\n-----\n\n* `enable`: boolean. Set to `true` to enable this cookbook\n* `kernel_version`: string. If set, will ensure this kernel is installed.\n   Can be either the version or the version and release e.g. '4.18.0'\n* `repo`: string. Currently either 'fedora' or 'centos'\n* `release`: string. e.g. '8-stream' to get the CentOS 8 stream,\n   or '8.1.1911' for a specific release. On Fedora this is ignored\n   if `repo` is set to 'fedora'.\n\nYou also might want to exclude the Fedora kernels from being available,\notherwise `dnf upgrade` will always install newer Fedora kernels so\neven though you can `dnf install` a CentOS kernel it will never get\nupgraded.\n\n### Examples\n\n#### Using the CentOS 8-Stream kernel\n\n```\nnode.default['cpe_kernel_channel'] = {\n  'enable' => true,\n  'release' => '8-stream',\n  'repo' => 'centos',\n}\n```\n\n#### Version locking to exclude Fedora kernels\n\nEither use our `cpe_package_versions` cookbook:\n\n```\nnode.default['cpe_package_versions']['enable'] = true\nnode.default['cpe_package_versions']['enable_locking'] = true\n\n%w{\n  kernel\n  kernel-core\n  kernel-devel\n  kernel-modules\n}.each do |pkg|\n  node.default['cpe_package_versions']['pkgs'][pkg] = '*-*.el8'\nend\n```\n\nOr configure `/etc/dnf/plugins/versionlock.list`, after installing via:\n\n`dnf install 'dnf-command(versionlock)'`\n",
+  "maintainer": "Facebook",
+  "maintainer_email": "noreply@facebook.com",
+  "license": "Apache-2.0",
+  "platforms": {
+
+  },
+  "dependencies": {
+    "fb_helpers": ">= 0.0.0"
+  },
+  "providing": {
+
+  },
+  "recipes": {
+
+  },
+  "version": "0.1.0",
+  "source_url": "https://github.com/facebook/IT-CPE/tree/master/itchef/",
+  "issues_url": "",
+  "privacy": false,
+  "chef_versions": [
+
+  ],
+  "ohai_versions": [
+
+  ],
+  "gems": [
+
+  ],
+  "eager_load_libraries": true
+}

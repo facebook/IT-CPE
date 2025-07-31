@@ -1,0 +1,38 @@
+{
+  "name": "cpe_hosts",
+  "description": "Manages the entries in the /etc/hosts file",
+  "long_description": "cpe_hosts Cookbook\n==================\nThis cookbook manages the /etc/hosts file.\n\nAttributes\n----------\n\n* node['cpe_hosts']['extra_entries']\n* node['cpe_hosts']['manage_by_line']\n\nUsage\n-----\n\n### cpe_hosts::default\n\n#### extra_entries\nA map of IP addresses to hostnames which will be added to /etc/hosts.\n\nWhen the default recipe is added to the run list it will add /etc/hosts entries\nbased on the contents of the `extra_entries` attribute.\n\nFor example, adding the following in some dependent cookbook:\n\n  node.default['cpe_hosts']['extra_entries']['123.4.5.6'] = ['myaddress.com']\n\nwill create an entry in /etc/hosts like:\n\n```\n# /etc/hosts\n...\n123.4.5.6 myaddress.com # Chef Managed\n```\n\n#### manage_by_line\nOption to manage entire file or by line.\n",
+  "maintainer": "Facebook",
+  "maintainer_email": "noreply@facebook.com",
+  "license": "Apache-2.0",
+  "platforms": {
+    "fedora": ">= 0.0.0",
+    "ubuntu": ">= 0.0.0",
+    "debian": ">= 0.0.0",
+    "mac_os_x": ">= 0.0.0",
+    "windows": ">= 0.0.0"
+  },
+  "dependencies": {
+    "cpe_helpers": ">= 0.0.0"
+  },
+  "providing": {
+
+  },
+  "recipes": {
+
+  },
+  "version": "0.2.0",
+  "source_url": "https://github.com/facebook/IT-CPE/tree/master/itchef/",
+  "issues_url": "",
+  "privacy": false,
+  "chef_versions": [
+
+  ],
+  "ohai_versions": [
+
+  ],
+  "gems": [
+
+  ],
+  "eager_load_libraries": true
+}

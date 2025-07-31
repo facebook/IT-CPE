@@ -1,0 +1,36 @@
+{
+  "name": "cpe_helpers",
+  "description": "Helper methods for Facebook IT-CPE open-source cookbooks",
+  "long_description": "cpe_helpers Cookbook\n====================\nNode helper methods for Facebook IT-CPE open-source cookbooks.\n\nRequirements\n------------\nThis cookbook requires that Facebook's `fb_helpers` cookbook (found [here](https://github.com/facebook/chef-cookbooks/tree/master/cookbooks/fb_helpers)) exists within your Chef repository.\n\nAttributes\n----------\n\nUsage\n-----\n### node methods\nSimply depend on this cookbook from your metadata.rb to get these methods in\nyour node.\n\n* `node.chef_greater_than?(v)`\n    Takes a string representing a version, and returns true if the Chef version\n    is strictly greater than that version\n\n* `node.chef_is?(v)`\n    Takes a string representing a version, and returns true if the Chef version\n    is exactly that version\n\n* `node.chef_less_than?(v)`\n    Takes a string representing a version, and returns true if the Chef version\n    is strictly less than that version\n\n* `node.os_at_least?(v)`\n    Takes a string representing a version, and returns true if the OS version\n    is equal, or greater than, that version\n\n* `node.os_at_most?(v)`\n    Takes a string representing a version, and returns true if the OS version\n    is equal, or less than, that version\n\n* `node.os_greater_than?(v)`\n    Takes a string representing a version, and returns true if the OS version\n    is strictly greater than that version\n\n* `node.os_less_than?(v)`\n    Takes a string representing a version, and returns true if the OS version\n    is strictly less than that version\n\n### CPE::Helpers\nThe following methods are available:\n",
+  "maintainer": "Facebook",
+  "maintainer_email": "noreply@facebook.com",
+  "license": "Apache-2.0",
+  "platforms": {
+    "fedora": ">= 0.0.0",
+    "mac_os_x": ">= 0.0.0",
+    "windows": ">= 0.0.0"
+  },
+  "dependencies": {
+    "fb_helpers": ">= 0.0.0"
+  },
+  "providing": {
+
+  },
+  "recipes": {
+
+  },
+  "version": "0.1.0",
+  "source_url": "https://github.com/facebook/IT-CPE/tree/master/itchef/",
+  "issues_url": "",
+  "privacy": false,
+  "chef_versions": [
+
+  ],
+  "ohai_versions": [
+
+  ],
+  "gems": [
+
+  ],
+  "eager_load_libraries": true
+}
