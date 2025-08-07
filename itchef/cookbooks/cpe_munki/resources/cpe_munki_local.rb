@@ -80,7 +80,7 @@ def validate_install_array(install_array)
   ret = []
   install_array.uniq.each do |item|
     item_no_ver = item.split('-')[0] # strip version component of item
-    if catalog_items.include?(item_no_ver)
+    if catalog_items.any? { |entry| entry == item_no_ver || entry == item }
       ret << item
     else
       ::Chef::Log.warn(
