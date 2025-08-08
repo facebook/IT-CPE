@@ -1,0 +1,55 @@
+{
+  "name": "cpe_init",
+  "description": "This is the very basic cookbook that starts it all.",
+  "long_description": "cpe_init cookbook\n=================\n\nDescription\n-----------\nThis is a sample - you almost certainly want to fork this and adjust it to taste.\nThe rest of the IT-CPE suite of cookbooks are designed to not be locally modified.\n\nRequirements\n------------\n\nUsage\n-----\nBefore you add a `include_recipe 'recipe'` statement be sure to add a\n`depends 'cookbook'` to the metadata.rb\n\nThis cookbook includes all of the opensource IT-CPE cookbooks. You may not be\nready to use them all, or you may want to include additional stuff, so adjust\nto taste.\n\nWe've gone ahead and included some extra `HERE:` comments on where we've put\nother cookbooks that are internal to give you a better idea of our full runlist.\nWe hope to be able to release more of these as time allows and where\nappropriate.\n\nThe general idea is that cookbooks are ordered least specific to most specific.\nThis allows a small core team to make APIs and defaults and then let individual\nservice owners' cookbooks at the end overwrite whatever they need to. This also\nensures that all things the service owner chooses not to bother with are setup\nto sane settings by the core group at your site.\n\nThe idea is that your runlists will include this first, then everything else.\nThis cookbook should be every \"core cookbook\" that provides APIs for everyone\nelse.\n\nIt's useful to think of things in a 3-pass system:\n\n* **Setup APIs** - This is what we do in attributes files. Create the structure\nin the node object for people to append to or modify.\n* **Use APIs** -  In recipes any cookbook can use those APIs by simply writing\nto the node object. The cookbooks in question can set things, but it can all be\noverwritten by \"owners\" later. This is where the ordering of our model is\ndifferent from other models - we start with the most generic stuff -\nthe cookbooks the core OS team writes that should be applicable in general to\nall machines unless someone has a more specific desire. Owners then can include\nother cookbooks that are more specific - maybe for a specific cluster, location,\ntype of service. Finally the last cookbooks should be the most specific ones for\nthat service or machine which gets the final say. Anytime someone removes a node\nassignment the next-most-specific setting will take precedent.\n\n* **Consume APIs** Everyone who uses any API is generally the cookbook that\nprovides that API, so APIs must be consumed only at runtime: `templates`,\n`ruby_blocks`, `providers`, etc.\n\nWe have provided an early recipe called `company_init.rb` in which you can set\nthe defaults for your organization for all settings CPE cookbooks provide.\nFor example, setting your organization and which `managed_installs` you want\nin your local munki manifests would be reasonable.\n\nThen, you can let others override them in their later cookbooks. Assuming\ncpe_init is the first thing in your runlist, this is basically the first thing,\nso any other cookbooks in your runlist will have time to overwrite them.\n\n### cpe_init::default\nThis is where we conditionally set which cookbook/recipe should be added to the\n`run_list`. We have some built in logic that will allow you to scope to the\nfollowing things:\n\n#### Based on platform\n* node.macos?\n* node.linux?\n\n#### Based on OS version\n* node.os_less_than?('10.11')\n* node.os_at_least?('10.10')\n\nApart from API cookbooks, this includes 3 recipes / cookbooks:\n\n* `cpe_init::company_init\n   see above\n* `cpe_user_customizations`\n   This is where all user-specific customizations should live. Generally\n   these recipes are used to change settings via API cookbooks.\n* `cpe_node_customizations`\n   This is where all node-specific customizations should live. Generally\n   these recipes are used to change settings via API cookbooks.\n\nContributing\n------------\n\n**DO NOT FORGET:** If you are calling an external cookbook Before you add an\n`include_recipe 'recipe'` statement be sure to add a `depends 'cookbook'` to the\nmetadata.rb\n",
+  "maintainer": "Facebook",
+  "maintainer_email": "noreply@facebook.com",
+  "license": "Apache-2.0",
+  "platforms": {
+
+  },
+  "dependencies": {
+    "cpe_helpers": ">= 0.0.0",
+    "cpe_user_customizations": ">= 0.0.0",
+    "cpe_node_customizations": ">= 0.0.0",
+    "fb_helpers": ">= 0.0.0",
+    "fb_launchd": ">= 0.0.0",
+    "cpe_applocker": ">= 0.0.0",
+    "cpe_dconf": ">= 0.0.0",
+    "cpe_deprecation_notifier": ">= 0.0.0",
+    "cpe_flatpak": ">= 0.0.0",
+    "cpe_gnome_software": ">= 0.0.0",
+    "cpe_logger": ">= 0.0.0",
+    "cpe_munki": ">= 0.0.0",
+    "cpe_nomad": ">= 0.0.0",
+    "cpe_pathsd": ">= 0.0.0",
+    "cpe_powermanagement": ">= 0.0.0",
+    "cpe_preferencepanes": ">= 0.0.0",
+    "cpe_profiles": ">= 0.0.0",
+    "cpe_remote": ">= 0.0.0",
+    "cpe_spotlight": ">= 0.0.0",
+    "cpe_symlinks": ">= 0.0.0",
+    "cpe_win_telemetry": ">= 0.0.0",
+    "cpe_chrome": ">= 0.0.0"
+  },
+  "providing": {
+
+  },
+  "recipes": {
+
+  },
+  "version": "0.1.0",
+  "source_url": "",
+  "issues_url": "",
+  "privacy": false,
+  "chef_versions": [
+
+  ],
+  "ohai_versions": [
+
+  ],
+  "gems": [
+
+  ],
+  "eager_load_libraries": true
+}

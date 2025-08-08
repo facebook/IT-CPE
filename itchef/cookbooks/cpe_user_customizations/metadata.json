@@ -1,0 +1,34 @@
+{
+  "name": "cpe_user_customizations",
+  "description": "This cookbook holds recipes each person creates for themselves.",
+  "long_description": "Description\n===========\nCookbook to add user customizations via API Cookbooks\n\nUsage\n-----\nAdd whichever values you want to change via API Cookbook\n\n",
+  "maintainer": "Facebook",
+  "maintainer_email": "noreply@facebook.com",
+  "license": "Apache-2.0",
+  "platforms": {
+
+  },
+  "dependencies": {
+    "cpe_helpers": ">= 0.0.0"
+  },
+  "providing": {
+
+  },
+  "recipes": {
+
+  },
+  "version": "0.0.1",
+  "source_url": "",
+  "issues_url": "",
+  "privacy": false,
+  "chef_versions": [
+
+  ],
+  "ohai_versions": [
+
+  ],
+  "gems": [
+
+  ],
+  "eager_load_libraries": true
+}
