@@ -15,6 +15,9 @@
 
 module CPE
   class Log
+    # Large messages to stdout can cause getchef to hang trying to parse stdout
+    # keep messages to less then 2000 for safety
+    MSG_MAX_LENGTH = 2000
     def self.log_path
       unix_log = '/var/log/cpe_logger.log'
       win_log = 'C:\Windows\cpe\logs\cpe_logger.log'
@@ -37,11 +40,16 @@ module CPE
       status = " status: #{status};" if status
       # Replace newlines to prevent null values written to scuba table
       msg = msg.to_s.tr("\n", ' ')
-      Chef::Log.send(level, "#{type};#{action}#{actor}#{status} #{msg}")
+      stdout_msg = msg
+      if stdout_msg.length > MSG_MAX_LENGTH
+        stdout_msg = stdout_msg[0...MSG_MAX_LENGTH] +
+          "(TRUNCATED AFTER #{MSG_MAX_LENGTH} CHARACTERS. FULL OUTPUT WRITTEN TO DISK)"
+      end
+      Chef::Log.send(level, "#{type};#{action}#{actor}#{status} #{stdout_msg}")
       # Large logs crash fluentbit, must be truncated
       log = "#{Time.now}; type: #{type};#{action}#{actor}#{status} msg: #{msg}"[0..32700] + ";\n"
       if Dir.exist?(File.dirname(log_path))
-        ::File.write(
+        ::File.write( # rubocop:disable Chef/Meta/NoFileWrites
           log_path,
           log,
           :mode => 'a',
@@ -95,14 +103,14 @@ module CPE
 
     # rubocop:disable Metrics/ParameterLists
     def self.if_else(
-        ifmsg,
-        elsemsg,
-        level: :info,
-        type: 'chef',
-        action: nil,
-        actor: nil,
-        ifstatus: 'success',
-        elsestatus: 'fail'
+      ifmsg,
+      elsemsg,
+      level: :info,
+      type: 'chef',
+      action: nil,
+      actor: nil,
+      ifstatus: 'success',
+      elsestatus: 'fail'
     )
       y = block_given? ? yield : nil
       msg = y ? ifmsg : elsemsg
