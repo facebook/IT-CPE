@@ -477,6 +477,7 @@ EOF
 
     def self.sevenzip_cmd
       [
+        'C:\Windows\System32\tar.exe',
         'C:\\ProgramData\\chocolatey\\tools\\7z.exe',
         'C:\\ProgramData\\chocolatey\\tools\\7za.exe',
         'C:\\ProgramData\\chocolatey\\lib\\chocolatey\\tools\\' +

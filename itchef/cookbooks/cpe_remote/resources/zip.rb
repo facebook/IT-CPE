@@ -101,7 +101,7 @@ action :create do
         only_if { ::File.exist?(zip_path) }
         only_if { ::Dir.exist?(new_resource.extract_location) }
         cwd new_resource.extract_location
-        code "#{zip_cmd} -y x #{zip_path}"
+        code zip_cmd == 'C:\Windows\System32\tar.exe' ? "#{zip_cmd} -x -f #{zip_path}" : "#{zip_cmd} -y x #{zip_path}"
         action :nothing
       end
     end
