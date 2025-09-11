@@ -29,8 +29,10 @@ action :config do
   end
 
   # Is this a portable or desktop?
-  model = node['hardware']['machine_model'].to_s
-  machine_type = model.downcase.include?('book') ? 'portable' : 'desktop'
+  machine_type = node['hardware'].any? do |k, v|
+    k.include?('machine_') && v.downcase.include?('book')
+  end ? 'portable' : 'desktop'
+
   # Set the basic identifier
   ident = "com.apple.EnergySaver.#{machine_type}"
 
