@@ -1,7 +1,7 @@
 {
   "name": "cpe_node_customizations",
   "description": "This cookbook holds recipes each person creates for themselves.",
-  "long_description": "Description\n===========\nCookbook to add node customizations via API Cookbooks\n\nUsage\n-----\nAdd whichever values you want to change via API Cookbook\n\n",
+  "long_description": "",
   "maintainer": "Facebook",
   "maintainer_email": "noreply@facebook.com",
   "license": "Apache-2.0",
