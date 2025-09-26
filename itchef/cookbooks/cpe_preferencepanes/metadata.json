@@ -1,7 +1,7 @@
 {
   "name": "cpe_preferencepanes",
   "description": "Installs/Configures cpe_preferencepanes",
-  "long_description": "cpe_preferencepanes Cookbook\n========================\nInstall a profile to manage access to preference panes. Suitable for preference\npanes without macos built-in authorization hooks.\n\nRequirements\n------------\n* macOS\n\nAttributes\n----------\n* node['cpe_preferencepanes']['DisabledPreferencePanes']\n* node['cpe_preferencepanes']['HiddenPreferencePanes']\n\nUsage\n-----\nThe profile will manage the `com.apple.systempreferences` preference domain.\n\nThe organization key defaults to `Facebook` unless `node['organization']` is\nconfigured in your company's custom init recipe. The profile will also use\nwhichever prefix is set in node['cpe_profiles']['prefix'], which defaults\nto `com.facebook.chef`\n\nExample usage;\n\n```\n# Disable Desktop & Screen Saver, Disable iCloud and Profiles panes.\nnode.default['cpe_preferencepanes']['DisabledPreferencePanes'] = [\n    'com.apple.preference.desktopscreeneffect',\n    'com.apple.preferences.icloud',\n    'com.apple.preferences.configurationprofiles',\n]\n\n# Hide Startup Disk pane.\nnode.default['cpe_preferencepanes']['HiddenPreferencePanes'] = [\n    'com.apple.preference.startupdisk',\n]\n```\n\nCFBundleIdentifiers are [documented on Apple's developer site](https://developer.apple.com/documentation/devicemanagement/systempreferences).\n",
+  "long_description": "",
   "maintainer": "Facebook",
   "maintainer_email": "noreply@facebook.com",
   "license": "Apache-2.0",
