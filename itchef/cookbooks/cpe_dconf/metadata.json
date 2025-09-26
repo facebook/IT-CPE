@@ -1,7 +1,7 @@
 {
   "name": "cpe_dconf",
   "description": "Manage dconf settings",
-  "long_description": "cpe_dconf Cookbook\n==================\nThis cookbook manages dconf configuration.\n\nRequirements\n------------\n* Linux (tested on Fedora, Ubuntu/Debian and Arch)\n\nAttributes\n----------\n* node['cpe_dconf']['settings']\n\nUsage\n-----\nEach component provides a name and a hash of keys to set. The hash is added to\n`node['cpe_dconf']['settings']`. In the dconf architecture, settings are\norganized into directories. The provided hash should follow this same structure;\nsee the examples for how to do this. Make sure not to have a leading slash in\nthe directory names.\n\nNote that you can specify key values in two ways: the value can be given as a\nhash that indicates the value and the lock status, or as a convenience, you can\ngive the value as a literal, and `'lock' => true` will be assumed.\n\n### Examples\n\n#### Screensaver example\n\n```\nnode['cpe_dconf']['settings']['screensaver'] = {\n  'org/gnome/desktop/screensaver' => {\n    'lock-enabled' => 'true',\n    'lock-delay' => {\n      'value' => 'uint32 0',\n      'lock' => false,\n    },\n  },\n  'org/gnome/desktop/session' => {\n    'idle-delay' => 'uint32 600'\n  }\n}\n```\n",
+  "long_description": "",
   "maintainer": "Facebook",
   "maintainer_email": "noreply@facebook.com",
   "license": "Apache-2.0",
