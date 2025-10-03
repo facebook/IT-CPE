@@ -52,10 +52,10 @@ action :config do
 
   powershell_script 'import reg file' do
     code <<-EOT
-     $process = Start-Process reg -NoNewWindow -ArgumentList "import #{reg_file_path}" -PassThru -Wait
-     Exit $process.ExitCode
+     Start-Process reg -NoNewWindow -ArgumentList "import #{reg_file_path}"
     EOT
-    only_if { verify_update_needed(policy_settings) }
+    # this optimizes powershell_script but requires Chef 18.4+
+    use_inline_powershell true if Chef::Version.new(Chef::VERSION) >= Chef::Version.new('18.4')
   end
 
   # This cookbook configures extension settings using the value
