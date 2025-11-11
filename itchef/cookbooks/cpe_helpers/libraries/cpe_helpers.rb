@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
+include Chef::Mixin::PowershellOut
 module CPE
   class Helpers
     LOGON_REG_KEY =
@@ -288,7 +288,8 @@ module CPE
     end
 
     def self.logged_on_user_sid
-      logged_on_user_registry['LastLoggedOnUserSID']
+      ps_cmd = "Get-LocalUser -Name \"#{logged_on_user_name}\" | Select-Object SID | % { $_.SID.Value }"
+      powershell_out(ps_cmd).stdout.strip
     end
 
     def self.ldap_lookup_script(username)
