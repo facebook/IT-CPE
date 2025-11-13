@@ -288,7 +288,7 @@ module CPE
     end
 
     def self.logged_on_user_sid
-      logged_on_user_registry['LastLoggedOnUserSID']
+      logged_on_user_registry['LastLoggedOnUserSID'] || logged_on_user_registry['SelectedUserSID']
     end
 
     def self.ldap_lookup_script(username)
