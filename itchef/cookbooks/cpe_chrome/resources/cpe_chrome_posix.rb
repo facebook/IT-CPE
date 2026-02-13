@@ -64,6 +64,9 @@ action_class do
       only_if do
         node.fedora? || node.centos? || node.debian_family?
       end
+      if node.rpm_installed?('google-chrome-stable')
+        ignore_failure true
+      end
       action :upgrade
     end
   end
