@@ -60,13 +60,35 @@ action_class do
     return unless node.linux?
     return unless node['cpe_chrome']['install_package']
 
+    Chef.event_handler do
+      on :resource_failed_retriable do |resource, _action, _count, exception|
+        if resource.to_s.include?('google-chrome-stable') &&
+          exception.to_s.include?('Public key is not installed')
+          Chef::Log.warn('[cpe_chrome]: Attempting to fix gpg key for chrome')
+
+          keys_pkgs = [
+            'gpg-pubkey-d38b4796-570c8cd3',
+            'gpg-pubkey-7fac5991-4615767f',
+          ]
+          keys_pkgs.each do |pkg|
+            res = shell_out(
+              "rpm -e #{pkg}",
+            )
+            if res.error?
+              Chef::Log.warn("[cpe_chrome]: Failed to remove #{pkg} with #{res.stderr}")
+            else
+              Chef::Log.warn("[cpe_chrome]: Removed #{pkg}")
+            end
+          end
+        end
+      end
+    end
+
     package 'google-chrome-stable' do # rubocop:disable Chef/Meta/CPEPackageResource
       only_if do
         node.fedora? || node.centos? || node.debian_family?
       end
-      if node.rpm_installed?('google-chrome-stable')
-        ignore_failure true
-      end
+      retries 1
       action :upgrade
     end
   end
