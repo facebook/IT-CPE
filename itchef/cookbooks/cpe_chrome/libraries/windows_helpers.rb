@@ -1,3 +1,4 @@
+# @lint-ignore FBCHEFCBLICENSE:OssConflict
 module CPE
   module WindowsChromeHelpers
     # Updates CPE::ChromeManagement::KnownSettings::GENERATED to contain
@@ -19,6 +20,13 @@ module CPE
           setting.value = setting_value.to_json
         else
           setting.value = setting_value
+        end
+
+        # For iterable settings with empty values, skip adding to reg_settings.
+        # This ensures the key is deleted completely without being recreated.
+        if setting.is_a?(WindowsChromeIterableSetting) &&
+           setting.value.respond_to?(:empty?) && setting.value.empty?
+          next
         end
 
         reg_settings << setting
@@ -47,6 +55,13 @@ module CPE
           begin
             current_values = registry_get_values(obj.registry_location)
           rescue Chef::Exceptions::Win32RegKeyMissing
+            next
+          end
+
+          # Check if the setting value is empty/nil
+          # If so, and the registry key exists, mark it for deletion
+          if obj.value.nil? || (obj.value.respond_to?(:empty?) && obj.value.empty?)
+            doomed_policies[obj] = nil
             next
           end
 
