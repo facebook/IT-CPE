@@ -24,7 +24,6 @@
     "cpe_nomad": ">= 0.0.0",
     "cpe_pathsd": ">= 0.0.0",
     "cpe_powermanagement": ">= 0.0.0",
-    "cpe_preferencepanes": ">= 0.0.0",
     "cpe_profiles": ">= 0.0.0",
     "cpe_remote": ">= 0.0.0",
     "cpe_spotlight": ">= 0.0.0",
