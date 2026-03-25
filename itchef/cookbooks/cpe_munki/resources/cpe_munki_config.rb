@@ -22,6 +22,7 @@ default_action :config
 
 action :config do
   return unless node['cpe_munki']['configure']
+  return if node['cpe_munki']['use_cfgr_profile']
 
   munki_prefs = node['cpe_munki']['preferences'].compact
   if munki_prefs.empty?

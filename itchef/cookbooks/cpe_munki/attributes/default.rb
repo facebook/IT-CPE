@@ -18,6 +18,7 @@
 default['cpe_munki'] = {
   'install' => false,
   'configure' => false,
+  'use_cfgr_profile' => nil,
   'auto_remediate' => nil,
   'skip_enforcing_launchds' => [],
   'munki_version_to_install' => {},
