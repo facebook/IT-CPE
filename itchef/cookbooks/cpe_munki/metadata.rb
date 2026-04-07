@@ -7,6 +7,5 @@ license 'Apache-2.0'
 description 'Installs/Configures Munki'
 version '0.3.0'
 
-depends 'cpe_remote'
 depends 'cpe_helpers'
-depends 'cpe_profiles'
+depends 'cpe_remote'

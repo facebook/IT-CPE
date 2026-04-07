@@ -20,7 +20,6 @@ return unless node.macos?
 cpe_munki_install 'Install Munki'
 cpe_munki_local 'Manage Local Munki Manifest'
 cpe_munki_defaults_config 'Manage Defaults Preferences'
-cpe_munki_config 'Manage Munki Settings'
 
 cookbook_file 'munki_preflight.py' do
   mode '0755'
