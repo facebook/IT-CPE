@@ -161,28 +161,10 @@ node.default['cpe_munki']['skip_enforcing_launchds'] += ['logouthelper']
 ```
 
 ### Munki Configuration
-The 'cpe_munki_config' resource will install a profile that configures Munki settings.
-You must set `node['cpe_munki']['config']` to be `true` for this to run.
-
-By leveraging `cpe_profiles`, we can craft a profile that has the base settings
-we want to apply. The default settings are stored in `node['cpe_munki']['preferences']`.
-Those values can be overridden in any recipe to be applied as you want:
-
-```ruby
-# Munki attribute overrides
-{
-  'DaysBetweenNotifications' => 90,
-  'InstallAppleSoftwareUpdates' => true,
-  'SoftwareRepoURL' => "https://#{server}/repo"
-}.each do |k, v|
-  node.default['cpe_munki']['preferences'][k] = v
-end
-```
-
-In addition, the 'cpe_munki_defaults_config' resource will configure settings using
+The 'cpe_munki_defaults_config' resource will configure Munki settings using
 the `macos_userdefaults` resource. This is useful if you want to consistently manage
 a setting with `defaults` so that other system tools besides Chef can modify it.
-You can set these settings using `node['cpe_munki']['defaults_preferences']`:`
+You can set these settings using `node['cpe_munki']['defaults_preferences']`:
 
 ```ruby
 # Munki attribute overrides
@@ -192,12 +174,6 @@ You can set these settings using `node['cpe_munki']['defaults_preferences']`:`
   node.default['cpe_munki']['defaults_preferences'][k] = v
 end
 ```
-
-**NOTE:** Preferences can *only* be set under either the `preferences` or
-`defaults_preferences` key. The resources will fail if a setting exists in
-both hashes. As such, if you had both of the above code examples somewhere
-in your code, an error would be thrown saying that 'SoftwareRepoURL' is
-configured twice.
 
 ### Local Manifests
 The 'cpe_munki_local' resource will implement a local-only manifest.
