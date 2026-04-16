@@ -1,6 +1,10 @@
 #!/bin/sh
 # (c) Meta Platforms, Inc. and affiliates. Confidential and proprietary.
 
-/opt/facebook/bin/heartbeat --tag munki_runs -token_file /Library/CPE/var/heartbeat_token.txt &>/dev/null
+HEARTBEAT="/opt/facebook/bin/heartbeat"
+TOKEN_FILE="/Library/CPE/var/heartbeat_token.txt"
+if [ -x "$HEARTBEAT" ] && [ -f "$TOKEN_FILE" ]; then
+  "$HEARTBEAT" --tag munki_runs -token_file "$TOKEN_FILE" &>/dev/null
+fi
 
 
