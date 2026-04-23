@@ -63,29 +63,15 @@ module CPE
     # Releases prior to 1803 do not recognize these registry settings and are
     # thus omitted.
     module ReleaseInformation
+      VERSION_25H2 = '25H2'.freeze
       VERSION_24H2 = '24H2'.freeze
       VERSION_23H2 = '23H2'.freeze
-      VERSION_22H2 = '22H2'.freeze
-      VERSION_21H2 = '21H2'.freeze
-      VERSION_21H1 = '21H1'.freeze
-      VERSION_20H2 = '20H2'.freeze
-      VERSION_20H1 = '2004'.freeze
-      VERSION_19H2 = '1909'.freeze
-      VERSION_19H1 = '1809'.freeze
-      VERSION_18H2 = '1803'.freeze
 
       def releases
         [
+          VERSION_25H2,
           VERSION_24H2,
           VERSION_23H2,
-          VERSION_22H2,
-          VERSION_21H2,
-          VERSION_21H1,
-          VERSION_20H2,
-          VERSION_20H1,
-          VERSION_19H2,
-          VERSION_19H1,
-          VERSION_18H2,
         ].freeze
       end
 
@@ -113,14 +99,14 @@ module CPE
       registry_hash = {}
 
       [KEY_PATH, "#{KEY_PATH}\\AU"].each do |path|
-        begin
-          registry_get_values(path).each do |i|
-            registry_hash[path] = {} unless registry_hash[path]
-            registry_hash[path].merge!({ i[:name] => i[:data] })
-          end
-        rescue Chef::Exceptions::Win32RegKeyMissing
-          registry_hash[path] = {}
+
+        registry_get_values(path).each do |i|
+          registry_hash[path] = {} unless registry_hash[path]
+          registry_hash[path].merge!({ i[:name] => i[:data] })
         end
+      rescue Chef::Exceptions::Win32RegKeyMissing
+        registry_hash[path] = {}
+
       end
 
       registry_hash
