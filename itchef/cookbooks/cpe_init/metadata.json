@@ -21,7 +21,6 @@
     "cpe_gnome_software": ">= 0.0.0",
     "cpe_logger": ">= 0.0.0",
     "cpe_munki": ">= 0.0.0",
-    "cpe_nomad": ">= 0.0.0",
     "cpe_pathsd": ">= 0.0.0",
     "cpe_powermanagement": ">= 0.0.0",
     "cpe_profiles": ">= 0.0.0",

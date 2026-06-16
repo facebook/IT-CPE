@@ -24,7 +24,6 @@ depends 'cpe_gnome_software'
 # depends 'cpe_hosts' # requires 'line' community cookbook
 depends 'cpe_logger'
 depends 'cpe_munki'
-depends 'cpe_nomad'
 depends 'cpe_pathsd'
 depends 'cpe_powermanagement'
 depends 'cpe_profiles'
