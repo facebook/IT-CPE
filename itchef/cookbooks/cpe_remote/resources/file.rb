@@ -84,6 +84,27 @@ action :create do
       new_resource.file_name : new_resource.folder_name
     file_source = new_resource.file_url ?
       new_resource.file_url : gen_url(new_resource.folder_name, filename)
+
+    # Validate the source URL BEFORE declaring the remote_file. A nil/invalid
+    # source makes remote_file raise an opaque
+    # Chef::Exceptions::InvalidRemoteFileURI when the resource is BUILT (the
+    # `source` setter validates), which is before the resource's own only_if
+    # guard can run. gen_url (and the cpe distro API it can delegate to) returns
+    # nil when the asset/handle cannot be resolved; valid_url? also returns false
+    # when the url is unreachable (a HEAD request fails). Fail here with an
+    # explicit, actionable message so the real cause is obvious instead of the
+    # opaque build-time error.
+    unless valid_url?(file_source)
+      reason = file_source.nil? ?
+        'the source url could not be resolved (gen_url/cpe distro API ' +
+        'returned nil)' :
+        "a HEAD request to the source url failed - invalid or unreachable " +
+        "(#{file_source})"
+      raise "cpe_remote_file[#{new_resource.folder_name}]: refusing to " +
+            "download '#{filename}' to '#{new_resource.path}' because " +
+            "#{reason}."
+    end
+
     hders = new_resource.headers ?
       new_resource.headers : auth_headers(file_source, 'GET')
     node['cpe_remote']['additional_headers'].each do |k, v|
@@ -98,17 +119,11 @@ action :create do
       action :delete
     end
 
-    # Download the remote file locally if file doesn't exist or checksum fails
+    # Download the remote file locally if file doesn't exist or checksum fails.
+    # Source validity is already gated by the valid_url? check above (which must
+    # run before this resource is built to avoid InvalidRemoteFileURI on a nil
+    # source).
     remote_file new_resource.path do
-      only_if do
-        CPE::Log.unless(
-          "Failed to download remote file since url(#{file_source}) is invalid",
-          :level => :warn,
-          :type => 'cpe_remote_file',
-          :action => "remote_file/#{filename}",
-          :status => 'fail',
-        ) { valid_url?(file_source) }
-      end
       path new_resource.path if new_resource.path
       atomic_update new_resource.atomic_update
       source file_source
