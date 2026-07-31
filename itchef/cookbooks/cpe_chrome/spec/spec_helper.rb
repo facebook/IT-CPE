@@ -1,3 +1,4 @@
+# @lint-ignore FBCHEFCBLICENSE:OssConflict
 # Copyright (c) Facebook, Inc. and its affiliates.
 #
 require 'rspec'
@@ -5,7 +6,6 @@ require_relative '../libraries/chrome_windows'
 
 RSpec.configure do |config|
   config.include CPE::ChromeManagement
-  config.disable_monkey_patching!
   config.order = :random
   config.default_formatter = 'doc'
   config.expect_with :rspec do |expectations|
