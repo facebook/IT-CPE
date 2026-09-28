@@ -1,6 +1,9 @@
 cpe_logger Cookbook
 ==================
-This cookbook provides a central logging library that other recipes can take advantage of to provide some unified logging. All log data here is collected in /var/log/cpe/cpe_logger.log and can be collected by osquery.
+This cookbook provides a central logging library that other recipes can take
+advantage of to provide some unified logging. All log data here is collected in
+/var/log/cpe_logger.log and egressed by fluent-bit to the Scribe category
+'cpe_logger'.
 
 Usage
 -----
@@ -28,7 +31,10 @@ Its highly encouraged that you also pass level, type, action, status.
   status - String, [success, fail] default: nil
 
 As well as showing the log in the chef output, these methods will produce a log
-on disk at '/var/log/cpe_logger.log', which can be indexed with osquery.
+on disk at '/var/log/cpe_logger.log', readable directly on the host.
+`cpe_base_settings` configures fluent-bit to tail that file and scribble it to the
+Scribe category 'cpe_logger', adding hostname, serial, uuid, device_environment,
+platform, and platform_version on the way out. Nothing indexes it with osquery.
 
 # Common Constructions
 
